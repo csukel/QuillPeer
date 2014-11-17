@@ -1,8 +1,4 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-    </style>
-
+    //use this color for the action bar
+    <color name="actionBarColor">#007373</color>
 </resources>

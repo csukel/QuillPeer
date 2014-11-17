@@ -1,4 +1,4 @@
-package ui.quillpeer.com.quillpeer;
+package ui.quillpeer.com.quillpeer.ui;
 
 
 import android.app.Activity;
@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import ui.quillpeer.com.quillpeer.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
