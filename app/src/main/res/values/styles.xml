@@ -1,4 +1,4 @@
 <resources>
-    //use this color for the action bar
+    //use this color for the ActionBar
     <color name="actionBarColor">#007373</color>
 </resources>
