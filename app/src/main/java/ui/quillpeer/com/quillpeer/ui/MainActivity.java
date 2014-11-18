@@ -3,9 +3,12 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.Activity;
 
 import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentManager;
+
+
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import ui.quillpeer.com.quillpeer.R;
 
 
-public class MainActivity extends Activity
+public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -50,7 +53,7 @@ public class MainActivity extends Activity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         //declare and initialize each fragment object for the main menu screens(Profile, People, Timetable,Settings,About)
         ProfileFragment fragmentProfile = new ProfileFragment();
