@@ -1,7 +1,5 @@
 package ui.quillpeer.com.quillpeer.ui;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
 
 
@@ -9,14 +7,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
+import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 
 
 public class MainActivity extends FragmentActivity

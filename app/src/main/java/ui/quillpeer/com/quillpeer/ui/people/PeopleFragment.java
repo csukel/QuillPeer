@@ -1,4 +1,4 @@
-package ui.quillpeer.com.quillpeer.ui;
+package ui.quillpeer.com.quillpeer.ui.people;
 
 import android.app.Activity;
 
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.MainActivity;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragmentPageAdapter;
 
 /**
