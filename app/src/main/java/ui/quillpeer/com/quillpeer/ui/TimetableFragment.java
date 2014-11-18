@@ -11,6 +11,7 @@ import ui.quillpeer.com.quillpeer.R;
 
 /**
  * Created by loucas on 18/11/2014.
+ * This will be the screen for Timetable
  */
 public class TimetableFragment extends Fragment {
     @Override
