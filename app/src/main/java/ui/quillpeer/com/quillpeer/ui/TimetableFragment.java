@@ -25,6 +25,7 @@ public class TimetableFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        //getArguments method is used to get arguments attached to the fragment from MainActivity
         ((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 }
