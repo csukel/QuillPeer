@@ -43,31 +43,67 @@ public class MainActivity extends Activity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
-
+    /*
+    * Loucas
+    * When on of the navigation drawer item is selected then show the corresponding fragment
+    * */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
+
+        //declare and initialize each fragment object for the main menu screens(Profile, People, Timetable,Settings,About)
+        ProfileFragment fragmentProfile = new ProfileFragment();
+        PeopleFragment fragmentPeople = new PeopleFragment();
+        TimetableFragment fragmentTimetable = new TimetableFragment();
+        SettingsFragment fragmentSettings = new SettingsFragment();
+        AboutFragment fragmentAbout = new AboutFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("Position", position);
+        Fragment gFragment = null;
+
+        switch (position) {
+            case 0:
+                gFragment = fragmentProfile;
+                break;
+            case 1:
+                gFragment = fragmentPeople;
+                break;
+            case 2:
+                gFragment = fragmentTimetable;
+                break;
+            case 3:
+                gFragment = fragmentSettings;
+                break;
+            case 4:
+                gFragment = fragmentAbout;
+                break;
+        }
+        //Store the position of the selected fragment into bundle
+        gFragment.setArguments(args);
+        //Show gFragment object on the screen
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, gFragment)
                 .commit();
     }
+
     //Set title on the action bar when a list item is selected from navigation drawer
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
+            case 0:
                 mTitle = getString(R.string.title_section1);
                 break;
-            case 2:
+            case 1:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case 3:
+            case 2:
                 mTitle = getString(R.string.title_section3);
                 break;
-            case 4:
+            case 3:
                 mTitle = getString(R.string.title_section4);
                 break;
-            case 5:
+            case 4:
                 mTitle = getString(R.string.title_section5);
                 break;
         }
@@ -107,46 +143,6 @@ public class MainActivity extends Activity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
     }
 
 }
