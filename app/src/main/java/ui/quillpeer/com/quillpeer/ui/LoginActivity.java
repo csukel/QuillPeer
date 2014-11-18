@@ -39,7 +39,7 @@ public class LoginActivity extends Activity {
         @Override
         public void onClick(View v) {
             //TODO check for empty text boxes (edtUsername and edtPassword) and then check with the server for user authenication
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(),TakePicActivity.class);
             startActivity(intent);
         }
     };
