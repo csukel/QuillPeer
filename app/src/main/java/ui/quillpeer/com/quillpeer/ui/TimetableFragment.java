@@ -21,6 +21,7 @@ public class TimetableFragment extends Fragment {
 
         return rootView;
     }
+    //updates the ActionBar title by using the onSectionAttached method from MainActivity
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
