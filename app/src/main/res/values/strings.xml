@@ -11,5 +11,37 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+    <string-array name="radius_visibility_list_entries">
+        <item>15 metres</item>
+        <item>30 metres</item>
+        <item>45 metres</item>
+    </string-array>
+    <string-array name="radius_visibility_list_values">
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+    </string-array>
+
+    <string-array name="visible_to_people_list_entries">
+    <item>ALL</item>
+    <item>Juniors</item>
+    <item>Seniors</item>
+</string-array>
+    <string-array name="visible_to_people_list_values">
+        <item>ALL</item>
+        <item>Juniors</item>
+        <item>Seniors</item>
+    </string-array>
+
+    <string-array name="show_people_list_entries">
+        <item>ALL</item>
+        <item>Juniors</item>
+        <item>Seniors</item>
+    </string-array>
+    <string-array name="show_people_list_values">
+        <item>ALL</item>
+        <item>Juniors</item>
+        <item>Seniors</item>
+    </string-array>
 
 </resources>

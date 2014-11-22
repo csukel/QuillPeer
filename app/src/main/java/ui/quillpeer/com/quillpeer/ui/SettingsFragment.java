@@ -1,25 +1,28 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v4.preference.PreferenceFragment;
 
 import ui.quillpeer.com.quillpeer.R;
 
 /**
  * Created by loucas on 18/11/2014.
+ * Library used for PreferenceFragment is a third party library downloaded from
+ * https://github.com/kolavar/android-support-v4-preferencefragment
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragment {
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
-
-        return rootView;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Load the settings from an XML resource
+        addPreferencesFromResource(R.xml.settings);
     }
+    /**
+     * When fragment is attached to the activity invokes the onSectionAttached of the corresponding activity
+     * in order to set the title on the ActionBar
+     * @param: Activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

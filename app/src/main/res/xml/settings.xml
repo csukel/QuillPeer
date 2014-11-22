@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Map Configurations">
+        <ListPreference
+            android:key="radius_list_preference"
+            android:title="Radius of visibility"
+            android:summary="You can change the radius of visibility"
+            android:entries="@array/radius_visibility_list_entries"
+            android:entryValues="@array/radius_visibility_list_values"
+            android:defaultValue="15"
+            android:dialogTitle="Choose the radius:" />
+
+        <ListPreference
+            android:key="visible_to_list_preference"
+            android:title="Visible to people with qualification level:"
+            android:summary="You can change the qualification level of people that can discover you on the map"
+            android:entries="@array/visible_to_people_list_entries"
+            android:entryValues="@array/visible_to_people_list_values"
+            android:defaultValue="ALL"
+            android:dialogTitle="Select qualification:" />
+
+        <ListPreference
+            android:key="show_people_list_preference"
+            android:title="Show people with qualification level:"
+            android:summary="You can change the qualification level of people that can you can see the map"
+            android:entries="@array/show_people_list_entries"
+            android:entryValues="@array/show_people_list_values"
+            android:defaultValue="ALL"
+            android:dialogTitle="Select qualification:" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="Usability Preferences">
+        <CheckBoxPreference
+            android:key="colorblind_option"
+            android:title="Color blind"
+            android:summary="Tick in the box if your a color blind person">
+
+            </CheckBoxPreference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Other">
+        <Preference
+            android:title="Change profile picture"
+            android:summary="Tap here to change your profile picture.">
+            <intent
+                android:action=".ui.TakePicActivity"
+                >
+            </intent>
+        </Preference>
+        <Preference
+            android:title="Tutorial"
+            android:summary="Tap here to access the tutorial section."
+            >
+
+        </Preference>
+        <Preference
+            android:title="Log Out">
+
+        </Preference>
+
+    </PreferenceCategory>
+</PreferenceScreen>
