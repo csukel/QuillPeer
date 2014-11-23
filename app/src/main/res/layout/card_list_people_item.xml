@@ -28,8 +28,6 @@
                 android:layout_marginRight="6dip"
                 android:src="@drawable/ic_action_person" />
 
-
-
             <LinearLayout
                 android:orientation="vertical"
 
@@ -38,25 +36,24 @@
                 android:layout_height="fill_parent">
 
                 <TextView
+                    android:id="@+id/txtPeoplePersonalDetails"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="Title Name Surname" />
                 <TextView
+                    android:id="@+id/txtPeopleDepartment"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
                     android:layout_weight="1"
-                    android:singleLine="true"
-                    android:ellipsize="marquee"
                     android:text="Department" />
 
                 <TextView
+                    android:id="@+id/txtPeopleUniversity"
                     android:layout_width="fill_parent"
                     android:layout_height="0dip"
                     android:layout_weight="1"
-                    android:singleLine="true"
-                    android:ellipsize="marquee"
                     android:text="University" />
 
 
