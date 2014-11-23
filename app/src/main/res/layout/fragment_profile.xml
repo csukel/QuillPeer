@@ -57,9 +57,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="textMultiLine"
                 android:layout_below="@+id/textView3"
                 android:layout_centerHorizontal="true"
+                android:editable="false"
                 android:layout_marginTop="45dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
