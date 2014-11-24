@@ -39,13 +39,15 @@ public class AllFragment extends Fragment {
         Person person1 = new Person("Mr","Loucas","Stylianou","University of Warwick","Department of Computer Science");
         Person person2 = new Person("Mr","Hao","Dong","University of Warwick","Department of Computer Science");
         Person person3 = new Person("Mr","Marios","Chrysanthou","University of Warwick","Department of Computer Science");
-        Person person4 = new Person("Dr","Maria","Liakat","University of Warwick","Department of Computer Science");
+        Person person4 = new Person("Dr","Maria","Liakata","University of Warwick","Department of Computer Science");
         Person person5 = new Person("Dr","Matt","Leeke","University of Warwick","Department of Computer Science");
+        Person person6 = new Person("Mr","Sirandjivy","Gocouladasse alias Souloramane","University of Warwick","Department of Computer Science");
         peopleList = new ArrayList<Person>();
         peopleList.add(person1);
         peopleList.add(person2);
         peopleList.add(person3);
         peopleList.add(person4);
         peopleList.add(person5);
+        peopleList.add(person6);
     }
 }
