@@ -1,11 +1,14 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -59,10 +62,30 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             super(v);
             imgPeopleFavourite = (ImageView)v.findViewById(R.id.imgPeopleFavourite);
             imgPeopleProfilePic = (ImageView)v.findViewById(R.id.imgPeopleProfilePic);
+
+            imgPeopleFavourite.setTag(R.drawable.ic_star_white);
             txtPeoplePersonalDetails = (TextView)v.findViewById(R.id.txtPeoplePersonalDetails);
             txtPeopleDepartment = (TextView)v.findViewById(R.id.txtPeopleDepartment);
             txtPeopleUniversity = (TextView)v.findViewById(R.id.txtPeopleUniversity);
 
+            imgPeopleFavourite.setOnTouchListener(imgStarListener);
+
         }
+
+        View.OnTouchListener imgStarListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int tag = (Integer)imgPeopleFavourite.getTag();
+                if (tag == R.drawable.ic_star_white) {
+                    imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
+                    imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
+                }
+                else {
+                    imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
+                    imgPeopleFavourite.setTag(R.drawable.ic_star_white);
+                }
+                return false;
+            }
+        };
     }
 }
