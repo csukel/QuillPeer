@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import ui.quillpeer.com.quillpeer.R;
 
@@ -17,6 +18,7 @@ public class LoginActivity extends Activity {
     private Button btnLogin;
     private EditText edtUsername;
     private EditText edtPassword;
+    private Toast m_currentToast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,33 @@ public class LoginActivity extends Activity {
         @Override
         public void onClick(View v) {
             //TODO check for empty text boxes (edtUsername and edtPassword) and then check with the server for user authenication
-            Intent intent = new Intent(getApplicationContext(),TakePicActivity.class);
-            startActivity(intent);
+            //get the username from the input box
+            String username = edtUsername.getText().toString();
+            //get the password from the input box
+            String password = edtPassword.getText().toString();
+
+            if (username.isEmpty()){
+                edtUsername.setError("Please fill this field");
+            }
+            else if (password.isEmpty()){
+                edtPassword.setError("Please fill this field");
+            }
+            else {
+
+                Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
+                startActivity(intent);
+            }
         }
     };
+
+    void showToast(String text,int toast_length)
+    {
+        if(m_currentToast != null)
+        {
+            m_currentToast.cancel();
+        }
+        m_currentToast = Toast.makeText(this, text,toast_length);
+        m_currentToast.show();
+
+    }
 }
