@@ -53,13 +53,17 @@ public class LoginActivity extends Activity {
                 edtPassword.setError("Please fill this field");
             }
             else {
-
+                //Authenticate user, display any error messages if there is something wrong with the authentication stage
+                //otherwise....
+                //if its the first time logging in the application create the account using account manager
+                //else if its not then check the credentials against the stored values for this account
+                //and if authentication is successful move to the next activity
                 Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
                 startActivity(intent);
             }
         }
     };
-
+/*
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
@@ -69,5 +73,5 @@ public class LoginActivity extends Activity {
         m_currentToast = Toast.makeText(this, text,toast_length);
         m_currentToast.show();
 
-    }
+    }*/
 }

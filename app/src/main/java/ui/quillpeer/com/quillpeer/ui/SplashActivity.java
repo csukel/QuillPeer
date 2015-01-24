@@ -21,7 +21,7 @@ public class SplashActivity extends Activity {
     private ScaleAnimation animImg;
     private Animation animSlogan;
     private TextView txtSlogan;
-    private final int SPLASH_DISPLAY_LENGHT = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 3000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +58,6 @@ public class SplashActivity extends Activity {
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
             }
-        }, SPLASH_DISPLAY_LENGHT);
+        }, SPLASH_DISPLAY_LENGTH);
     }
 }

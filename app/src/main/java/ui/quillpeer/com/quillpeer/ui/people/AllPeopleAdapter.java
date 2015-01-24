@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Iterator;
 import java.util.List;
 
 import core.Person;
@@ -47,6 +48,9 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         peopleViewHolder.txtPeoplePersonalDetails.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname());
         peopleViewHolder.txtPeopleUniversity.setText(person.getUniversity());
         peopleViewHolder.txtPeopleDepartment.setText(person.getDepartment());
+
+
+
 
     }
 
