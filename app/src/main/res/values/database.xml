@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 	<string name="Database_onCreate">
+    	CREATE TABLE USER_INFO(   USERNAME TEXT PRIMARY KEY,
+    		                        PASSWORD TEXT NOT NULL); \n
+
+    </string>
+    <string name="Database_onUpgrade">
+    	DROP TABLE IF EXISTS USER_INFO; \n
+    </string>
+</resources>

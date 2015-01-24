@@ -3,11 +3,11 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -58,13 +58,13 @@ public class LoginActivity extends Activity {
                 //if its the first time logging in the application create the account using account manager
                 //else if its not then check the credentials against the stored values for this account
                 //and if authentication is successful move to the next activity
+
                 Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
                 startActivity(intent);
             }
         }
     };
-/*
-    void showToast(String text,int toast_length)
+/*    void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
         {
