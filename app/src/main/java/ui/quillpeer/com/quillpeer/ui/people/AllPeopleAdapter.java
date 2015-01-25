@@ -1,6 +1,5 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,13 +9,11 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import core.Person;
+import core.People.Person;
 import ui.quillpeer.com.quillpeer.R;
 
 /**

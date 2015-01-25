@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,10 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-
 import java.util.ArrayList;
 import java.util.List;
-import core.Person;
+import core.People.Person;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -51,12 +49,12 @@ public class AllFragment extends Fragment  {
     }
 
     public void populateList(){
-        Person person1 = new Person("Mr","Loucas","Stylianou","University of Warwick","Department of Computer Science",false,false);
-        Person person2 = new Person("Mr","Hao","Dong","University of Warwick","Department of Computer Science",false,false);
-        Person person3 = new Person("Mr","Marios","Chrysanthou","University of Warwick","Department of Computer Science",false,false);
-        Person person4 = new Person("Dr","Maria","Liakata","University of Warwick","Department of Computer Science",false,false);
-        Person person5 = new Person("Dr","Matt","Leeke","University of Warwick","Department of Computer Science",false,false);
-        Person person6 = new Person("Mr","Sirandjivy","Gocouladasse alias Souloramane","University of Warwick","Department of Computer Science",false,false);
+        Person person1 = new Person("Mr","Loucas","Stylianou","University of Warwick","Department of Computer Science","",false);
+        Person person2 = new Person("Mr","Hao","Dong","University of Warwick","Department of Computer Science","",false);
+        Person person3 = new Person("Mr","Marios","Chrysanthou","University of Warwick","Department of Computer Science","",false);
+        Person person4 = new Person("Dr","Maria","Liakata","University of Warwick","Department of Computer Science","",false);
+        Person person5 = new Person("Dr","Matt","Leeke","University of Warwick","Department of Computer Science","",false);
+        Person person6 = new Person("Mr","Sirandjivy","Gocouladasse alias Souloramane","University of Warwick","Department of Computer Science","",false);
         peopleList = new ArrayList<Person>();
         peopleList.add(person1);
         peopleList.add(person2);

@@ -1,4 +1,4 @@
-package core;
+package core.People;
 
 import java.util.List;
 
@@ -20,19 +20,17 @@ public class Person {
     private String department;
     //check if this person is a speaker
     private boolean isSpeaker;
-    //to check if this person instance is in user's favourite list of people
-    private boolean isFavourite;
     //personal email
     private String email;
 
-    public Person (String title,String name,String surname,String university,String department,boolean isSpeaker,boolean isFavourite){
+    public Person (String title,String name,String surname,String university,String department,String email,boolean isSpeaker){
         this.title = title;
         this.name = name;
         this.surname = surname;
         this.university = university;
         this.department = department;
         this.isSpeaker = isSpeaker;
-        this.isFavourite = isFavourite;
+        this.email = email;
     }
 
     public String getTitle(){
@@ -59,14 +57,6 @@ public class Person {
 
     public boolean isSpeaker(){
         return this.isSpeaker;
-    }
-
-    public boolean isFavourite(){
-        return this.isFavourite;
-    }
-
-    public void changeFavourite(){
-        this.isFavourite = !isFavourite;
     }
 
     public String getEmail(){
