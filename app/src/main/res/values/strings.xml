@@ -52,5 +52,9 @@
         <item>Juniors</item>
         <item>Seniors</item>
     </string-array>
-
+    <string name="sfName">Search by name</string>
+    <string name="sfSurname">Search by surname</string>
+    <string name="sfUniversity">Search by university</string>
+    <string name="sfDepartment">Search by department</string>
+    <string name="sfQualification">Search by qualification</string>
 </resources>

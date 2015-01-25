@@ -5,17 +5,24 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
+import android.widget.Spinner;
+
 import java.util.ArrayList;
 import java.util.List;
 import core.People.Person;
 import ui.quillpeer.com.quillpeer.R;
+
+import static android.widget.SearchView.OnQueryTextListener;
 
 /**
  * Created by loucas on 18/11/2014.
@@ -23,6 +30,9 @@ import ui.quillpeer.com.quillpeer.R;
 public class AllFragment extends Fragment  {
     private List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
+    private String searchFilter="";
+    //Set search filter criteria in a string array
+    private String[] searchCriteriaList;
     View rootView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,9 +52,12 @@ public class AllFragment extends Fragment  {
         //populate list with fake data
         populateList();
         //initialise the adapter
-        allPeopleAdapter = new AllPeopleAdapter(peopleList);
+        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
         //set the adapter to the recycler view
         recList.setAdapter(allPeopleAdapter);
+        //initialise the search filtering options list
+        searchCriteriaList= new String[]{getResources().getString(R.string.sfName),getResources().getString(R.string.sfSurname),
+                getResources().getString(R.string.sfUniversity),getResources().getString(R.string.sfDepartment),getResources().getString(R.string.sfQualification)};
         return rootView;
     }
 
@@ -77,30 +90,68 @@ public class AllFragment extends Fragment  {
         //set a hint in the search input box
         searchView.setQueryHint("Search for people");
         //assign a query text lister to the menu item
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            //when the user submits a query using the button
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                onQueryTextChange(s);
-                return false;
-            }
-            //when the query text changes ....
-            @Override
-            public boolean onQueryTextChange(String s) {
-                //if the adapter's object is not null filter the dataset in the adapter
-                if (allPeopleAdapter!=null){
-                    allPeopleAdapter.getFilter().filter(s);
-                }
-                return false;
-            }
-        });
+        searchView.setOnQueryTextListener(onQueryTextChange);
         searchView.setIconifiedByDefault(false);
+
+        //get the spinner menu item
+        MenuItem spinnerItem = menu.findItem(R.id.search_spinner);
+        //spinner instantiation
+        Spinner spinner = (Spinner)spinnerItem.getActionView();
+
+        //instantiate array adapter
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+                android.R.layout.simple_spinner_item,searchCriteriaList);
+        //set dataset adapter for the spinner
+        spinner.setAdapter(spinnerAdapter);
+        //set the on item selected listener for the spinner
+        spinner.setOnItemSelectedListener(onItemSelectedListener);
+
     }
+
+    //when an item is selected from the spinner(search filter) do...
+    AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Log.i("AllFragment", "Spinner pos" + position);
+            setSearchFilter(searchCriteriaList[position]);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     @Override
     public void onPrepareOptionsMenu(Menu menu)
     {
         super.onPrepareOptionsMenu(menu);
+    }
+
+    private OnQueryTextListener onQueryTextChange = new OnQueryTextListener() {
+        //when the user submits a query using the button
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            onQueryTextChange(s);
+            return false;
+        }
+        //when the query text changes ....
+        @Override
+        public boolean onQueryTextChange(String s) {
+            //if the adapter's object is not null filter the dataset in the adapter
+            if (allPeopleAdapter!=null){
+                allPeopleAdapter.getFilter().filter(s+"_"+getSearchFilter());
+            }
+            return false;
+        }
+    };
+
+    private void setSearchFilter(String s){
+        this.searchFilter = s;
+    }
+
+    private String getSearchFilter(){
+        return this.searchFilter;
     }
 
 }

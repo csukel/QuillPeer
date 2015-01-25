@@ -1,5 +1,6 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,7 +24,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
     private List<Person> personList;
     private List<Person> orig;
-
+    private Context mContext;
 
     @Override
     public AllPeopleViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -34,8 +35,9 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         return new AllPeopleViewHolder(itemView);
     }
 
-    public AllPeopleAdapter(List<Person> personList){
+    public AllPeopleAdapter(List<Person> personList,Context context){
         this.personList = personList;
+        this.mContext = context;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
     }
     //define the custom filter
-    @Override
+
     public Filter getFilter() {
         return new Filter() {
 
@@ -70,11 +72,34 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                     if (orig != null && orig.size() > 0) {
                         //loop through the original list and check objects against the query
                         for (final Person p : orig) {
-                            //if an object is matched add it to the results list
-                            if (p.getName().toLowerCase()
-                                    .contains(query.toString().toLowerCase())
-                                    || p.getSurname().toLowerCase().contains(query.toString().toLowerCase()))
+
+                            //split the query to two strings ...
+                            String[] filterQueryConstraints = query.toString().split("_");
+                            //the query
+                            String filterQuery = filterQueryConstraints[0];
+                            //and the search criteria filter
+                            String searchFilter = filterQueryConstraints[1];
+                            //if an object is matched according to search filter and the query string then add it to the results list
+                            if (searchFilter.equals(mContext.getResources().getString(R.string.sfName)) &&
+                                    p.getName().toLowerCase().contains(filterQuery.toLowerCase()))
                                 results.add(p);
+                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfSurname)) &&
+                                    p.getSurname().toLowerCase().contains(filterQuery.toLowerCase()))
+                                results.add(p);
+                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfUniversity)) &&
+                                    p.getUniversity().toLowerCase().contains(filterQuery.toLowerCase()))
+                                results.add(p);
+                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfDepartment)) &&
+                                    p.getDepartment().toLowerCase().contains(filterQuery.toLowerCase()))
+                                results.add(p);
+                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfQualification)) &&
+                                    p.getQualification().toLowerCase().contains(filterQuery.toLowerCase()))
+                                results.add(p);
+
+/*                            if (p.getName().toLowerCase()
+                                    .contains(filterQuery.toString().toLowerCase())
+                                    || p.getSurname().toLowerCase().contains(filterQuery.toString().toLowerCase()))
+                                results.add(p);*/
                         }
                     }
                     //return results of filtering

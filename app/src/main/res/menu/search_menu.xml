@@ -5,4 +5,9 @@
         android:icon="@drawable/ic_action_search"
         android:showAsAction="collapseActionView|ifRoom"
         android:actionViewClass="android.widget.SearchView" />
+    <item android:id="@+id/search_spinner"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:actionLayout="@layout/spinner_layout"/>
+        <!--android:actionProviderClass=""-->
 </menu>
