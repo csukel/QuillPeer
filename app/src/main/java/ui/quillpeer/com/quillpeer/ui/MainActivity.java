@@ -3,6 +3,8 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.ActionBar;
 
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.SearchView;
 
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
@@ -29,6 +32,8 @@ public class MainActivity extends FragmentActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+
+    private static boolean isPeopleFragmentVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,18 +126,41 @@ public class MainActivity extends FragmentActivity
         }
     }
 
+    /* Called whenever invalidateOptionsMenu() is called */
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+/*        if(isPeopleFragmentVisible){
+            menu.findItem(R.id.search).setVisible(true);
+        }else{
+            menu.findItem(R.id.search).setVisible(false);
+        }*/
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            //getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.search_menu, menu);
+
+            SearchManager searchManager = (SearchManager)
+                    getSystemService(Context.SEARCH_SERVICE);
+            MenuItem searchMenuItem = menu.findItem(R.id.search);
+            SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+            searchView.setSearchableInfo(searchManager.
+                    getSearchableInfo(getComponentName()));
+            searchView.setSubmitButtonEnabled(true);
+            //searchView.setOnQueryTextListener(this);
             restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,9 +22,11 @@ import ui.quillpeer.com.quillpeer.R;
 /**
  * Created by loucas on 23/11/2014.
  */
-public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder> {
+public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder> implements Filterable {
 
     private List<Person> personList;
+    private List<Person> orig;
+
 
     @Override
     public AllPeopleViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -52,6 +57,44 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
 
 
+    }
+    //define the custom filter
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence query) {
+                final FilterResults oReturn = new FilterResults();
+                final ArrayList<Person> results = new ArrayList<Person>();
+                if (orig == null)
+                    orig = personList;
+                if (query != null) {
+                    if (orig != null && orig.size() > 0) {
+                        //loop through the original list and check objects against the query
+                        for (final Person p : orig) {
+                            //if an object is matched add it to the results list
+                            if (p.getName().toLowerCase()
+                                    .contains(query.toString().toLowerCase())
+                                    || p.getSurname().toLowerCase().contains(query.toString().toLowerCase()))
+                                results.add(p);
+                        }
+                    }
+                    //return results of filtering
+                    oReturn.values = results;
+                }
+                return oReturn;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,
+                                          FilterResults results) {
+                personList= (ArrayList<Person>) results.values;
+                //update the adapter
+                notifyDataSetChanged();
+            }
+        };
     }
 
 
