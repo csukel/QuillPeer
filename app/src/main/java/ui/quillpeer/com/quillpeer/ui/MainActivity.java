@@ -3,8 +3,9 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.ActionBar;
 
 
-import android.app.SearchManager;
-import android.content.Context;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.SearchView;
+import android.widget.Toast;
+
+import com.estimote.sdk.BeaconManager;
 
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
@@ -22,6 +25,8 @@ import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    private BeaconManager beaconManager;
+    private static final int REQUEST_ENABLE_BT = 1234;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -48,6 +53,41 @@ public class MainActivity extends FragmentActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // Configure BeaconManager.
+        beaconManager = new BeaconManager(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Check if device supports Bluetooth Low Energy.
+        if (!beaconManager.hasBluetooth()) {
+            Toast.makeText(this, "Device does not have Bluetooth Low Energy", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // If Bluetooth is not enabled, let user enable it.
+        if (!beaconManager.isBluetoothEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            //connectToService();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == Activity.RESULT_OK) {
+                //connectToService();
+            } else {
+                Toast.makeText(this, "Bluetooth not enabled", Toast.LENGTH_LONG).show();
+                getActionBar().setSubtitle("Bluetooth not enabled");
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
     /*
     * Loucas
