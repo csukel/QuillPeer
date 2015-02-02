@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -16,7 +17,12 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
@@ -26,7 +32,10 @@ import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private BeaconManager beaconManager;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
+    private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -39,6 +48,7 @@ public class MainActivity extends FragmentActivity
     private CharSequence mTitle;
 
     private static boolean isPeopleFragmentVisible = false;
+    private ArrayList<Beacon> beaconsList = new ArrayList<Beacon>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +66,26 @@ public class MainActivity extends FragmentActivity
 
         // Configure BeaconManager.
         beaconManager = new BeaconManager(this);
+
+        beaconManager.setRangingListener(rangingListener);
     }
+
+    BeaconManager.RangingListener rangingListener = new BeaconManager.RangingListener() {
+        @Override
+        public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
+            // Note that results are not delivered on UI thread.
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Note that beacons reported here are already sorted by estimated
+                    // distance between device and beacon.
+                    getActionBar().setSubtitle("Found beacons: " + beacons.size());
+                    //beaconsList = (ArrayList)beacons;
+                    beaconsList = new ArrayList<Beacon>(beacons);
+                }
+            });
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -73,7 +102,7 @@ public class MainActivity extends FragmentActivity
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else {
-            //connectToService();
+            connectToService();
         }
     }
 
@@ -81,13 +110,32 @@ public class MainActivity extends FragmentActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
-                //connectToService();
+                connectToService();
             } else {
                 Toast.makeText(this, "Bluetooth not enabled", Toast.LENGTH_LONG).show();
                 getActionBar().setSubtitle("Bluetooth not enabled");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+/*    @Override
+    protected void onStop() {
+        try {
+            beaconManager.stopRanging(ALL_ESTIMOTE_BEACONS);
+        } catch (RemoteException e) {
+            Log.d(TAG, "Error while stopping ranging", e);
+        }
+
+        super.onStop();
+    }*/
+
+    @Override
+    protected void onDestroy() {
+        //when activity is destroyed, disconnect from the beacon service
+        beaconManager.disconnect();
+
+        super.onDestroy();
     }
     /*
     * Loucas
@@ -162,7 +210,7 @@ public class MainActivity extends FragmentActivity
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(mTitle);
         }catch  (Exception ex){
-            Log.e("Main activity",ex.toString());
+            Log.e(TAG,"Main activity",ex);
         }
     }
 
@@ -215,6 +263,23 @@ public class MainActivity extends FragmentActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void connectToService() {
+        getActionBar().setSubtitle("Scanning...");
+        beaconsList.clear();
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                try {
+                    beaconManager.startRanging(ALL_ESTIMOTE_BEACONS);
+                } catch (RemoteException e) {
+                    Toast.makeText(MainActivity.this, "Cannot start ranging, something terrible happened",
+                            Toast.LENGTH_LONG).show();
+                    Log.e( TAG,"Cannot start ranging",e);
+                }
+            }
+        });
     }
 
 
