@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,7 @@ public class MainActivity extends FragmentActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
+    private Handler handlerAveragingBeaconsDistance;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -74,6 +76,13 @@ public class MainActivity extends FragmentActivity
         @Override
         public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
             // Note that results are not delivered on UI thread.
+            // If Bluetooth is not enabled, let user enable it.
+            if (!beaconManager.isBluetoothEnabled()) {
+/*            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);*/
+                BluetoothAdapter bleAdapter = BluetoothAdapter.getDefaultAdapter();
+                bleAdapter.enable();
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -99,8 +108,10 @@ public class MainActivity extends FragmentActivity
 
         // If Bluetooth is not enabled, let user enable it.
         if (!beaconManager.isBluetoothEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+/*            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);*/
+            BluetoothAdapter bleAdapter = BluetoothAdapter.getDefaultAdapter();
+            bleAdapter.enable();
         } else {
             connectToService();
         }
