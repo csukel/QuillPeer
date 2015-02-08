@@ -32,15 +32,24 @@
     </string-array>
 
     <string-array name="visible_to_people_list_entries">
-    <item>ALL</item>
-    <item>Juniors</item>
-    <item>Seniors</item>
-</string-array>
-    <string-array name="visible_to_people_list_values">
-        <item>ALL</item>
-        <item>Juniors</item>
-        <item>Seniors</item>
+        <!--Hao created this as Enum-->
+        <item>Professor</item><!--1-->
+        <item>Associate / Senior Lecturer / Reader</item><!--2-->
+        <item>Assistant / Lecturer</item><!--3-->
+        <item>Postdoc</item><!--4-->
+        <item>PhD students</item><!--5-->
+        <item>Other</item><!--6-->
     </string-array>
+    <string-array name="visible_to_people_list_values">
+        <!--Hao created this as Enum-->
+        <item>Professor</item><!--1-->
+        <item>Associate / Senior Lecturer / Reader</item><!--2-->
+        <item>Assistant / Lecturer</item><!--3-->
+        <item>Postdoc</item><!--4-->
+        <item>PhD students</item><!--5-->
+        <item>Other</item><!--6-->
+    </string-array>
+    <string-array name="empty_array"></string-array>
 
     <string-array name="show_people_list_entries">
         <item>ALL</item>

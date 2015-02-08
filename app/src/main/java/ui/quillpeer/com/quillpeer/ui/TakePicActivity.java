@@ -67,6 +67,7 @@ public class TakePicActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 //get the picture and store it in a bitmap object
                 Bitmap bp = (Bitmap) data.getExtras().get("data");
+                bp = Bitmap.createScaledBitmap(bp,256,256,false);
                 //set image to the profilePic object
                 profilePic.setImageBitmap(bp);
             } else if (resultCode == RESULT_CANCELED) {

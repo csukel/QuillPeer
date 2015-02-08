@@ -1,32 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <PreferenceCategory android:title="Map Configurations">
-        <ListPreference
+<!--        <MultiSelectListPreference
+            android:dialogTitle="Qualification Filter"
+            android:key="show_people_list_preference"
+            android:title = "Qualification Filter"
+            android:summary = "Use this setting to set a filter on qualification level of peoples shown on the map"
+            android:entries = "@array/show_people_list_entries"
+            android:entryValues="@array/show_people_list_values"
+            android:defaultValue="@array/empty_array"/>-->
+            <CheckBoxPreference
+                android:key="qfilter_professor"
+                android:summary=""
+                android:title="Show professors on map"
+                android:defaultValue="true"
+                />
+
+            <CheckBoxPreference
+                android:key="qfilter_associate"
+                android:summary=""
+                android:title="Show associates on map"
+                android:defaultValue="true"
+                />
+
+        <CheckBoxPreference
+            android:key="qfilter_assistant"
+            android:summary=""
+            android:title="Show assistants on map"
+            android:defaultValue="true"
+            />
+        <CheckBoxPreference
+            android:key="qfilter_postdoc"
+            android:summary=""
+            android:title="Show postdocs on map"
+            android:defaultValue="true"
+            />
+        <CheckBoxPreference
+            android:key="qfilter_phd"
+            android:summary=""
+            android:title="Show phd students on map"
+            android:defaultValue="true"
+            />
+<!--        <ListPreference
             android:key="radius_list_preference"
             android:title="Radius of visibility"
             android:summary="You can change the radius of visibility"
             android:entries="@array/radius_visibility_list_entries"
             android:entryValues="@array/radius_visibility_list_values"
             android:defaultValue="15"
-            android:dialogTitle="Choose the radius:" />
+            android:dialogTitle="Choose the radius:" />-->
 
-        <ListPreference
+<!--        <ListPreference
             android:key="visible_to_list_preference"
             android:title="Visible to people with qualification level:"
             android:summary="You can change the qualification level of people that can discover you on the map"
             android:entries="@array/visible_to_people_list_entries"
             android:entryValues="@array/visible_to_people_list_values"
             android:defaultValue="ALL"
-            android:dialogTitle="Select qualification:" />
+            android:dialogTitle="Select qualification:" />-->
 
-        <ListPreference
+
+
+
+<!--        <ListPreference
             android:key="show_people_list_preference"
             android:title="Show people with qualification level:"
             android:summary="You can change the qualification level of people that can you can see the map"
             android:entries="@array/show_people_list_entries"
             android:entryValues="@array/show_people_list_values"
             android:defaultValue="ALL"
-            android:dialogTitle="Select qualification:" />
+            android:dialogTitle="Select qualification:" />-->
 
     </PreferenceCategory>
 

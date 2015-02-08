@@ -38,6 +38,9 @@ public class MainActivity extends FragmentActivity
     private static final int REQUEST_ENABLE_BT = 1234;
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
     private Handler handlerAveragingBeaconsDistance;
+    private Handler handleBleEnabled = new Handler();
+    private BluetoothAdapter bleAdapter ;
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -60,7 +63,8 @@ public class MainActivity extends FragmentActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
+        //get bluetooth adapter
+        bleAdapter = BluetoothAdapter.getDefaultAdapter();
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
@@ -70,19 +74,39 @@ public class MainActivity extends FragmentActivity
         beaconManager = new BeaconManager(this);
 
         beaconManager.setRangingListener(rangingListener);
+        //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
+        handleBleEnabled.postDelayed(ckeckBleOn,2000);
     }
+
+    Runnable ckeckBleOn = new Runnable(){
+
+        @Override
+        public void run() {
+            // If Bluetooth is not enabled, let user enable it.
+            if (!beaconManager.isBluetoothEnabled()) {
+                bleAdapter.enable();
+            }
+            handleBleEnabled.postDelayed(this,500);
+        }
+    };
+/*    protected void checkBleOn(){
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                // If Bluetooth is not enabled, let user enable it.
+                if (!beaconManager.isBluetoothEnabled()) {
+                    bleAdapter.enable();
+                }
+            }
+        };
+        t.start();
+    }*/
 
     BeaconManager.RangingListener rangingListener = new BeaconManager.RangingListener() {
         @Override
         public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
             // Note that results are not delivered on UI thread.
-            // If Bluetooth is not enabled, let user enable it.
-            if (!beaconManager.isBluetoothEnabled()) {
-/*            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);*/
-                BluetoothAdapter bleAdapter = BluetoothAdapter.getDefaultAdapter();
-                bleAdapter.enable();
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -110,7 +134,6 @@ public class MainActivity extends FragmentActivity
         if (!beaconManager.isBluetoothEnabled()) {
 /*            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);*/
-            BluetoothAdapter bleAdapter = BluetoothAdapter.getDefaultAdapter();
             bleAdapter.enable();
         } else {
             connectToService();
