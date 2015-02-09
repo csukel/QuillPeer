@@ -13,6 +13,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -31,7 +32,8 @@ public class ServerComm {
     //login to the server and return response
     public static String login(String paramUsername,String paramPassword){
         String result = null;
-        HttpClient httpClient = AndroidHttpClient.newInstance("Android");
+        HttpClient httpClient = new DefaultHttpClient();
+        //HttpClient httpClient = AndroidHttpClient.newInstance("Android");
         // In a POST request, we don't pass the values in the URL.
         //Therefore we use only the web page URL as the parameter of the HttpPost argument
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.loginAPI);
@@ -84,7 +86,10 @@ public class ServerComm {
     //logout from the server and return response
     public static String logout(){
         String result = null;
+        HttpClient httpClient = new DefaultHttpClient();
+/*
         HttpClient httpClient = AndroidHttpClient.newInstance("Android");
+*/
         // In a POST request, we don't pass the values in the URL.
         //Therefore we use only the web page URL as the parameter of the HttpPost argument
         HttpGet httpGet = new HttpGet(Server.getHost()+APIs.logoutAPI);
