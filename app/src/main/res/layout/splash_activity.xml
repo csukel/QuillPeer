@@ -16,9 +16,9 @@
             android:id="@+id/txtSlogan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="(Slogan)"
+            android:text="Quill Peer connects you with people!"
             android:gravity="center"
-            android:textSize="50sp"
+            android:textSize="40sp"
             android:textColor="@android:color/white"/>
         </LinearLayout>
     //for the logo

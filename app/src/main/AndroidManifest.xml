@@ -10,7 +10,9 @@
     <!-- Needed permissions in order to scan for beacons. -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-
+    <!--Need internet permission to perform any communication with the server-->
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
     <!-- Declaration that this app is usable on phones with Bluetooth Low Energy. -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 

@@ -82,8 +82,11 @@ public class TakePicActivity extends Activity {
         @Override
         public void onClick(View v) {
             //TODO send pic to the server
+            //move to main activity
             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
             startActivity(intent);
+            //close this activity
+            finish();
         }
     };
 

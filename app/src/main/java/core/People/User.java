@@ -13,8 +13,8 @@ public class User extends Person {
     }
 
 
-    public static void instanciate(String title, String name, String surname, String university,
-                                   String department,String email, boolean isSpeaker){
+    public static void instantiate(String title, String name, String surname, String university,
+                                   String department, String email, boolean isSpeaker){
         instance = new User(title,name,surname,university,department,email,isSpeaker);
     }
 

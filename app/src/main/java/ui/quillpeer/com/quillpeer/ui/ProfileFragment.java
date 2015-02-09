@@ -21,8 +21,11 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_cardview, container, false);
 
-
+        initializeViewResources();
         return rootView;
+    }
+
+    private void initializeViewResources() {
     }
 
     @Override

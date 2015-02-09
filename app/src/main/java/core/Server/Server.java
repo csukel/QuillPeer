@@ -6,7 +6,7 @@ package core.Server;
  */
 public class Server {
     private static Server instance;
-    private static final String HOST="";
+    private static final String HOST="http://54.149.69.131";
     private static final String PORT="";
 
 

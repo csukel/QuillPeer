@@ -1,13 +1,18 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
+import core.People.User;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -40,7 +45,6 @@ public class LoginActivity extends Activity {
     View.OnClickListener btnLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO check for empty text boxes (edtUsername and edtPassword) and then check with the server for user authenication
             //get the username from the input box
             String username = edtUsername.getText().toString();
             //get the password from the input box
@@ -58,13 +62,76 @@ public class LoginActivity extends Activity {
                 //if its the first time logging in the application create the account using account manager
                 //else if its not then check the credentials against the stored values for this account
                 //and if authentication is successful move to the next activity
-
-                Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
-                startActivity(intent);
+                sendPostRequest(edtUsername.getText().toString(),edtPassword.getText().toString());
             }
         }
     };
-/*    void showToast(String text,int toast_length)
+
+
+
+    private void sendPostRequest(String givenUsername, String givenPassword) {
+
+        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+            ProgressDialog dialog = ProgressDialog.show(LoginActivity.this,
+                    "Connecting...", "Please wait...", false);
+
+            @Override
+            protected void onPreExecute(){
+                super.onPreExecute();
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String paramUsername = params[0];
+                String paramPassword = params[1];
+
+                return ServerComm.login(paramUsername,paramPassword);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                dialog.dismiss();
+                JSONObject jsonObject=null;
+                boolean outcome = false;
+                try {
+                    jsonObject = new JSONObject(result);
+                    outcome= jsonObject.getBoolean("successful");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (outcome){
+                    //TODO: create user object, store user details in db,proceed to next activity
+                    JSONObject jsonUser;
+                    try {
+                        jsonUser = jsonObject.getJSONObject("user");
+                        User.instantiate(jsonUser.getString("prefix"),jsonUser.getString("first_name"),jsonUser.getString("last_name"),jsonUser.getString("university"),
+                                jsonUser.getString("department"),jsonUser.getString("email"),jsonUser.getString("is_speaker").contains("1"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showToast("Authentication successful",Toast.LENGTH_SHORT);
+                    Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    showToast("Authentication failed. Please check your credentials",Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        //check the network state and proceed if there is internet connection
+        if (ServerComm.isNetworkConnected(getApplicationContext(),this)){
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(givenUsername, givenPassword);
+        }else showToast("Check your internet connection...",Toast.LENGTH_SHORT);
+
+
+    }
+
+    void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
         {
@@ -73,5 +140,9 @@ public class LoginActivity extends Activity {
         m_currentToast = Toast.makeText(this, text,toast_length);
         m_currentToast.show();
 
-    }*/
+    }
+
+
 }
+
+
