@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.library21.custom.SwipeRefreshLayoutBottom;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -52,19 +55,31 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
     private View rootView;
     private LinearLayoutManager llm;
     private SwipeRefreshLayoutBottom mSwipeRefreshLayout;
-
+    private FrameLayout mRootLayout;
+    private Handler mHandler;
+    private int startIndex = 0;
+    private static final int numOfPeople = 10;
+    private RecyclerView recList;
+    //when user has retrieved or people this should be turn to true
+    private boolean noMoreData = false;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_people_all, container, false);
-        RecyclerView recList = (RecyclerView) rootView.findViewById(R.id.cardListPeople);
+        recList = new RecyclerView(getActivity());
         //recList.setHasFixedSize(true);
         llm = new LinearLayoutManager(rootView.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
         mSwipeRefreshLayout = new SwipeRefreshLayoutBottom(getActivity());
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mHandler = new Handler();
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.yellow, R.color.blue);
+        mSwipeRefreshLayout.addView(recList);
+        ((LinearLayout) rootView).addView(mSwipeRefreshLayout);
+
         //set a scroll listener in order to know when we need to load more data
         //recList.setOnScrollListener(rcOnScrollListener);
         //allow the fragment to invalidate options menu
@@ -92,7 +107,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
         //instantiate the list
         peopleList = new ArrayList<Person>();
         //initially fetch 10 people data
-        sendPostRequest("0","15");
+        sendPostRequest(Integer.toString(startIndex),Integer.toString(numOfPeople));
+        startIndex += numOfPeople;
     }
 
     @Override
@@ -194,12 +210,14 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                     jsonObject = new JSONObject(result);
                     outcome= jsonObject.getBoolean("successful");
                     JSONArray jsonArray = jsonObject.getJSONArray("users");
+                    if (jsonArray.length() ==0)
+                        noMoreData = true;
                     for (int i =0; i<jsonArray.length();i++){
                         if ( jsonArray.get(i) instanceof JSONObject){
                             JSONObject ob = (JSONObject) jsonArray.get(i);
                             OtherParticipant opart = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),ob.getString("first_name"),
                                     ob.getString("last_name"),ob.getString("university"),ob.getString("department"),ob.getString("email"),
-                                    ob.getString("is_speaker").contains("1"),false);
+                                    ob.getString("is_speaker").contains("1"),ob.getBoolean("favourite"));
 
                             peopleList.add(opart);
                         }
@@ -208,9 +226,19 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                     e.printStackTrace();
                 }
 
-                if (outcome){
+                if (outcome && !noMoreData){
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    allPeopleAdapter.notifyDataSetChanged();
+                    int lastVisibleItem = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
+                    recList.smoothScrollToPosition(lastVisibleItem+3);
+
+                    //mSwipeRefreshLayout.isRefreshing()
                 }
-                else{
+                else if (noMoreData){
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    showToast("There are no more people to show...",Toast.LENGTH_SHORT);
+                }
+                else {
                     showToast("Fetching data failed...",Toast.LENGTH_SHORT);
                 }
             }
@@ -223,7 +251,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
 
     }
-
+    //show toasts
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
@@ -235,15 +263,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
     }
 
-
-
-    @Override
+/*    @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible) {
 
         }
-    }
+    }*/
 
 /*    private RecyclerView.OnScrollListener rcOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -273,6 +299,22 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
     @Override
     public void onRefresh() {
+        //if there are still data to fetch ...
+        if (!noMoreData) {
+            //start refreshing
+            mSwipeRefreshLayout.setRefreshing(true);
+            //send post request to server to get the next bunch of data
+            sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople));
+            //increment index for the next time of querying the server
+            startIndex += numOfPeople;
+        }
+        //otherwise
+        else {
+            //stop refreshing
+            mSwipeRefreshLayout.setRefreshing(false);
+            //show a message accordingly
+            showToast("There are no more people to show...",Toast.LENGTH_SHORT);
+        }
 
     }
 }

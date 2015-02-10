@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.People.OtherParticipant;
 import core.People.Person;
 import ui.quillpeer.com.quillpeer.R;
 
@@ -45,13 +46,17 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         return personList.size();
     }
 
-
+    //bind data of people on the cards
     @Override
     public void onBindViewHolder(AllPeopleViewHolder peopleViewHolder, int i) {
-        Person person = personList.get(i);
+        OtherParticipant person = (OtherParticipant) personList.get(i);
         peopleViewHolder.txtPeoplePersonalDetails.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname());
         peopleViewHolder.txtPeopleUniversity.setText(person.getUniversity());
         peopleViewHolder.txtPeopleDepartment.setText(person.getDepartment());
+        if (person.isFavourite()) {
+            peopleViewHolder.imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
+            peopleViewHolder.imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
+        }
 
 
 
@@ -127,6 +132,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         protected TextView txtPeopleDepartment;
         protected ImageView imgPeopleFavourite;
 
+        //initialise views
         public AllPeopleViewHolder(View v){
             super(v);
             imgPeopleFavourite = (ImageView)v.findViewById(R.id.imgPeopleFavourite);
@@ -141,6 +147,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
         }
 
+        //on favourite image press do ...
         View.OnTouchListener imgStarListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
