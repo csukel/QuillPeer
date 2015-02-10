@@ -18,17 +18,17 @@ import ui.quillpeer.com.quillpeer.ui.people.PeopleFragmentPageAdapter;
  * Created by loucas on 18/11/2014.
  */
 public class PeopleFragment extends Fragment {
+    private ViewPager pager;
+    private PeopleFragmentPageAdapter pagerAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.people_pager, container, false);
-        ViewPager pager=(ViewPager)rootView.findViewById(R.id.people_pager);
-        pager.setAdapter(buildAdapter());
+        pager=(ViewPager)rootView.findViewById(R.id.people_pager);
+        //Set the number of pages that should be retained to either side of the current page in the view hierarchy in an idle state
+        pager.setOffscreenPageLimit(2);
+        pager.setAdapter(new PeopleFragmentPageAdapter(getActivity(),getChildFragmentManager()));
         return rootView;
-    }
-
-    private PagerAdapter buildAdapter() {
-        return (new PeopleFragmentPageAdapter(getActivity(),getChildFragmentManager()));
     }
 
     @Override

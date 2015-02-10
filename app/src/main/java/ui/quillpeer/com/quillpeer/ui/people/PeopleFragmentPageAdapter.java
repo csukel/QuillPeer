@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.support.v4.app.FragmentPagerAdapter;
 
+
 /**
  * Created by loucas on 18/11/2014.
  * This class is used as the custom page adapter for people's screen to control navigation using swipe view
@@ -27,19 +28,17 @@ public class PeopleFragmentPageAdapter extends FragmentPagerAdapter {
     //use this method to return the corresponding (fragment) screen to the user
     @Override
     public Fragment getItem(int position) {
-        android.support.v4.app.Fragment fragment = null;
+        //android.support.v4.app.Fragment fragment = null;
         switch (position){
             case 0:
-                fragment = new MapFragment();
-                break;
+                return new MapFragment();
             case 1:
-                fragment = new SuggestionsFragment();
-                break;
+                return new SuggestionsFragment();
             case 2:
-                fragment = new AllFragment();
-                break;
+                return new AllFragment();
+
         }
-        return(fragment);
+        return null;
     }
 
     //Set the corresponding tab title for the pager
@@ -59,4 +58,6 @@ public class PeopleFragmentPageAdapter extends FragmentPagerAdapter {
         }
         return(title);
     }
+
+
 }

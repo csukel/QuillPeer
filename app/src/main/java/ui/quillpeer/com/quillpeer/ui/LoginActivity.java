@@ -95,10 +95,12 @@ public class LoginActivity extends Activity {
                 super.onPostExecute(result);
                 dialog.dismiss();
                 JSONObject jsonObject=null;
+                String msg = "Something went wrong";
                 boolean outcome = false;
                 try {
                     jsonObject = new JSONObject(result);
                     outcome= jsonObject.getBoolean("successful");
+                    msg = jsonObject.getString("msg");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -113,12 +115,12 @@ public class LoginActivity extends Activity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    showToast("Authentication successful",Toast.LENGTH_SHORT);
+                    //showToast("Authentication successful",Toast.LENGTH_SHORT);
                     Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
                     startActivity(intent);
                 }
                 else{
-                    showToast("Authentication failed. Please check your credentials",Toast.LENGTH_SHORT);
+                    showToast(msg,Toast.LENGTH_SHORT);
                 }
             }
         }

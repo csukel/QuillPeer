@@ -1,7 +1,11 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.library21.custom.SwipeRefreshLayoutBottom;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,24 +20,39 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import core.People.OtherParticipant;
 import core.People.Person;
+import core.People.User;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.TakePicActivity;
 
 import static android.widget.SearchView.OnQueryTextListener;
 
 /**
  * Created by loucas on 18/11/2014.
  */
-public class AllFragment extends Fragment  {
+public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.OnRefreshListener {
     private List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
     private String searchFilter="";
     //Set search filter criteria in a string array
     private String[] searchCriteriaList;
-    View rootView;
+    //toast for displaying small messages to the user
+    private Toast m_currentToast;
+    private View rootView;
+    private LinearLayoutManager llm;
+    private SwipeRefreshLayoutBottom mSwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,10 +60,13 @@ public class AllFragment extends Fragment  {
         rootView = inflater.inflate(R.layout.fragment_people_all, container, false);
         RecyclerView recList = (RecyclerView) rootView.findViewById(R.id.cardListPeople);
         //recList.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(rootView.getContext());
+        llm = new LinearLayoutManager(rootView.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
+        mSwipeRefreshLayout = new SwipeRefreshLayoutBottom(getActivity());
+        //set a scroll listener in order to know when we need to load more data
+        //recList.setOnScrollListener(rcOnScrollListener);
         //allow the fragment to invalidate options menu
         getActivity().supportInvalidateOptionsMenu();
         //allow fragment to have a menu
@@ -58,23 +80,19 @@ public class AllFragment extends Fragment  {
         //initialise the search filtering options list
         searchCriteriaList= new String[]{getResources().getString(R.string.sfName),getResources().getString(R.string.sfSurname),
                 getResources().getString(R.string.sfUniversity),getResources().getString(R.string.sfDepartment),getResources().getString(R.string.sfQualification)};
+
+        //showToast("ALLFragment Created",Toast.LENGTH_SHORT);
+
         return rootView;
     }
 
-    public void populateList(){
-        Person person1 = new Person("Mr","Loucas","Stylianou","University of Warwick","Department of Computer Science","",false);
-        Person person2 = new Person("Mr","Hao","Dong","University of Warwick","Department of Computer Science","",false);
-        Person person3 = new Person("Mr","Marios","Chrysanthou","University of Warwick","Department of Computer Science","",false);
-        Person person4 = new Person("Dr","Maria","Liakata","University of Warwick","Department of Computer Science","",false);
-        Person person5 = new Person("Dr","Matt","Leeke","University of Warwick","Department of Computer Science","",false);
-        Person person6 = new Person("Mr","Sirandjivy","Gocouladasse alias Souloramane","University of Warwick","Department of Computer Science","",false);
+
+
+    private void populateList(){
+        //instantiate the list
         peopleList = new ArrayList<Person>();
-        peopleList.add(person1);
-        peopleList.add(person2);
-        peopleList.add(person3);
-        peopleList.add(person4);
-        peopleList.add(person5);
-        peopleList.add(person6);
+        //initially fetch 10 people data
+        sendPostRequest("0","15");
     }
 
     @Override
@@ -154,4 +172,107 @@ public class AllFragment extends Fragment  {
         return this.searchFilter;
     }
 
+    private void sendPostRequest(String givenUsername, String givenPassword) {
+
+        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String paramStart = params[0];
+                String paramSize = params[1];
+
+                return ServerComm.getPeople(paramStart, paramSize);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                JSONObject jsonObject=null;
+                boolean outcome = false;
+                try {
+                    jsonObject = new JSONObject(result);
+                    outcome= jsonObject.getBoolean("successful");
+                    JSONArray jsonArray = jsonObject.getJSONArray("users");
+                    for (int i =0; i<jsonArray.length();i++){
+                        if ( jsonArray.get(i) instanceof JSONObject){
+                            JSONObject ob = (JSONObject) jsonArray.get(i);
+                            OtherParticipant opart = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),ob.getString("first_name"),
+                                    ob.getString("last_name"),ob.getString("university"),ob.getString("department"),ob.getString("email"),
+                                    ob.getString("is_speaker").contains("1"),false);
+
+                            peopleList.add(opart);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (outcome){
+                }
+                else{
+                    showToast("Fetching data failed...",Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        //check the network state and proceed if there is internet connection
+        if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(givenUsername, givenPassword);
+        }else showToast("Check your internet connection...",Toast.LENGTH_SHORT);
+
+
+    }
+
+    void showToast(String text,int toast_length)
+    {
+        if(m_currentToast != null)
+        {
+            m_currentToast.cancel();
+        }
+        m_currentToast = Toast.makeText(getActivity().getApplicationContext(), text,toast_length);
+        m_currentToast.show();
+
+    }
+
+
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+
+        }
+    }
+
+/*    private RecyclerView.OnScrollListener rcOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+
+            int lastVisibleItem = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
+            int totalItemCount = llm.getItemCount();
+
+            if (lastVisibleItem >= totalItemCount -1 ) {
+                loadMore();
+            }
+            //showToast("Need to load more",Toast.LENGTH_SHORT);
+        }
+
+    };
+
+    private void loadMore() {
+        showToast("Need to load more",Toast.LENGTH_SHORT);
+    }*/
+
+    @Override
+    public void onRefresh() {
+
+    }
 }

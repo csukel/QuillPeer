@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.qozix.tileview.TileView;
-
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -44,4 +43,6 @@ public class MapFragment extends Fragment{
 
         return rootView;
     }
+
+
 }

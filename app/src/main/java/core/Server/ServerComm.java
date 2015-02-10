@@ -13,9 +13,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,13 +31,14 @@ import java.util.List;
  * Created by loucas on 08/02/2015.
  */
 public class ServerComm {
-
+    //use a single httpClient instead of creating a new instance every time to store the laravel session
+    private static DefaultHttpClient httpClient = new DefaultHttpClient();
     private ServerComm(){}
 
     //login to the server and return response
     public static String login(String paramUsername,String paramPassword){
         String result = null;
-        HttpClient httpClient = new DefaultHttpClient();
+        //HttpClient httpClient = new DefaultHttpClient();
         //HttpClient httpClient = AndroidHttpClient.newInstance("Android");
         // In a POST request, we don't pass the values in the URL.
         //Therefore we use only the web page URL as the parameter of the HttpPost argument
@@ -86,7 +92,7 @@ public class ServerComm {
     //logout from the server and return response
     public static String logout(){
         String result = null;
-        HttpClient httpClient = new DefaultHttpClient();
+        //HttpClient httpClient = new DefaultHttpClient();
 /*
         HttpClient httpClient = AndroidHttpClient.newInstance("Android");
 */
@@ -108,6 +114,36 @@ public class ServerComm {
             ioe.printStackTrace();
         }
 
+        return result;
+    }
+
+    //post a request to the server to get a number of people
+    public static String getPeople(String start,String size){
+        //HttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getPeople);
+        JSONObject jsonObject = new JSONObject();
+        String result=null;
+
+        try {
+            jsonObject.put("start", start);
+            jsonObject.put("size",size);
+
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
+        }
+        catch (JSONException jex){
+            jex.printStackTrace();
+        }
         return result;
     }
 
