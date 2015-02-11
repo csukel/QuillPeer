@@ -19,6 +19,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -147,6 +148,7 @@ public class ServerComm {
         return result;
     }
 
+    //add a participant to the favourites (this method communicates with the corresponding api of the server)
     public static String addFavourite(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.addFavourite);
         JSONObject jsonObject = new JSONObject();
@@ -173,6 +175,7 @@ public class ServerComm {
         return result;
     }
 
+    //remove a participant from the favourites (this method communicates with the corresponding api of the server)
     public static String removeFavourite(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.removeFavourite);
         JSONObject jsonObject = new JSONObject();
@@ -200,6 +203,7 @@ public class ServerComm {
         return result;
     }
 
+    //get a person (this method communicates with the corresponding api of the server)
     public static String getPerson(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getPerson);
         JSONObject jsonObject = new JSONObject();
@@ -223,6 +227,28 @@ public class ServerComm {
         }
         catch (JSONException jex){
             jex.printStackTrace();
+        }
+        return result;
+    }
+    //send the average of 5 measurements collected fore each beacon (this method communicates with the corresponding api of the server)
+    public static String savePosition(JSONArray jsonArray){
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.savePosition);
+        String result=null;
+
+        try {
+
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonArray.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
         }
         return result;
     }

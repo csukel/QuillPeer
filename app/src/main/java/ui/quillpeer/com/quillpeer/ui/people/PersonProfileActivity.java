@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,7 +38,7 @@ public class PersonProfileActivity extends Activity {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.fragment_profile_cardview);
-
+        MyApplication.setCurrentActivity(this);
         initializeViewResources();
     }
 
@@ -59,11 +60,6 @@ public class PersonProfileActivity extends Activity {
         }else Log.e("PersonProfileActivity","NUll intent passed");
 
 
-    }
-
-    public void onResume(){
-        super.onResume();
-        MyApplication.setCurrentActivity(this);
     }
 
     //send a post request to server to get the person's data
@@ -91,7 +87,7 @@ public class PersonProfileActivity extends Activity {
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
-                dialog.dismiss();
+
                 JSONObject jsonObject=null;
                 boolean outcome = false;
                 try {
@@ -113,11 +109,21 @@ public class PersonProfileActivity extends Activity {
                                 user.getString("department"),user.getString("email"),user.getString("is_speaker").contains("1"),false,user.getString("qualification"));
                         person.setPaperAbstract(jsonObject.getJSONObject("abstract").getString("abstract"));
                         setViewValues();
+                        new Handler(){
+                        }.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                            }
+                        },500);
+                        //dialog.dismiss();
                     } catch (JSONException e) {
+                        dialog.dismiss();
                         e.printStackTrace();
                     }
                 }
                 else {
+                    dialog.dismiss();
                     showToast("Fetching profile data failed...", Toast.LENGTH_SHORT);
                 }
             }

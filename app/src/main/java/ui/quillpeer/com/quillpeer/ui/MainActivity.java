@@ -3,9 +3,10 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.ActionBar;
 
 
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
@@ -17,15 +18,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
-
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
+import com.estimote.sdk.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import core.MyApplication;
+import core.People.User;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
 import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
@@ -41,6 +50,8 @@ public class MainActivity extends FragmentActivity
     private Handler handlerAveragingBeaconsDistance;
     private Handler handleBleEnabled = new Handler();
     private BluetoothAdapter bleAdapter ;
+    private HashMap<String,ArrayList<Double>> beaconsDistancesList;
+    private int measurementsCounter = 0;
 
 
     /**
@@ -60,7 +71,7 @@ public class MainActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -77,6 +88,8 @@ public class MainActivity extends FragmentActivity
         beaconManager.setRangingListener(rangingListener);
         //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
         handleBleEnabled.postDelayed(ckeckBleOn,2000);
+        //start the communication with beacons
+        startBeaconsComm();
     }
 
     Runnable ckeckBleOn = new Runnable(){
@@ -90,19 +103,6 @@ public class MainActivity extends FragmentActivity
             handleBleEnabled.postDelayed(this,500);
         }
     };
-/*    protected void checkBleOn(){
-        Thread t = new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                // If Bluetooth is not enabled, let user enable it.
-                if (!beaconManager.isBluetoothEnabled()) {
-                    bleAdapter.enable();
-                }
-            }
-        };
-        t.start();
-    }*/
 
     BeaconManager.RangingListener rangingListener = new BeaconManager.RangingListener() {
         @Override
@@ -116,32 +116,80 @@ public class MainActivity extends FragmentActivity
                     getActionBar().setSubtitle("Found beacons: " + beacons.size());
                     //beaconsList = (ArrayList)beacons;
                     beaconsList = new ArrayList<Beacon>(beacons);
+
                 }
             });
+            //if measurements are less than 5 then store the next set of measurements
+            if (measurementsCounter < 5) {
+                for (Beacon beacon : beaconsList) {
+                    String beaconId = beacon.getMacAddress();
+                    double distance = Utils.computeAccuracy(beacon);
+                    if (beaconsDistancesList.containsKey(beaconId)) {
+                        ArrayList<Double> distanceList = beaconsDistancesList.get(beaconId);
+                        distanceList.add(distance);
+                        Log.d(TAG, "Distance list length: " + distanceList.size());
+                    } else {
+                        ArrayList<Double> distanceList = new ArrayList<Double>();
+                        distanceList.add(distance);
+                        beaconsDistancesList.put(beacon.getMacAddress(), distanceList);
+                    }
+                }
+                measurementsCounter++;
+            }
+            //otherwise iterate through the hash map
+            else {
+                //do the averaging for each beacon
+                Iterator iterator = beaconsDistancesList.keySet().iterator();
+                JSONArray jsonArray = new JSONArray();
+                while (iterator.hasNext()){
+                    String macaddr = (String)iterator.next();
+                    ArrayList<Double> distanceList = beaconsDistancesList.get(macaddr);
+                    double sum=0.0;
+                    for (int i =0;i<distanceList.size(); i++){
+                        //calc the sum of the double stored in the array list of distances for each beacon
+                        sum += distanceList.get(i);
+                    }
+                    //calc the average for each one
+                    double avgDist = sum/distanceList.size();
+                    Log.d(TAG,"Average of beacon: " + macaddr + " is " + (sum/distanceList.size()));
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        //wrap them up into a JSONObject
+                        jsonObject.put("beacond_id",macaddr);
+                        jsonObject.put("beacon_dist",avgDist);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //add the jsonObject into a json array
+                    jsonArray.put(jsonObject);
+                }
+                //sent the json array to the server
+                sendBeaconsToServer(jsonArray);
+                Log.d(TAG,"beacon averaging");
+                measurementsCounter =0;
+                beaconsDistancesList.clear();
+            }
+            Log.d(TAG,"Beacons ranging continues...");
+            //Log.d(TAG,"Beacon 0: " + beacons.get(0).getMacAddress() + " Distance: " + Utils.computeAccuracy(beacons.get(0)));
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
+
+    protected void startBeaconsComm() {
         // Check if device supports Bluetooth Low Energy.
         if (!beaconManager.hasBluetooth()) {
             Toast.makeText(this, "Device does not have Bluetooth Low Energy", Toast.LENGTH_LONG).show();
             return;
         }
-
         // If Bluetooth is not enabled, let user enable it.
         if (!beaconManager.isBluetoothEnabled()) {
-/*            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);*/
             bleAdapter.enable();
-        } else {
-            connectToService();
         }
+        connectToService();
     }
 
-    @Override
+/*    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
@@ -152,24 +200,23 @@ public class MainActivity extends FragmentActivity
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }*/
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"Activity is onStop");
     }
 
-/*    @Override
-    protected void onStop() {
+    @Override
+    protected void onDestroy() {
         try {
             beaconManager.stopRanging(ALL_ESTIMOTE_BEACONS);
         } catch (RemoteException e) {
             Log.d(TAG, "Error while stopping ranging", e);
         }
-
-        super.onStop();
-    }*/
-
-    @Override
-    protected void onDestroy() {
         //when activity is destroyed, disconnect from the beacon service
         beaconManager.disconnect();
-
         super.onDestroy();
     }
     /*
@@ -322,6 +369,48 @@ public class MainActivity extends FragmentActivity
         super.onResume();
         //set this activity as the current activity
         MyApplication.setCurrentActivity(this);
+    }
+
+    //create an async task to execute the post request to the server to send beacons' measurements
+    private void sendBeaconsToServer(JSONArray jsonArray) {
+
+        class SendPostReqAsyncTask extends AsyncTask<JSONArray, Void, String> {
+            @Override
+            protected String doInBackground(JSONArray... params) {
+
+                JSONArray paramJArray = params[0];
+
+                return ServerComm.savePosition(paramJArray);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                JSONObject jsonObject=null;
+                String msg = "Something went wrong";
+                boolean outcome = false;
+                try {
+                    jsonObject = new JSONObject(result);
+                    outcome= jsonObject.getBoolean("successful");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                if (outcome){
+
+                }
+                else{
+                    //showToast(msg,Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        //check the network state and proceed if there is internet connection
+        if (ServerComm.isNetworkConnected(getApplicationContext(),this)){
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(jsonArray);
+        }else
+            getActionBar().setSubtitle("Check your internet connection ...");
     }
 
 
