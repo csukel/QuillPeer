@@ -71,7 +71,12 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             peopleViewHolder.imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
             peopleViewHolder.imgPeopleFavourite.setTag(R.drawable.ic_star_white);
         }
-        peopleViewHolder.imgPeopleProfilePic.setImageBitmap(person.getProfilePicture());
+        //set the profile picture to the corresponding view
+        if (person.getProfilePicture()!=null){
+            peopleViewHolder.imgPeopleProfilePic.setImageBitmap(person.getProfilePicture());
+        }else {
+            peopleViewHolder.imgPeopleProfilePic.setImageResource(R.drawable.ic_action_person);
+        }
 
 
 
@@ -176,6 +181,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                     Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
                     intent.putExtra("person_id",op.getUserId());
                     v.getContext().startActivity(intent);
+
                 }
                 else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
                 return false;
@@ -192,10 +198,10 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                     OtherParticipant op = (OtherParticipant) personList.get(getPosition());
                     int tag = (Integer)imgPeopleFavourite.getTag();
                     if (tag == R.drawable.ic_star_white) {
-                        sendPostRequest(op.getUserId(),v,"add");
+                        sendPostRequest(op.getUserId(),v,"add",getPosition());
                     }
                     else {
-                        sendPostRequest(op.getUserId(),v,"remove");
+                        sendPostRequest(op.getUserId(),v,"remove",getPosition());
 
                     }
                 }else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
@@ -204,7 +210,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             }
         };
 
-        private void sendPostRequest(String userId, final View v,String favouriteAction) {
+        private void sendPostRequest(String userId, final View v,String favouriteAction, final int positionIndex) {
 
             class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
                 ProgressDialog dialog = ProgressDialog.show(MyApplication.currentActivity(),
@@ -244,8 +250,9 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    //if the post to the server was successful then ...
                     if (outcome){
+                        //change the image
                         int tag = (Integer)imgPeopleFavourite.getTag();
                         if (tag == R.drawable.ic_star_white) {
                             imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
@@ -254,8 +261,9 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                         else {
                             imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
                             imgPeopleFavourite.setTag(R.drawable.ic_star_white);
-
                         }
+                        //change the favourite status
+                        ((OtherParticipant)personList.get(positionIndex)).changeFavouriteStatus();
                     }
                     else {
                         showToast("Posting data failed...",Toast.LENGTH_SHORT,v);
