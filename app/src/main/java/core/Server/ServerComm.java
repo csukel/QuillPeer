@@ -147,6 +147,59 @@ public class ServerComm {
         return result;
     }
 
+    public static String addFavourite(String userId){
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.addFavourite);
+        JSONObject jsonObject = new JSONObject();
+        String result=null;
+
+        try {
+            jsonObject.put("person_id",Integer.valueOf(userId));
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
+        }
+        catch (JSONException jex){
+            jex.printStackTrace();
+        }
+        return result;
+    }
+
+    public static String removeFavourite(String userId){
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.removeFavourite);
+        JSONObject jsonObject = new JSONObject();
+        String result=null;
+
+        try {
+            jsonObject.put("person_id",Integer.valueOf(userId));
+
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
+        }
+        catch (JSONException jex){
+            jex.printStackTrace();
+        }
+        return result;
+    }
+
     //return true if the device is connected to the internet
     public static boolean isNetworkConnected(Context context,Activity activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(context.CONNECTIVITY_SERVICE);

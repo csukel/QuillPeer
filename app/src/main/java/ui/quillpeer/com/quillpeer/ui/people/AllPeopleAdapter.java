@@ -1,6 +1,10 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
+import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -10,20 +14,28 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.MainActivity;
 
 /**
  * Created by loucas on 23/11/2014.
  */
 public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder> implements Filterable {
 
-    private List<Person> personList;
+    List<Person> personList;
     private List<Person> orig;
     private Context mContext;
 
@@ -131,7 +143,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         protected TextView txtPeopleUniversity;
         protected TextView txtPeopleDepartment;
         protected ImageView imgPeopleFavourite;
-
+        protected Toast m_currentToast;
         //initialise views
         public AllPeopleViewHolder(View v){
             super(v);
@@ -151,17 +163,98 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         View.OnTouchListener imgStarListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int tag = (Integer)imgPeopleFavourite.getTag();
-                if (tag == R.drawable.ic_star_white) {
-                    imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
-                    imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
-                }
-                else {
-                    imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
-                    imgPeopleFavourite.setTag(R.drawable.ic_star_white);
-                }
+
+                //check the network state and proceed if there is internet connection
+                if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(), MyApplication.currentActivity())){
+                    OtherParticipant op = (OtherParticipant) AllFragment.peopleList.get(getPosition());
+                    int tag = (Integer)imgPeopleFavourite.getTag();
+                    if (tag == R.drawable.ic_star_white) {
+                        sendPostRequest(op.getUserId(),v,"add");
+                    }
+                    else {
+                        sendPostRequest(op.getUserId(),v,"remove");
+
+                    }
+                }else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
+
                 return false;
             }
         };
+
+        private void sendPostRequest(String userId, final View v,String favouriteAction) {
+
+            class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+                ProgressDialog dialog = ProgressDialog.show(MyApplication.currentActivity(),
+                        "Posting...", "Please wait...", false);
+
+                @Override
+                protected void onPreExecute(){
+                    super.onPreExecute();
+                    dialog.show();
+                }
+
+                @Override
+                protected String doInBackground(String... params) {
+
+                    String paramUserId = params[0];
+                    String paramAction = params[1];
+                    View paramSize = v;
+
+                    if (paramAction.equals("add"))
+                        return ServerComm.addFavourite(paramUserId);
+                    else
+                        return ServerComm.removeFavourite(paramUserId);
+
+                }
+
+                @Override
+                protected void onPostExecute(String result) {
+                    super.onPostExecute(result);
+                    dialog.dismiss();
+                    JSONObject jsonObject=null;
+                    boolean outcome = false;
+                    try {
+                        if (result!=null) {
+                            jsonObject = new JSONObject(result);
+                            outcome = jsonObject.getBoolean("successful");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (outcome){
+                        int tag = (Integer)imgPeopleFavourite.getTag();
+                        if (tag == R.drawable.ic_star_white) {
+                            imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
+                            imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
+                        }
+                        else {
+                            imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
+                            imgPeopleFavourite.setTag(R.drawable.ic_star_white);
+
+                        }
+                    }
+                    else {
+                        showToast("Posting data failed...",Toast.LENGTH_SHORT,v);
+                    }
+                }
+            }
+            //check the network state and proceed if there is internet connection
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(userId,favouriteAction);
+
+        }
+
+        //show toasts
+        void showToast(String text,int toast_length,View v)
+        {
+            if(m_currentToast != null)
+            {
+                m_currentToast.cancel();
+            }
+            m_currentToast = Toast.makeText(v.getContext().getApplicationContext(), text,toast_length);
+            m_currentToast.show();
+
+        }
     }
 }

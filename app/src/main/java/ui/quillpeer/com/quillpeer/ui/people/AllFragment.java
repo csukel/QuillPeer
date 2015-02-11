@@ -45,7 +45,7 @@ import static android.widget.SearchView.OnQueryTextListener;
  * Created by loucas on 18/11/2014.
  */
 public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.OnRefreshListener {
-    private List<Person> peopleList;
+    static List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
     private String searchFilter="";
     //Set search filter criteria in a string array
@@ -108,7 +108,6 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
         peopleList = new ArrayList<Person>();
         //initially fetch 10 people data
         sendPostRequest(Integer.toString(startIndex),Integer.toString(numOfPeople));
-        startIndex += numOfPeople;
     }
 
     @Override
@@ -221,12 +220,17 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
                             peopleList.add(opart);
                         }
+
                     }
+                    //increment index for the next time of querying the server
+                    startIndex += numOfPeople;
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 if (outcome && !noMoreData){
+
                     mSwipeRefreshLayout.setRefreshing(false);
                     allPeopleAdapter.notifyDataSetChanged();
                     int lastVisibleItem = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
@@ -239,6 +243,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                     showToast("There are no more people to show...",Toast.LENGTH_SHORT);
                 }
                 else {
+                    mSwipeRefreshLayout.setRefreshing(false);
                     showToast("Fetching data failed...",Toast.LENGTH_SHORT);
                 }
             }
@@ -247,7 +252,10 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
             SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
             sendPostReqAsyncTask.execute(givenUsername, givenPassword);
-        }else showToast("Check your internet connection...",Toast.LENGTH_SHORT);
+        }else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            showToast("Check your internet connection...",Toast.LENGTH_SHORT);
+        }
 
 
     }
@@ -305,8 +313,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
             mSwipeRefreshLayout.setRefreshing(true);
             //send post request to server to get the next bunch of data
             sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople));
-            //increment index for the next time of querying the server
-            startIndex += numOfPeople;
+
+
         }
         //otherwise
         else {

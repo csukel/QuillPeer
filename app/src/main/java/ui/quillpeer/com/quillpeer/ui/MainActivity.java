@@ -25,6 +25,7 @@ import com.estimote.sdk.Region;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.MyApplication;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
 import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
@@ -59,7 +60,7 @@ public class MainActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        MyApplication.setCurrentActivity(this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
