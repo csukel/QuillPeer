@@ -22,8 +22,10 @@ public class Person {
     private boolean isSpeaker;
     //personal email
     private String email;
+    //the abstract of this person
+    private String paperAbstract;
 
-    public Person (String title,String name,String surname,String university,String department,String email,boolean isSpeaker){
+    public Person (String title,String name,String surname,String university,String department,String email,boolean isSpeaker,String qualification){
         this.title = title;
         this.name = name;
         this.surname = surname;
@@ -31,6 +33,8 @@ public class Person {
         this.department = department;
         this.isSpeaker = isSpeaker;
         this.email = email;
+        this.qualification = qualification;
+        this.paperAbstract = null;
     }
 
     public String getTitle(){
@@ -62,5 +66,9 @@ public class Person {
     public String getEmail(){
         return this.email;
     }
+
+    public String getPaperAbstract(){return this.paperAbstract;}
+
+    public void setPaperAbstract(String abstr){this.paperAbstract = abstr;}
 
 }

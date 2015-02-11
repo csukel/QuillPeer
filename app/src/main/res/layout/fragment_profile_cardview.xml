@@ -68,7 +68,7 @@
                         android:text="Loucas Stylianou"
                         />
                     <TextView
-                        android:id="@+id/txtCardUniversity"
+                        android:id="@+id/txtCardProfileUniversity"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -78,7 +78,7 @@
 
                         />
                     <TextView
-                        android:id="@+id/txtCardDepartment"
+                        android:id="@+id/txtCardProfileDepartment"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -88,7 +88,7 @@
 
                         />
                     <TextView
-                        android:id="@+id/txtCardQualification"
+                        android:id="@+id/txtCardProfileQualification"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -96,15 +96,6 @@
                         android:text="MEng Computer Science Student (4th year)"
                         android:layout_marginLeft="5dp"
 
-                        />
-                    <TextView
-                        android:id="@+id/txtCardFieldInterest"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dip"
-                        android:layout_weight="1"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Field of Interest: App development"
-                        android:layout_marginLeft="5dp"
                         />
                 </LinearLayout>
 
@@ -153,10 +144,12 @@
                     />
 
                     <TextView
+                        android:id="@+id/txtCardProfilePaperAbstract"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="This report looks at the development of an Android instant messaging application that its main focus is to protect children and teenagers from becoming victims of cyberbullying. It goes through the whole development process. Starts from how to build an instant messaging application, then steps to the integration of Google Profanity filter in order to block profane words. Continues with the evaluation between the two different techniques which have been studied to improve the accuracy of the profanity filtering mechanism, a sentiment analysis model and a ruled based approach. Finished with the integration of the rule based approach. The project is then fully evaluated against the initial objectives and research done with each component of the system studied. Further work is suggested to improve the techniques employed for tackling cyberbullying."
                         android:layout_marginLeft="5dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         />
                     </LinearLayout>
 

@@ -111,7 +111,9 @@ public class LoginActivity extends Activity {
                     try {
                         jsonUser = jsonObject.getJSONObject("user");
                         User.instantiate(jsonUser.getString("prefix"),jsonUser.getString("first_name"),jsonUser.getString("last_name"),jsonUser.getString("university"),
-                                jsonUser.getString("department"),jsonUser.getString("email"),jsonUser.getString("is_speaker").contains("1"));
+                                jsonUser.getString("department"),jsonUser.getString("email"),jsonUser.getString("is_speaker").contains("1"),jsonUser.getString("qualification"));
+                        JSONObject jsonAbstract  = jsonObject.getJSONObject("abstract");
+                        User.getInstance().setPaperAbstract(jsonAbstract.getString("abstract"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

@@ -8,14 +8,14 @@ public class User extends Person {
     private static User instance = null;
     private static String password;
     private static String authToken;
-    private User(String title, String name, String surname, String university, String department, String email, boolean isSpeaker) {
-        super(title, name, surname, university, department, email, isSpeaker);
+    private User(String title, String name, String surname, String university, String department, String email, boolean isSpeaker,String qualifiction) {
+        super(title, name, surname, university, department, email, isSpeaker,qualifiction);
     }
 
 
     public static void instantiate(String title, String name, String surname, String university,
-                                   String department, String email, boolean isSpeaker){
-        instance = new User(title,name,surname,university,department,email,isSpeaker);
+                                   String department, String email, boolean isSpeaker,String qualification){
+        instance = new User(title,name,surname,university,department,email,isSpeaker,qualification);
     }
 
     public static User getInstance(){

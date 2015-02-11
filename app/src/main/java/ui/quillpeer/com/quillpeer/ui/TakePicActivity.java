@@ -164,6 +164,7 @@ public class TakePicActivity extends Activity {
         catch(ActivityNotFoundException anfe){
             //display an error message
             String errorMessage = "Whoops - your device doesn't support the crop action!";
+            //TODO if the device does not support crop then crop it ussing bitmap method for scaling
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }

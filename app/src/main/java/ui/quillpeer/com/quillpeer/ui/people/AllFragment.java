@@ -216,7 +216,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                             JSONObject ob = (JSONObject) jsonArray.get(i);
                             OtherParticipant opart = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),ob.getString("first_name"),
                                     ob.getString("last_name"),ob.getString("university"),ob.getString("department"),ob.getString("email"),
-                                    ob.getString("is_speaker").contains("1"),ob.getBoolean("favourite"));
+                                    ob.getString("is_speaker").contains("1"),ob.getBoolean("favourite"),ob.getString("qualification"));
 
                             peopleList.add(opart);
                         }

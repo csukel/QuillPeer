@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MyApplication.setCurrentActivity(this);
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -315,6 +315,13 @@ public class MainActivity extends FragmentActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        //set this activity as the current activity
+        MyApplication.setCurrentActivity(this);
     }
 
 

@@ -11,8 +11,8 @@ public class OtherParticipant extends Person {
     //the participant's id which indexes  it in the server side database
     private String userId;
 
-    public OtherParticipant(String userId ,String title, String name, String surname, String university, String department, String email, boolean isSpeaker,boolean isFavourite) {
-        super(title, name, surname, university, department, email, isSpeaker);
+    public OtherParticipant(String userId ,String title, String name, String surname, String university, String department, String email, boolean isSpeaker,boolean isFavourite,String qualification) {
+        super(title, name, surname, university, department, email, isSpeaker,qualification);
         this.isFavourite = isFavourite;
         this.userId = userId;
 

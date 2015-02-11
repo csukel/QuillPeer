@@ -65,6 +65,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         peopleViewHolder.txtPeoplePersonalDetails.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname());
         peopleViewHolder.txtPeopleUniversity.setText(person.getUniversity());
         peopleViewHolder.txtPeopleDepartment.setText(person.getDepartment());
+        peopleViewHolder.txtPeopleQualification.setText(person.getQualification());
         if (person.isFavourite()) {
             peopleViewHolder.imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
             peopleViewHolder.imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
@@ -142,6 +143,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         protected TextView txtPeoplePersonalDetails;
         protected TextView txtPeopleUniversity;
         protected TextView txtPeopleDepartment;
+        protected TextView txtPeopleQualification;
         protected ImageView imgPeopleFavourite;
         protected Toast m_currentToast;
         //initialise views
@@ -154,6 +156,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             txtPeoplePersonalDetails = (TextView)v.findViewById(R.id.txtPeoplePersonalDetails);
             txtPeopleDepartment = (TextView)v.findViewById(R.id.txtPeopleDepartment);
             txtPeopleUniversity = (TextView)v.findViewById(R.id.txtPeopleUniversity);
+            txtPeopleQualification = (TextView)v.findViewById(R.id.txtPeopleQualification);
 
             imgPeopleFavourite.setOnTouchListener(imgStarListener);
 
