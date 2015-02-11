@@ -117,6 +117,7 @@ public class LoginActivity extends Activity {
                                 jsonUser.getString("department"),jsonUser.getString("email"),jsonUser.getString("is_speaker").contains("1"),jsonUser.getString("qualification"));
                         JSONObject jsonAbstract  = jsonObject.getJSONObject("abstract");
                         User.getInstance().setPaperAbstract(jsonAbstract.getString("abstract"));
+                        User.getInstance().setPaperAbstractTitle(jsonAbstract.getString("title"));
                         imageStream = jsonUser.getString("picture");
 
                     } catch (JSONException e) {

@@ -28,6 +28,7 @@ public class ProfileFragment extends Fragment {
     private TextView profileDepartment;
     private TextView profileQualification;
     private TextView profilePaperAbstract;
+    private TextView profilePaperAbstractTitle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +57,8 @@ public class ProfileFragment extends Fragment {
         profileQualification.setText(user.getQualification());
         profilePaperAbstract = (TextView)v.findViewById(R.id.txtCardProfilePaperAbstract);
         profilePaperAbstract.setText(user.getPaperAbstract());
+        profilePaperAbstractTitle = (TextView)v.findViewById(R.id.txtCardProfilePaperAbstractTitle);
+        profilePaperAbstractTitle.setText(user.getPaperAbstractTitle());
     }
 
     @Override

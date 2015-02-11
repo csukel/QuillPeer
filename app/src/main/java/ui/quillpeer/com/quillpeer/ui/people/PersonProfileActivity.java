@@ -33,6 +33,7 @@ public class PersonProfileActivity extends Activity {
     private TextView profileDepartment;
     private TextView profileQualification;
     private TextView profilePaperAbstract;
+    private TextView profilePaperAbstractTitle;
     private Toast m_currentToast;
     private OtherParticipant person;
 
@@ -51,11 +52,11 @@ public class PersonProfileActivity extends Activity {
         profileDepartment = (TextView)findViewById(R.id.txtCardProfileDepartment);
         profileQualification = (TextView)findViewById(R.id.txtCardProfileQualification);
         profilePaperAbstract = (TextView)findViewById(R.id.txtCardProfilePaperAbstract);
+        profilePaperAbstractTitle = (TextView)findViewById(R.id.txtCardProfilePaperAbstractTitle);
         Intent intent = getIntent();
         if (intent!=null) {
             Bundle bundle = intent.getExtras();
             String person_id = bundle.getString("person_id");
-            //TODO: call the get person api
             //get person's data from server
             sendPostRequest(person_id);
         }else Log.e("PersonProfileActivity","NUll intent passed");
@@ -110,6 +111,7 @@ public class PersonProfileActivity extends Activity {
                                 user.getString("department"),user.getString("email"),user.getString("is_speaker").contains("1"),false,user.getString("qualification"));
                         person.setPaperAbstract(jsonObject.getJSONObject("abstract").getString("abstract"));
                         person.setProfilePicture(ImageProcessing.decodeImage(user.getString("picture")));
+                        person.setPaperAbstractTitle(jsonObject.getJSONObject("abstract").getString("title"));
                         setViewValues();
                         new Handler(){
                         }.postDelayed(new Runnable() {
@@ -151,6 +153,7 @@ public class PersonProfileActivity extends Activity {
         if (person.getProfilePicture()!=null){
             profilePicture.setImageBitmap(person.getProfilePicture());
         }
+        profilePaperAbstractTitle.setText(person.getPaperAbstractTitle());
 
     }
 

@@ -26,8 +26,11 @@ public class Person {
     private String email;
     //the abstract of this person
     private String paperAbstract;
+    //the abstract title
+    private String paperAbstractTitle;
     //profile picture
     private Bitmap profilePicture;
+
 
     //person class constructor
     public Person (String title,String name,String surname,String university,String department,String email,boolean isSpeaker,String qualification){
@@ -40,6 +43,7 @@ public class Person {
         this.email = email;
         this.qualification = qualification;
         this.paperAbstract = null;
+        this.paperAbstractTitle = null;
         this.profilePicture=null;
     }
 
@@ -77,6 +81,13 @@ public class Person {
 
     public void setPaperAbstract(String abstr){this.paperAbstract = abstr;}
 
+    public void setPaperAbstractTitle(String title){
+        this.paperAbstractTitle = title;
+    }
+
+    public String getPaperAbstractTitle(){
+        return this.paperAbstractTitle;
+    }
     public void setProfilePicture(Bitmap picture){
         this.profilePicture = picture;
     }

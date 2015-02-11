@@ -136,11 +136,12 @@
                     android:padding="10dp">
 
                     <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Abstract"
-                    android:layout_marginLeft="5dp"
+                        android:id="@+id/txtCardProfilePaperAbstractTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Abstract"
+                        android:layout_marginLeft="5dp"
                     />
 
                     <TextView
