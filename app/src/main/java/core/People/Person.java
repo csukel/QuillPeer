@@ -1,5 +1,7 @@
 package core.People;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 /**
@@ -24,7 +26,10 @@ public class Person {
     private String email;
     //the abstract of this person
     private String paperAbstract;
+    //profile picture
+    private Bitmap profilePicture;
 
+    //person class constructor
     public Person (String title,String name,String surname,String university,String department,String email,boolean isSpeaker,String qualification){
         this.title = title;
         this.name = name;
@@ -35,6 +40,7 @@ public class Person {
         this.email = email;
         this.qualification = qualification;
         this.paperAbstract = null;
+        this.profilePicture=null;
     }
 
     public String getTitle(){
@@ -70,5 +76,13 @@ public class Person {
     public String getPaperAbstract(){return this.paperAbstract;}
 
     public void setPaperAbstract(String abstr){this.paperAbstract = abstr;}
+
+    public void setProfilePicture(Bitmap picture){
+        this.profilePicture = picture;
+    }
+
+    public Bitmap getProfilePicture(){
+        return this.profilePicture;
+    }
 
 }

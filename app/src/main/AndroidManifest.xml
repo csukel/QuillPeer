@@ -55,7 +55,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             </activity>
-
+        <activity android:name=".ui.people.PersonProfileActivity"
+            android:label = "Quill Peer"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name=".ui.people.PersonProfileActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            </activity>
         <!-- Estimote service responsible for scanning beacons. -->
         <service android:name="com.estimote.sdk.service.BeaconService"
             android:exported="false"/>

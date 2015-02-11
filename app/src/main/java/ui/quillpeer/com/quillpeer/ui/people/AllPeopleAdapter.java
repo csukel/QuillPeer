@@ -1,10 +1,9 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +26,6 @@ import core.People.OtherParticipant;
 import core.People.Person;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
-import ui.quillpeer.com.quillpeer.ui.MainActivity;
 
 /**
  * Created by loucas on 23/11/2014.
@@ -151,16 +148,32 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             super(v);
             imgPeopleFavourite = (ImageView)v.findViewById(R.id.imgPeopleFavourite);
             imgPeopleProfilePic = (ImageView)v.findViewById(R.id.imgPeopleProfilePic);
-
             imgPeopleFavourite.setTag(R.drawable.ic_star_white);
             txtPeoplePersonalDetails = (TextView)v.findViewById(R.id.txtPeoplePersonalDetails);
             txtPeopleDepartment = (TextView)v.findViewById(R.id.txtPeopleDepartment);
             txtPeopleUniversity = (TextView)v.findViewById(R.id.txtPeopleUniversity);
             txtPeopleQualification = (TextView)v.findViewById(R.id.txtPeopleQualification);
 
+            //set listener to favourite image view
             imgPeopleFavourite.setOnTouchListener(imgStarListener);
+            //set tap listener on the profile pic
+            imgPeopleProfilePic.setOnTouchListener(imgProfPicTapListener);
 
         }
+
+        View.OnTouchListener imgProfPicTapListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                OtherParticipant op = (OtherParticipant)AllFragment.peopleList.get(getPosition());
+                if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(),MyApplication.currentActivity())){
+                    Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
+                    intent.putExtra("person_id",op.getUserId());
+                    v.getContext().startActivity(intent);
+                }
+                else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
+                return false;
+            }
+        };
 
         //on favourite image press do ...
         View.OnTouchListener imgStarListener = new View.OnTouchListener() {
