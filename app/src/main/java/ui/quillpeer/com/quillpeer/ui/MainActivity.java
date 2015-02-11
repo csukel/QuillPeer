@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import core.Beacons;
 import core.MyApplication;
 import core.People.User;
 import core.Server.ServerComm;
@@ -155,7 +156,8 @@ public class MainActivity extends FragmentActivity
                     JSONObject jsonObject = new JSONObject();
                     try {
                         //wrap them up into a JSONObject
-                        jsonObject.put("beacond_id",macaddr);
+                        jsonObject.put("id", Beacons.getBeaconsIndices().get(macaddr));
+                        jsonObject.put("mac_address",macaddr);
                         jsonObject.put("beacon_dist",avgDist);
                     } catch (JSONException e) {
                         e.printStackTrace();
