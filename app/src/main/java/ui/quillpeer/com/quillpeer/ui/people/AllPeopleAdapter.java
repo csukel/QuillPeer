@@ -32,7 +32,7 @@ import ui.quillpeer.com.quillpeer.R;
  */
 public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder> implements Filterable {
 
-    List<Person> personList;
+    static List<Person> personList;
     private List<Person> orig;
     private Context mContext;
 
@@ -63,10 +63,16 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
         peopleViewHolder.txtPeopleUniversity.setText(person.getUniversity());
         peopleViewHolder.txtPeopleDepartment.setText(person.getDepartment());
         peopleViewHolder.txtPeopleQualification.setText(person.getQualification());
+        //check if the person is favourite or not and set the corresponding picture
         if (person.isFavourite()) {
             peopleViewHolder.imgPeopleFavourite.setImageResource(R.drawable.ic_star_yellow);
             peopleViewHolder.imgPeopleFavourite.setTag(R.drawable.ic_star_yellow);
+        } else {
+            peopleViewHolder.imgPeopleFavourite.setImageResource(R.drawable.ic_star_white);
+            peopleViewHolder.imgPeopleFavourite.setTag(R.drawable.ic_star_white);
         }
+        peopleViewHolder.imgPeopleProfilePic.setImageBitmap(person.getProfilePicture());
+
 
 
 
@@ -157,14 +163,15 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             //set listener to favourite image view
             imgPeopleFavourite.setOnTouchListener(imgStarListener);
             //set tap listener on the profile pic
-            imgPeopleProfilePic.setOnTouchListener(imgProfPicTapListener);
+            imgPeopleProfilePic.setOnLongClickListener(imgProfPicTapListener);
 
         }
 
-        View.OnTouchListener imgProfPicTapListener = new View.OnTouchListener() {
+        View.OnLongClickListener imgProfPicTapListener = new View.OnLongClickListener() {
+
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                OtherParticipant op = (OtherParticipant)AllFragment.peopleList.get(getPosition());
+            public boolean onLongClick(View v) {
+                OtherParticipant op = (OtherParticipant)personList.get(getPosition());
                 if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(),MyApplication.currentActivity())){
                     Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
                     intent.putExtra("person_id",op.getUserId());
@@ -182,7 +189,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
                 //check the network state and proceed if there is internet connection
                 if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(), MyApplication.currentActivity())){
-                    OtherParticipant op = (OtherParticipant) AllFragment.peopleList.get(getPosition());
+                    OtherParticipant op = (OtherParticipant) personList.get(getPosition());
                     int tag = (Integer)imgPeopleFavourite.getTag();
                     if (tag == R.drawable.ic_star_white) {
                         sendPostRequest(op.getUserId(),v,"add");

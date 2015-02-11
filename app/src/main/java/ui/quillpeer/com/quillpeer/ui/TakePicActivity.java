@@ -1,24 +1,33 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import core.ImageProcessing;
+import core.People.User;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -153,8 +162,8 @@ public class TakePicActivity extends Activity {
             cropIntent.putExtra("aspectX", 0);
             cropIntent.putExtra("aspectY", 0);
             //indicate output X and Y
-            cropIntent.putExtra("outputX", 512);
-            cropIntent.putExtra("outputY", 512);
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
             //retrieve data on return
             cropIntent.putExtra("return-data", true);
             //start the activity - we handle returning in onActivityResult
@@ -175,12 +184,19 @@ public class TakePicActivity extends Activity {
         public void onClick(View v) {
             //TODO send pic to the server
             //move to main activity
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
-            //close this activity
-            finish();
+
+            if (capturedImage!=null) {
+                String image_str = ImageProcessing.encodeImage(capturedImage);
+                sendPictureToServer(image_str);
+/*                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                //close this activity
+                finish();*/
+            }else showToast("Please take a picture...", Toast.LENGTH_SHORT);
         }
     };
+
+
 
     void showToast(String text,int toast_length)
     {
@@ -191,6 +207,66 @@ public class TakePicActivity extends Activity {
         m_currentToast = Toast.makeText(this, text,toast_length);
         m_currentToast.show();
 
+    }
+
+    private void sendPictureToServer(final String image_str) {
+        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+            ProgressDialog dialog = ProgressDialog.show(TakePicActivity.this,
+                    "Uploading image...", "Please wait...", false);
+
+            @Override
+            protected void onPreExecute(){
+                super.onPreExecute();
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String paramImage = params[0];
+
+
+                return ServerComm.savePicture(paramImage);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                dialog.dismiss();
+                JSONObject jsonObject=null;
+                boolean outcome = false;
+                try {
+                    jsonObject = new JSONObject(result);
+                    outcome= jsonObject.getBoolean("successful");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //if the picture has been uploaded successfully ...
+                if (outcome){
+                    //save the image in the user profile picture var
+                    User.getInstance().setProfilePicture(ImageProcessing.decodeImage(image_str));
+                    //step to the main activity
+                    Intent previousIntent = getIntent();
+                    if (previousIntent!=null && previousIntent.getStringExtra("activity")!=null){
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        //close this activity
+                        finish();
+                    }
+                    else finish();
+
+                }
+                else{
+                    showToast("Failed to upload image ...",Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        //check the network state and proceed if there is internet connection
+        if (ServerComm.isNetworkConnected(getApplicationContext(),this)){
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(image_str);
+        }else showToast("Check your internet connection...",Toast.LENGTH_SHORT);
     }
 
 

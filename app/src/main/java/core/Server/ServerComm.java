@@ -253,6 +253,34 @@ public class ServerComm {
         return result;
     }
 
+    public static String savePicture(String picture){
+
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.uploadProfilPicture);
+        JSONObject jsonObject = new JSONObject();
+        String result=null;
+
+        try {
+            jsonObject.put("picture",picture);
+
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
+        }
+        catch (JSONException jex){
+            jex.printStackTrace();
+        }
+        return result;
+    }
+
     //return true if the device is connected to the internet
     public static boolean isNetworkConnected(Context context,Activity activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(context.CONNECTIVITY_SERVICE);

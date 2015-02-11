@@ -15,6 +15,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import core.ImageProcessing;
 import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.User;
@@ -108,6 +109,7 @@ public class PersonProfileActivity extends Activity {
                         person = new OtherParticipant(user.getString("id"),user.getString("prefix"),user.getString("first_name"),user.getString("last_name"),user.getString("university"),
                                 user.getString("department"),user.getString("email"),user.getString("is_speaker").contains("1"),false,user.getString("qualification"));
                         person.setPaperAbstract(jsonObject.getJSONObject("abstract").getString("abstract"));
+                        person.setProfilePicture(ImageProcessing.decodeImage(user.getString("picture")));
                         setViewValues();
                         new Handler(){
                         }.postDelayed(new Runnable() {
@@ -146,6 +148,9 @@ public class PersonProfileActivity extends Activity {
         profileDepartment.setText(person.getDepartment());
         profileQualification.setText(person.getQualification());
         profilePaperAbstract.setText(person.getPaperAbstract());
+        if (person.getProfilePicture()!=null){
+            profilePicture.setImageBitmap(person.getProfilePicture());
+        }
 
     }
 

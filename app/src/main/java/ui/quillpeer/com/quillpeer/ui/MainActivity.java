@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.View;
 import android.widget.Toast;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -44,7 +45,7 @@ import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 public class MainActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private BeaconManager beaconManager;
-
+    private boolean  doubleBackToExitPressedOnce;
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
@@ -53,6 +54,7 @@ public class MainActivity extends FragmentActivity
     private BluetoothAdapter bleAdapter ;
     private HashMap<String,ArrayList<Double>> beaconsDistancesList;
     private int measurementsCounter = 0;
+    private Toast m_currentToast;
 
 
     /**
@@ -415,5 +417,32 @@ public class MainActivity extends FragmentActivity
             getActionBar().setSubtitle("Check your internet connection ...");
     }
 
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
 
+        this.doubleBackToExitPressedOnce = true;
+        showToast("Please click BACK again to exit",Toast.LENGTH_SHORT);
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+    //show toasts
+    void showToast(String text,int toast_length)
+    {
+        if(m_currentToast != null)
+        {
+            m_currentToast.cancel();
+        }
+        m_currentToast = Toast.makeText(getApplicationContext(), text,toast_length);
+        m_currentToast.show();
+
+    }
 }

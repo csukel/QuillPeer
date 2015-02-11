@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import core.ImageProcessing;
 import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
@@ -108,18 +110,33 @@ public class LoginActivity extends Activity {
                 if (outcome){
                     //TODO: create user object, store user details in db,proceed to next activity
                     JSONObject jsonUser;
+                    String imageStream=null;
                     try {
                         jsonUser = jsonObject.getJSONObject("user");
                         User.instantiate(jsonUser.getString("prefix"),jsonUser.getString("first_name"),jsonUser.getString("last_name"),jsonUser.getString("university"),
                                 jsonUser.getString("department"),jsonUser.getString("email"),jsonUser.getString("is_speaker").contains("1"),jsonUser.getString("qualification"));
                         JSONObject jsonAbstract  = jsonObject.getJSONObject("abstract");
                         User.getInstance().setPaperAbstract(jsonAbstract.getString("abstract"));
+                        imageStream = jsonUser.getString("picture");
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //showToast("Authentication successful",Toast.LENGTH_SHORT);
-                    Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
-                    startActivity(intent);
+                    //if the user has already uploaded a picture step to main activity
+                    if (imageStream!=null){
+                        User.getInstance().setProfilePicture(ImageProcessing.decodeImage(imageStream));
+                        //showToast("Authentication successful",Toast.LENGTH_SHORT);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                    //otherwise step to take a pic activity
+                    else {
+                        //showToast("Authentication successful",Toast.LENGTH_SHORT);
+                        Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
+                        intent.putExtra("activity","login");
+                        startActivity(intent);
+                    }
+
                 }
                 else{
                     showToast(msg,Toast.LENGTH_SHORT);

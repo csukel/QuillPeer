@@ -3,6 +3,7 @@ package ui.quillpeer.com.quillpeer.ui.people;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.ImageProcessing;
 import core.People.OtherParticipant;
 import core.People.Person;
 import core.People.User;
@@ -62,6 +64,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
     private RecyclerView recList;
     //when user has retrieved or people this should be turn to true
     private boolean noMoreData = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -217,7 +220,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                             OtherParticipant opart = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),ob.getString("first_name"),
                                     ob.getString("last_name"),ob.getString("university"),ob.getString("department"),ob.getString("email"),
                                     ob.getString("is_speaker").contains("1"),ob.getBoolean("favourite"),ob.getString("qualification"));
-
+                            Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
+                            opart.setProfilePicture(bp);
                             peopleList.add(opart);
                         }
 
@@ -233,6 +237,11 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
                     mSwipeRefreshLayout.setRefreshing(false);
                     allPeopleAdapter.notifyDataSetChanged();
+                    //initialise the adapter
+/*                    allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
+                    //set the adapter to the recycler view
+                    recList.setAdapter(allPeopleAdapter);*/
+                    //recList.setAdapter();
                     int lastVisibleItem = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
                     recList.smoothScrollToPosition(lastVisibleItem+3);
 
