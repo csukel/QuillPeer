@@ -1,19 +1,21 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import core.People.User;
+import core.MyApplication;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
@@ -24,26 +26,62 @@ import ui.quillpeer.com.quillpeer.R;
  */
 public class SettingsFragment extends PreferenceFragment {
     private Toast m_currentToast;
+    private SharedPreferences sharedPrefs;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Load the settings from an XML resource
         addPreferencesFromResource(R.xml.settings);
 
-        Preference myPref = (Preference) findPreference("pref_log_out");
-        myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        sharedPrefs = MyApplication.getPrefs();
+
+        Preference prefLogout = (Preference) findPreference("pref_log_out");
+        prefLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 //open browser or intent here
                 //Toast.makeText(getActivity().getApplicationContext(), "Log out is pressed", Toast.LENGTH_SHORT).show();
                 //check the network state and proceed if there is internet connection
-                if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(), getActivity())){
+                if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(), getActivity())) {
                     logout();
-                }else Toast.makeText(getActivity().getApplicationContext(), "Check your internet connection...", Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(getActivity().getApplicationContext(), "Check your internet connection...", Toast.LENGTH_LONG).show();
 
                 return false;
             }
         });
+
+        Preference prefDeleteAccount = (Preference)findPreference("pref_delete_account");
+        prefDeleteAccount.setOnPreferenceClickListener(prefDeletAccountClickListener);
     }
+
+    Preference.OnPreferenceClickListener prefDeletAccountClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Delete account")
+                    .setMessage("Are you sure you want to delete this account?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+                            editor.remove("credStored");
+                            editor.remove("username");
+                            editor.remove("password");
+                            editor.commit();
+                            getActivity().finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false)
+                    .show();
+
+            return false;
+        }
+    };
 
     private void logout(){
         class SendGetReqAsyncTask extends AsyncTask<Void, Void, String> {

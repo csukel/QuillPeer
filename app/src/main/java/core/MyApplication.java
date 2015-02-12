@@ -3,6 +3,7 @@ package core;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * Created by loucas on 10/02/2015.
@@ -10,7 +11,7 @@ import android.content.Context;
 public class MyApplication extends Application {
     private static Context context;
     private static Activity activity;
-
+    private static SharedPreferences sharedPreferences;
     public void onCreate() {
         super.onCreate();
         MyApplication.context = getApplicationContext();
@@ -32,6 +33,14 @@ public class MyApplication extends Application {
 
     public static Activity currentActivity() {
         return activity;
+    }
+
+    public static SharedPreferences getPrefs(){
+        return sharedPreferences;
+    }
+
+    public static void setPrefs(SharedPreferences preferences){
+        sharedPreferences = preferences;
     }
 
 }
