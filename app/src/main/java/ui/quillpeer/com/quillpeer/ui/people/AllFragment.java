@@ -209,26 +209,30 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
                 JSONObject jsonObject=null;
                 boolean outcome = false;
                 try {
-                    jsonObject = new JSONObject(result);
-                    outcome= jsonObject.getBoolean("successful");
-                    JSONArray jsonArray = jsonObject.getJSONArray("users");
-                    if (jsonArray.length() ==0)
-                        noMoreData = true;
-                    for (int i =0; i<jsonArray.length();i++){
-                        if ( jsonArray.get(i) instanceof JSONObject){
-                            JSONObject ob = (JSONObject) jsonArray.get(i);
-                            OtherParticipant opart = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),ob.getString("first_name"),
-                                    ob.getString("last_name"),ob.getString("university"),ob.getString("department"),ob.getString("email"),
-                                    ob.getString("is_speaker").contains("1"),ob.getBoolean("favourite"),ob.getString("qualification"));
-                            Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
-                            opart.setProfilePicture(bp);
-                            peopleList.add(opart);
+                    if (result != null) {
+                        jsonObject = new JSONObject(result);
+                        outcome = jsonObject.getBoolean("successful");
+                        JSONArray jsonArray = jsonObject.getJSONArray("users");
+                        if (jsonArray.length() == 0)
+                            noMoreData = true;
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            if (jsonArray.get(i) instanceof JSONObject) {
+                                JSONObject ob = (JSONObject) jsonArray.get(i);
+                                OtherParticipant opart = new OtherParticipant(ob.getString("id"), ob.getString("prefix"), ob.getString("first_name"),
+                                        ob.getString("last_name"), ob.getString("university"), ob.getString("department"), ob.getString("email"),
+                                        ob.getString("is_speaker").contains("1"), ob.getBoolean("favourite"), ob.getString("qualification"));
+                                String imageStream = ob.getString("picture");
+                                if (!imageStream.equals("null")) {
+                                    Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
+                                    opart.setProfilePicture(bp);
+                                }
+                                peopleList.add(opart);
+                            }
+
                         }
-
+                        //increment index for the next time of querying the server
+                        startIndex += numOfPeople;
                     }
-                    //increment index for the next time of querying the server
-                    startIndex += numOfPeople;
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -237,11 +241,6 @@ public class AllFragment extends Fragment implements SwipeRefreshLayoutBottom.On
 
                     mSwipeRefreshLayout.setRefreshing(false);
                     allPeopleAdapter.notifyDataSetChanged();
-                    //initialise the adapter
-/*                    allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
-                    //set the adapter to the recycler view
-                    recList.setAdapter(allPeopleAdapter);*/
-                    //recList.setAdapter();
                     int lastVisibleItem = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
                     recList.smoothScrollToPosition(lastVisibleItem+3);
 

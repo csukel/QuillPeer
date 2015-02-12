@@ -132,8 +132,8 @@ public class LoginActivity extends Activity {
                 String msg = "Something went wrong";
                 boolean outcome = false;
                 try {
-                    jsonObject = new JSONObject(result);
-                    if (jsonObject!=null) {
+                    if (result!=null) {
+                        jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
                         msg = jsonObject.getString("msg");
                     }
@@ -158,17 +158,10 @@ public class LoginActivity extends Activity {
                         e.printStackTrace();
                     }
                     //if the user has already uploaded a picture step to main activity
-                    if (imageStream!=null){
+                    if (!imageStream.equals("null")){
                         User.getInstance().setProfilePicture(ImageProcessing.decodeImage(imageStream));
                         //if the credentials havent been stored then...
-                        if (!settings.getBoolean("credStored",false)) {
-                            SharedPreferences.Editor editor = settings.edit();
-                            //store credentials and the boolean var
-                            editor.putBoolean("credStored", true);
-                            editor.putString("username", edtUsername.getText().toString());
-                            editor.putString("password", edtPassword.getText().toString());
-                            editor.commit();
-                        }
+                        checkIfCredStored();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                         //close activity
@@ -176,10 +169,12 @@ public class LoginActivity extends Activity {
                     }
                     //otherwise step to take a pic activity
                     else {
+                        checkIfCredStored();
                         //showToast("Authentication successful",Toast.LENGTH_SHORT);
                         Intent intent = new Intent(getApplicationContext(), TakePicActivity.class);
                         intent.putExtra("activity","login");
                         startActivity(intent);
+                        finish();
                     }
 
                 }
@@ -195,6 +190,18 @@ public class LoginActivity extends Activity {
         }else showToast("Check your internet connection...",Toast.LENGTH_SHORT);
 
 
+    }
+    //check if the credentials are stored
+    private void checkIfCredStored() {
+        //if no then store them in shared preferences
+        if (!settings.getBoolean("credStored",false)) {
+            SharedPreferences.Editor editor = settings.edit();
+            //store credentials and the boolean var
+            editor.putBoolean("credStored", true);
+            editor.putString("username", edtUsername.getText().toString());
+            editor.putString("password", edtPassword.getText().toString());
+            editor.commit();
+        }
     }
 
     void showToast(String text,int toast_length)

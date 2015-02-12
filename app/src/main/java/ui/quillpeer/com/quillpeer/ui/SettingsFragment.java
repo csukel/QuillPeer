@@ -107,8 +107,10 @@ public class SettingsFragment extends PreferenceFragment {
                 JSONObject jsonObject=null;
                 boolean outcome = false;
                 try {
-                    jsonObject = new JSONObject(result);
-                    outcome= jsonObject.getBoolean("successful");
+                    if (result!=null) {
+                        jsonObject = new JSONObject(result);
+                        outcome = jsonObject.getBoolean("successful");
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

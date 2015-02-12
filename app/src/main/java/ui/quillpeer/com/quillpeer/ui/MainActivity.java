@@ -6,6 +6,7 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -35,7 +36,6 @@ import java.util.List;
 
 import core.Beacons;
 import core.MyApplication;
-import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
@@ -391,11 +391,13 @@ public class MainActivity extends FragmentActivity
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
                 JSONObject jsonObject=null;
-                String msg = "Something went wrong";
+                //String msg = "Something went wrong";
                 boolean outcome = false;
                 try {
-                    jsonObject = new JSONObject(result);
-                    outcome= jsonObject.getBoolean("successful");
+                    if (result!=null) {
+                        jsonObject = new JSONObject(result);
+                        outcome = jsonObject.getBoolean("successful");
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -406,6 +408,7 @@ public class MainActivity extends FragmentActivity
                 }
                 else{
                     //showToast(msg,Toast.LENGTH_SHORT);
+                    Log.e(TAG,"Error when sending beacon values");
                 }
             }
         }
