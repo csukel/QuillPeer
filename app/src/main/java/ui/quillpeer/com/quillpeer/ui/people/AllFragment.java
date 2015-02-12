@@ -301,7 +301,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                 reset = true;
                 sendPostRequest("0",Integer.toString(numOfPeople),reset);
         }else {
-            showToast("Check your internet connection...",Toast.LENGTH_SHORT);
+            allPeopleAdapter.notifyDataSetChanged();
+            //showToast("Check your internet connection...",Toast.LENGTH_SHORT);
         }
     }
 
@@ -311,12 +312,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
             if (!noMoreData){
-                recList.showMoreProgress();
+                //recList.showMoreProgress();
                 sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset);
             }
         }else {
             recList.hideMoreProgress();
-            showToast("Check your internet connection...", Toast.LENGTH_SHORT);
+            allPeopleAdapter.notifyDataSetChanged();
+            //showToast("Check your internet connection...", Toast.LENGTH_SHORT);
         }
 
     }
