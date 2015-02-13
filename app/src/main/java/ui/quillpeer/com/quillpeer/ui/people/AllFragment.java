@@ -137,6 +137,27 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //assign a query text lister to the menu item
         searchView.setOnQueryTextListener(onQueryTextChange);
         searchView.setIconifiedByDefault(false);
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.i("AllFragment","search is closed");
+                //check the network state and proceed if there is internet connection
+                if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
+                    reset = true;
+                    //reset the list with the first bunch of people data
+                    sendPostRequest("0",Integer.toString(numOfPeople),reset);
+                }else {
+                    allPeopleAdapter.notifyDataSetChanged();
+                }
+                return true;
+            }
+        });
 
     }
 
@@ -378,6 +399,20 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
             //showToast("Check your internet connection...", Toast.LENGTH_SHORT);
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("AllFragment","menu item was pressed");
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+
+            case android.R.id.home:
+                Log.i("AllFragment","home button pressed");
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
