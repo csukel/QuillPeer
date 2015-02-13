@@ -204,7 +204,7 @@ public class PersonProfileActivity extends Activity {
                     try {
                         JSONObject user = jsonObject.getJSONObject("user");
                         person = new OtherParticipant(user.getString("id"),user.getString("prefix"),user.getString("first_name"),user.getString("last_name"),user.getString("university"),
-                                user.getString("department"),user.getString("email"),user.getString("is_speaker").contains("1"),false,user.getString("qualification"));
+                                user.getString("department"),user.getString("email"),user.getString("is_speaker").contains("1"),user.getBoolean("favourite"),user.getString("qualification"));
                         person.setPaperAbstract(jsonObject.getJSONObject("abstract").getString("abstract"));
                         person.setProfilePicture(ImageProcessing.decodeImage(user.getString("picture")));
                         person.setPaperAbstractTitle(jsonObject.getJSONObject("abstract").getString("title"));
