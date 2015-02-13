@@ -78,10 +78,6 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             peopleViewHolder.imgPeopleProfilePic.setImageResource(R.drawable.ic_action_person);
         }
 
-
-
-
-
     }
     //define the custom filter
 
@@ -168,14 +164,14 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             //set listener to favourite image view
             imgPeopleFavourite.setOnTouchListener(imgStarListener);
             //set tap listener on the profile pic
-            imgPeopleProfilePic.setOnLongClickListener(imgProfPicTapListener);
+            imgPeopleProfilePic.setOnClickListener(imgProfPicTapListener);
 
         }
 
-        View.OnLongClickListener imgProfPicTapListener = new View.OnLongClickListener() {
+        View.OnClickListener imgProfPicTapListener = new View.OnClickListener() {
 
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 OtherParticipant op = (OtherParticipant)personList.get(getPosition());
                 if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(),MyApplication.currentActivity())){
                     Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
@@ -183,8 +179,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                     v.getContext().startActivity(intent);
 
                 }
-                else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
-                return false;
+
             }
         };
 
@@ -204,7 +199,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
                         sendPostRequest(op.getUserId(),v,"remove",getPosition());
 
                     }
-                }else showToast("Check your internet connection...",Toast.LENGTH_SHORT,v);
+                }
 
                 return false;
             }

@@ -1,17 +1,15 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
 
-import android.app.ProgressDialog;
-import android.content.Intent;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.library21.custom.SwipeRefreshLayoutBottom;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,29 +20,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.malinskiy.superrecyclerview.OnMoreListener;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import core.ImageProcessing;
 import core.People.OtherParticipant;
 import core.People.Person;
-import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
-import ui.quillpeer.com.quillpeer.ui.TakePicActivity;
 
 import static android.widget.SearchView.OnQueryTextListener;
 
@@ -61,7 +51,6 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     private Toast m_currentToast;
     private View rootView;
     private LinearLayoutManager llm;
-    private SwipeRefreshLayoutBottom mSwipeRefreshLayout;
     private FrameLayout mRootLayout;
     private Handler mHandler;
     private int startIndex = 0;
@@ -281,8 +270,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         {
             m_currentToast.cancel();
         }
-        m_currentToast = Toast.makeText(getActivity().getApplicationContext(), text,toast_length);
-        m_currentToast.show();
+
+        Context context = getActivity().getApplicationContext();
+        if (context!=null){
+            m_currentToast = Toast.makeText(context, text,toast_length);
+            m_currentToast.show();
+        }
+
 
     }
 
@@ -312,7 +306,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
             if (!noMoreData){
-                //recList.showMoreProgress();
+                //send a post request to the server to query for a number of people
                 sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset);
             }
         }else {

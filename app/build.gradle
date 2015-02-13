@@ -35,4 +35,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile files('libs/estimote-sdk-preview.jar')
     compile 'com.malinskiy:superrecyclerview:1.1.0'
+    compile 'com.github.johnkil.android-appmsg:appmsg:1.2.0'
+
 }

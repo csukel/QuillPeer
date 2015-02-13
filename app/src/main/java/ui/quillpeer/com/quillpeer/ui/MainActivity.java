@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.Toast;
+
+import com.devspark.appmsg.AppMsg;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
@@ -49,7 +51,7 @@ public class MainActivity extends FragmentActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ENABLE_BT = 1234;
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
-    private Handler handlerAveragingBeaconsDistance;
+    private Handler handleInternetStateMsg = new Handler();
     private Handler handleBleEnabled = new Handler();
     private BluetoothAdapter bleAdapter ;
     private HashMap<String,ArrayList<Double>> beaconsDistancesList;
@@ -91,6 +93,9 @@ public class MainActivity extends FragmentActivity
         beaconManager.setRangingListener(rangingListener);
         //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
         handleBleEnabled.postDelayed(ckeckBleOn,2000);
+        //run a handler to check every 1 sec (with initial post delay of 2 secs) the internet state and
+        //display to the user the corresponding alert msg
+        handleInternetStateMsg.postDelayed(checkInternetState,2000);
         //start the communication with beacons
         startBeaconsComm();
     }
@@ -104,6 +109,19 @@ public class MainActivity extends FragmentActivity
                 bleAdapter.enable();
             }
             handleBleEnabled.postDelayed(this,500);
+        }
+    };
+
+    //display an alert when user is not connected to the internet
+    Runnable checkInternetState = new Runnable() {
+        @Override
+        public void run() {
+            if (!ServerComm.isNetworkConnected(getApplicationContext(),MainActivity.this)){
+                AppMsg.makeText(MainActivity.this,"You are not connected to the internet...",AppMsg.STYLE_ALERT).show();
+            }else {
+                AppMsg.cancelAll(MainActivity.this);
+            }
+            handleInternetStateMsg.postDelayed(this,1000);
         }
     };
 
