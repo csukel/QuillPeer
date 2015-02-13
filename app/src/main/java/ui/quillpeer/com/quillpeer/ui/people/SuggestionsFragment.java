@@ -3,17 +3,19 @@ package ui.quillpeer.com.quillpeer.ui.people;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import core.FragmentLifecycle;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
  * Created by loucas on 18/11/2014.
  */
-public class SuggestionsFragment extends Fragment  {
+public class SuggestionsFragment extends Fragment implements FragmentLifecycle {
     private Toast m_currentToast;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,4 +41,13 @@ public class SuggestionsFragment extends Fragment  {
 
     }
 
+    @Override
+    public void onPauseFragment(FragmentActivity activity) {
+
+    }
+
+    @Override
+    public void onResumeFragment(FragmentActivity activity) {
+
+    }
 }

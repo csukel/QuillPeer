@@ -22,14 +22,13 @@ import ui.quillpeer.com.quillpeer.R;
  */
 public class ProfileFragment extends Fragment {
     private ImageView profilePicture;
-    private TextView profileTitle;
     private TextView profileName;
     private TextView profileUniversity;
     private TextView profileDepartment;
     private TextView profileQualification;
     private TextView profilePaperAbstract;
     private TextView profilePaperAbstractTitle;
-
+    private ImageView profileFavourite;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,10 +44,9 @@ public class ProfileFragment extends Fragment {
         profilePicture = (ImageView)v.findViewById(R.id.imgCardProfilePicture);
         profilePicture.setImageBitmap(user.getProfilePicture());
         profilePicture.setOnTouchListener(profilePicTouchListener);
-        profileTitle = (TextView)v.findViewById(R.id.txtCardProfileTitle);
-        profileTitle.setText(user.getTitle());
+
         profileName = (TextView)v.findViewById(R.id.txtCardProfileName);
-        profileName.setText(user.getName() + " " + user.getSurname());
+        profileName.setText(user.getTitle() + " " + user.getName() + " " + user.getSurname());
         profileUniversity = (TextView)v.findViewById(R.id.txtCardProfileUniversity);
         profileUniversity.setText(user.getUniversity());
         profileDepartment = (TextView)v.findViewById(R.id.txtCardProfileDepartment);
@@ -59,6 +57,8 @@ public class ProfileFragment extends Fragment {
         profilePaperAbstract.setText(user.getPaperAbstract());
         profilePaperAbstractTitle = (TextView)v.findViewById(R.id.txtCardProfilePaperAbstractTitle);
         profilePaperAbstractTitle.setText(user.getPaperAbstractTitle());
+        profileFavourite = (ImageView)v.findViewById(R.id.imgCardProfileFavourite);
+        profileFavourite.setVisibility(View.INVISIBLE);
     }
 
     @Override

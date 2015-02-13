@@ -107,11 +107,6 @@
 
         </Preference>
 
-        <Preference
-            android:title="Delete account"
-            android:key="pref_delete_account">
-
-        </Preference>
 
     </PreferenceCategory>
 </PreferenceScreen>

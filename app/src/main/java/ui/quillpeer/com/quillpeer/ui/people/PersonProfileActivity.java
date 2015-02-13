@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +29,6 @@ import ui.quillpeer.com.quillpeer.R;
  */
 public class PersonProfileActivity extends Activity {
     private ImageView profilePicture;
-    private TextView profileTitle;
     private TextView profileName;
     private TextView profileUniversity;
     private TextView profileDepartment;
@@ -36,23 +37,30 @@ public class PersonProfileActivity extends Activity {
     private TextView profilePaperAbstractTitle;
     private Toast m_currentToast;
     private OtherParticipant person;
+    private ImageView profileFavourite;
+
 
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.fragment_profile_cardview);
         MyApplication.setCurrentActivity(this);
         initializeViewResources();
+        try {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }catch(NullPointerException nex){
+            nex.printStackTrace();
+        }
     }
 
     private void initializeViewResources() {
         profilePicture = (ImageView)findViewById(R.id.imgCardProfilePicture);
-        profileTitle = (TextView)findViewById(R.id.txtCardProfileTitle);
         profileName = (TextView)findViewById(R.id.txtCardProfileName);
         profileUniversity = (TextView)findViewById(R.id.txtCardProfileUniversity);
         profileDepartment = (TextView)findViewById(R.id.txtCardProfileDepartment);
         profileQualification = (TextView)findViewById(R.id.txtCardProfileQualification);
         profilePaperAbstract = (TextView)findViewById(R.id.txtCardProfilePaperAbstract);
         profilePaperAbstractTitle = (TextView)findViewById(R.id.txtCardProfilePaperAbstractTitle);
+        profileFavourite = (ImageView)findViewById(R.id.imgCardProfileFavourite);
         Intent intent = getIntent();
         if (intent!=null) {
             Bundle bundle = intent.getExtras();
@@ -63,6 +71,94 @@ public class PersonProfileActivity extends Activity {
 
 
     }
+
+    View.OnTouchListener profileFavouriteOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            //Send post request to the server
+            //check the network state and proceed if there is internet connection
+            if (ServerComm.isNetworkConnected(v.getContext().getApplicationContext(), MyApplication.currentActivity())){
+
+                int tag = (Integer)profileFavourite.getTag();
+                if (tag == R.drawable.ic_star_white) {
+                    sendPostRequestFavourite(person.getUserId(),v,"add");
+                }
+                else {
+                    sendPostRequestFavourite(person.getUserId(),v,"remove");
+
+                }
+            }
+            return false;
+        }
+    };
+
+    //send a post request to the server to add or remove the person from user favourite's list
+    private void sendPostRequestFavourite(String userId, final View v,String favouriteAction) {
+
+        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+            ProgressDialog dialog = ProgressDialog.show(MyApplication.currentActivity(),
+                    "Posting...", "Please wait...", false);
+
+            @Override
+            protected void onPreExecute(){
+                super.onPreExecute();
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String paramUserId = params[0];
+                String paramAction = params[1];
+                View paramSize = v;
+
+                if (paramAction.equals("add"))
+                    return ServerComm.addFavourite(paramUserId);
+                else
+                    return ServerComm.removeFavourite(paramUserId);
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                dialog.dismiss();
+                JSONObject jsonObject=null;
+                boolean outcome = false;
+                try {
+                    if (result!=null) {
+                        jsonObject = new JSONObject(result);
+                        outcome = jsonObject.getBoolean("successful");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //if the post to the server was successful then ...
+                if (outcome){
+                    //change the image
+                    int tag = (Integer)profileFavourite.getTag();
+                    if (tag == R.drawable.ic_star_white) {
+                        profileFavourite.setImageResource(R.drawable.ic_star_yellow);
+                        profileFavourite.setTag(R.drawable.ic_star_yellow);
+                    }
+                    else {
+                        profileFavourite.setImageResource(R.drawable.ic_star_white);
+                        profileFavourite.setTag(R.drawable.ic_star_white);
+                    }
+                    //change the favourite status
+                    person.changeFavouriteStatus();
+                }
+                else {
+                    showToast("Posting data failed...",Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        //check the network state and proceed if there is internet connection
+        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+        sendPostReqAsyncTask.execute(userId,favouriteAction);
+
+    }
+
 
     //send a post request to server to get the person's data
     private void sendPostRequest(String userId) {
@@ -144,8 +240,9 @@ public class PersonProfileActivity extends Activity {
     }
 
     private void setViewValues() {
-        profileTitle.setText(person.getTitle());
-        profileName.setText(person.getName() + " " + person.getSurname());
+        String speaker = "";
+        if (person.isSpeaker()) speaker = "(Speaker)";
+        profileName.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname() + " " + speaker);
         profileUniversity.setText(person.getUniversity());
         profileDepartment.setText(person.getDepartment());
         profileQualification.setText(person.getQualification());
@@ -154,6 +251,15 @@ public class PersonProfileActivity extends Activity {
             profilePicture.setImageBitmap(person.getProfilePicture());
         }
         profilePaperAbstractTitle.setText(person.getPaperAbstractTitle());
+
+        if (person.isFavourite()) {
+            profileFavourite.setImageResource(R.drawable.ic_star_yellow);
+            profileFavourite.setTag(R.drawable.ic_star_yellow);
+        } else {
+            profileFavourite.setImageResource(R.drawable.ic_star_white);
+            profileFavourite.setTag(R.drawable.ic_star_white);
+        }
+        profileFavourite.setOnTouchListener(profileFavouriteOnTouchListener);
 
     }
 
@@ -167,5 +273,17 @@ public class PersonProfileActivity extends Activity {
         m_currentToast = Toast.makeText(this.getApplicationContext(), text,toast_length);
         m_currentToast.show();
 
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

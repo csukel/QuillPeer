@@ -50,38 +50,9 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        Preference prefDeleteAccount = (Preference)findPreference("pref_delete_account");
-        prefDeleteAccount.setOnPreferenceClickListener(prefDeletAccountClickListener);
     }
 
-    Preference.OnPreferenceClickListener prefDeletAccountClickListener = new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Delete account")
-                    .setMessage("Are you sure you want to delete this account?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPreferences.Editor editor = sharedPrefs.edit();
-                            editor.remove("credStored");
-                            editor.remove("username");
-                            editor.remove("password");
-                            editor.commit();
-                            getActivity().finish();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setCancelable(false)
-                    .show();
 
-            return false;
-        }
-    };
 
     private void logout(){
         class SendGetReqAsyncTask extends AsyncTask<Void, Void, String> {
@@ -116,6 +87,11 @@ public class SettingsFragment extends PreferenceFragment {
                 }
                 //if logout is successful close the main activity
                 if (outcome){
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.remove("credStored");
+                    editor.remove("username");
+                    editor.remove("password");
+                    editor.commit();
                     getActivity().finish();
                 }
             }

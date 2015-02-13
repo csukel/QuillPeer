@@ -23,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/imgPeopleProfilePic"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+                android:layout_width="256px"
+                android:layout_height="256px"
                 android:layout_marginRight="6dip"
                 android:src="@drawable/ic_action_person" />
 

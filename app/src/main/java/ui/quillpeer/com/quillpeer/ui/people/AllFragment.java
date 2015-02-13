@@ -2,26 +2,26 @@ package ui.quillpeer.com.quillpeer.ui.people;
 
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.SearchView;
-import android.widget.Spinner;
 import android.widget.Toast;
 import com.malinskiy.superrecyclerview.OnMoreListener;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
@@ -30,36 +30,43 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+
+import core.FragmentLifecycle;
 import core.ImageProcessing;
+import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.MainActivity;
 
 import static android.widget.SearchView.OnQueryTextListener;
 
 /**
  * Created by loucas on 18/11/2014.
  */
-public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener {
+public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener, FragmentLifecycle {
     static List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
-    private String searchFilter="";
     //Set search filter criteria in a string array
     private String[] searchCriteriaList;
     //toast for displaying small messages to the user
     private Toast m_currentToast;
     private View rootView;
     private LinearLayoutManager llm;
-    private FrameLayout mRootLayout;
-    private Handler mHandler;
     private int startIndex = 0;
     private static final int numOfPeople = 10;
-   // private RecyclerView recList;
     //when user has retrieved or people this should be turn to true
     private boolean noMoreData = false;
     private boolean reset = false;
     private SuperRecyclerView recList;
+    private boolean isVisible = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,28 +79,38 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
-        mHandler = new Handler();
 
-        //allow the fragment to invalidate options menu
-        getActivity().supportInvalidateOptionsMenu();
-        //allow fragment to have a menu
-        setHasOptionsMenu(true);
         //populate list with fake data
         populateList();
         //initialise the adapter
         allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
         //set the adapter to the recycler view
         recList.setAdapter(allPeopleAdapter);
-        //initialise the search filtering options list
-        searchCriteriaList= new String[]{getResources().getString(R.string.sfName),getResources().getString(R.string.sfSurname),
-                getResources().getString(R.string.sfUniversity),getResources().getString(R.string.sfDepartment),getResources().getString(R.string.sfQualification)};
-
         recList.setRefreshListener(this);
         recList.setRefreshingColorResources(android.R.color.holo_orange_light, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_red_light);
         recList.setupMoreListener(this, 1);
 
 
         return rootView;
+    }
+
+    public void onPauseFragment(FragmentActivity activity) {
+/*        peopleList.clear();
+        allPeopleAdapter.notifyDataSetChanged();*/
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.i("AllFragment","on resume");
+        if (isVisible){
+
+        }
+    }
+
+    @Override
+    public void onResumeFragment(FragmentActivity activity) {
+        Log.i("AllFragment","is visible");
+        isVisible = true;
     }
 
 
@@ -121,34 +138,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         searchView.setOnQueryTextListener(onQueryTextChange);
         searchView.setIconifiedByDefault(false);
 
-        //get the spinner menu item
-        MenuItem spinnerItem = menu.findItem(R.id.search_spinner);
-        //spinner instantiation
-        Spinner spinner = (Spinner)spinnerItem.getActionView();
-
-        //instantiate array adapter
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
-                android.R.layout.simple_spinner_item,searchCriteriaList);
-        //set dataset adapter for the spinner
-        spinner.setAdapter(spinnerAdapter);
-        //set the on item selected listener for the spinner
-        spinner.setOnItemSelectedListener(onItemSelectedListener);
-
     }
-
-    //when an item is selected from the spinner(search filter) do...
-    AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Log.i("AllFragment", "Spinner pos" + position);
-            setSearchFilter(searchCriteriaList[position]);
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
 
     @Override
     public void onPrepareOptionsMenu(Menu menu)
@@ -160,34 +150,97 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //when the user submits a query using the button
         @Override
         public boolean onQueryTextSubmit(String s) {
-            onQueryTextChange(s);
+            Log.d("AllFragment","query submitted");
+            //TODO send the query to the server
+            sendSearchPostRequestToServer(s);
             return false;
         }
         //when the query text changes ....
         @Override
         public boolean onQueryTextChange(String s) {
-            //if the adapter's object is not null filter the dataset in the adapter
-            if (allPeopleAdapter!=null){
-                allPeopleAdapter.getFilter().filter(s+"_"+getSearchFilter());
-            }
             return false;
         }
     };
 
-    private void setSearchFilter(String s){
-        this.searchFilter = s;
-    }
-
-    private String getSearchFilter(){
-        return this.searchFilter;
-    }
-
-    private void sendPostRequest(String begin, String size, final boolean reSet) {
-
+    //send a search request to the server
+    private void sendSearchPostRequestToServer(String searchQuery) {
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String query = params[0];
+
+
+                return ServerComm.searchPeople(query);
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                JSONObject jsonObject=null;
+                boolean outcome = false;
+                try {
+                    if (result != null) {
+                        jsonObject = new JSONObject(result);
+                        outcome = jsonObject.getBoolean("successful");
+                        JSONArray jsonArray = jsonObject.getJSONArray("users");
+                        peopleList.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            if (jsonArray.get(i) instanceof JSONObject) {
+                                JSONObject ob = (JSONObject) jsonArray.get(i);
+                                OtherParticipant opart = new OtherParticipant(ob.getString("id"), ob.getString("prefix"), ob.getString("first_name"),
+                                        ob.getString("last_name"), ob.getString("university"), ob.getString("department"), ob.getString("email"),
+                                        ob.getString("is_speaker").contains("1"), ob.getBoolean("favourite"), ob.getString("qualification"));
+                                String imageStream = ob.getString("picture");
+                                if (!imageStream.equals("null")) {
+                                    Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
+                                    opart.setProfilePicture(bp);
+                                }
+                                peopleList.add(opart);
+                            }
+
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (outcome){
+                    allPeopleAdapter.notifyDataSetChanged();
+
+                }
+                else {
+                    //mSwipeRefreshLayout.setRefreshing(false);
+                    showToast("Fetching data failed...",Toast.LENGTH_SHORT);
+                }
+            }
+        }
+        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+        sendPostReqAsyncTask.execute(searchQuery);
+    }
+
+    private void sendPostRequest(String begin, String size, final boolean reSet) {
+        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+            private List<Person> backupList;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                if (reSet) {
+                    backupList = peopleList;
+                    peopleList.clear();
+                    try {
+                        allPeopleAdapter.notifyDataSetChanged();
+                    } catch (NullPointerException nex) {
+                        nex.printStackTrace();
+                    }
+                }
             }
 
             @Override
@@ -236,6 +289,15 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                         }
                         //increment index for the next time of querying the server
                         startIndex += numOfPeople;
+                    }else {
+                        if(reset) {
+                            peopleList = backupList;
+                            try {
+                                allPeopleAdapter.notifyDataSetChanged();
+                            } catch (NullPointerException nex) {
+                                nex.printStackTrace();
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -293,6 +355,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
                 reset = true;
+
                 sendPostRequest("0",Integer.toString(numOfPeople),reset);
         }else {
             allPeopleAdapter.notifyDataSetChanged();
@@ -316,4 +379,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }
 
     }
+
+
+
+
 }

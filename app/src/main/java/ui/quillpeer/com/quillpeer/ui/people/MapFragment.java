@@ -2,18 +2,21 @@ package ui.quillpeer.com.quillpeer.ui.people;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.qozix.tileview.TileView;
+
+import core.FragmentLifecycle;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
  * Created by loucas on 18/11/2014.
  */
-public class MapFragment extends Fragment{
+public class MapFragment extends Fragment implements FragmentLifecycle {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,4 +48,13 @@ public class MapFragment extends Fragment{
     }
 
 
+    @Override
+    public void onPauseFragment(FragmentActivity activity) {
+
+    }
+
+    @Override
+    public void onResumeFragment(FragmentActivity activity) {
+
+    }
 }

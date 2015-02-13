@@ -134,7 +134,11 @@ public class MainActivity extends FragmentActivity
                 public void run() {
                     // Note that beacons reported here are already sorted by estimated
                     // distance between device and beacon.
-                    getActionBar().setSubtitle("Found beacons: " + beacons.size());
+                    try {
+                        getActionBar().setSubtitle("Found beacons: " + beacons.size());
+                    }catch (NullPointerException nex){
+                        nex.printStackTrace();
+                    }
                     //beaconsList = (ArrayList)beacons;
                     beaconsList = new ArrayList<Beacon>(beacons);
 
@@ -422,7 +426,7 @@ public class MainActivity extends FragmentActivity
 
 
                 if (outcome){
-
+                    //TODO check the outome when the api from the server is ready
                 }
                 else{
                     //showToast(msg,Toast.LENGTH_SHORT);
@@ -434,8 +438,7 @@ public class MainActivity extends FragmentActivity
         if (ServerComm.isNetworkConnected(getApplicationContext(),this)){
             SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
             sendPostReqAsyncTask.execute(jsonArray);
-        }else
-            getActionBar().setSubtitle("Check your internet connection ...");
+        }
     }
 
     @Override

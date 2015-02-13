@@ -30,7 +30,7 @@ import ui.quillpeer.com.quillpeer.R;
 /**
  * Created by loucas on 23/11/2014.
  */
-public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder> implements Filterable {
+public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder>  {
 
     static List<Person> personList;
     private List<Person> orig;
@@ -58,8 +58,11 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
     //bind data of people on the cards
     @Override
     public void onBindViewHolder(AllPeopleViewHolder peopleViewHolder, int i) {
+
         OtherParticipant person = (OtherParticipant) personList.get(i);
-        peopleViewHolder.txtPeoplePersonalDetails.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname());
+        String speaker = "";
+        if (person.isSpeaker()) speaker = "(Speaker)";
+        peopleViewHolder.txtPeoplePersonalDetails.setText(person.getTitle() + " " + person.getName() + " " + person.getSurname() + " " + speaker);
         peopleViewHolder.txtPeopleUniversity.setText(person.getUniversity());
         peopleViewHolder.txtPeopleDepartment.setText(person.getDepartment());
         peopleViewHolder.txtPeopleQualification.setText(person.getQualification());
@@ -78,67 +81,6 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
             peopleViewHolder.imgPeopleProfilePic.setImageResource(R.drawable.ic_action_person);
         }
 
-    }
-    //define the custom filter
-
-    public Filter getFilter() {
-        return new Filter() {
-
-            @Override
-            protected FilterResults performFiltering(CharSequence query) {
-                final FilterResults oReturn = new FilterResults();
-                final ArrayList<Person> results = new ArrayList<Person>();
-                if (orig == null)
-                    orig = personList;
-                if (query != null) {
-                    if (orig != null && orig.size() > 0) {
-                        //loop through the original list and check objects against the query
-                        for (final Person p : orig) {
-
-                            //split the query to two strings ...
-                            String[] filterQueryConstraints = query.toString().split("_");
-                            //the query
-                            String filterQuery = filterQueryConstraints[0];
-                            //and the search criteria filter
-                            String searchFilter = filterQueryConstraints[1];
-                            //if an object is matched according to search filter and the query string then add it to the results list
-                            if (searchFilter.equals(mContext.getResources().getString(R.string.sfName)) &&
-                                    p.getName().toLowerCase().contains(filterQuery.toLowerCase()))
-                                results.add(p);
-                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfSurname)) &&
-                                    p.getSurname().toLowerCase().contains(filterQuery.toLowerCase()))
-                                results.add(p);
-                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfUniversity)) &&
-                                    p.getUniversity().toLowerCase().contains(filterQuery.toLowerCase()))
-                                results.add(p);
-                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfDepartment)) &&
-                                    p.getDepartment().toLowerCase().contains(filterQuery.toLowerCase()))
-                                results.add(p);
-                            else if (searchFilter.equals(mContext.getResources().getString(R.string.sfQualification)) &&
-                                    p.getQualification().toLowerCase().contains(filterQuery.toLowerCase()))
-                                results.add(p);
-
-/*                            if (p.getName().toLowerCase()
-                                    .contains(filterQuery.toString().toLowerCase())
-                                    || p.getSurname().toLowerCase().contains(filterQuery.toString().toLowerCase()))
-                                results.add(p);*/
-                        }
-                    }
-                    //return results of filtering
-                    oReturn.values = results;
-                }
-                return oReturn;
-            }
-
-            @SuppressWarnings("unchecked")
-            @Override
-            protected void publishResults(CharSequence constraint,
-                                          FilterResults results) {
-                personList= (ArrayList<Person>) results.values;
-                //update the adapter
-                notifyDataSetChanged();
-            }
-        };
     }
 
 
