@@ -118,8 +118,8 @@ public class ServerComm {
         return result;
     }
 
-    //post a request to the server to get a number of people
-    public static String getPeople(String start,String size){
+    //post a request to the server to get a number of people according to the give search criteria
+    public static String getPeople(String start,String size,String searchQuery){
         //HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getPeople);
         JSONObject jsonObject = new JSONObject();
@@ -128,7 +128,7 @@ public class ServerComm {
         try {
             jsonObject.put("start", start);
             jsonObject.put("size",size);
-
+            jsonObject.put("search",searchQuery);
             httpPost.setHeader("Content-type", "application/json");
 
             StringEntity se = new StringEntity(jsonObject.toString());
@@ -282,33 +282,7 @@ public class ServerComm {
         return result;
     }
 
-    //this method sends to the server a query to search for people
-    public static String searchPeople(String searchQuery){
-        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.searchPeople);
-        JSONObject jsonObject = new JSONObject();
-        String result=null;
 
-        try {
-            jsonObject.put("search",searchQuery);
-
-            httpPost.setHeader("Content-type", "application/json");
-
-            StringEntity se = new StringEntity(jsonObject.toString());
-            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            httpPost.setEntity(se);
-
-            HttpResponse response = httpClient.execute(httpPost);
-            result = EntityUtils.toString(response.getEntity());
-        }catch(ClientProtocolException cex){
-            cex.printStackTrace();
-        }catch(IOException ioex){
-            ioex.printStackTrace();
-        }
-        catch (JSONException jex){
-            jex.printStackTrace();
-        }
-        return result;
-    }
 
 
     //return true if the device is connected to the internet

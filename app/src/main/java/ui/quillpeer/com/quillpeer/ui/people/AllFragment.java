@@ -49,20 +49,21 @@ import static android.widget.SearchView.OnQueryTextListener;
 public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener, FragmentLifecycle {
     private static List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
-    //Set search filter criteria in a string array
-    private String[] searchCriteriaList;
     //toast for displaying small messages to the user
     private Toast m_currentToast;
     private View rootView;
     private LinearLayoutManager llm;
     private int startIndex = 0;
+    private int indexSearch = 0;
     private static final int numOfPeople = 10;
     //when user has retrieved or people this should be turn to true
     private boolean noMoreData = false;
     private boolean reset = false;
     private SuperRecyclerView recList;
     private boolean isVisible = false;
+    private boolean searching = false;
     private String screenName = "AllFragment";
+    private String queryString;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +126,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //instantiate the list
         peopleList = new ArrayList<Person>();
         //initially fetch 10 people data
-        sendPostRequest(Integer.toString(startIndex),Integer.toString(numOfPeople),reset);
+        sendPostRequest(Integer.toString(startIndex),Integer.toString(numOfPeople),reset,"");
     }
 
     @Override
@@ -157,7 +158,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                 if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
                     reset = true;
                     //reset the list with the first bunch of people data
-                    sendPostRequest("0",Integer.toString(numOfPeople),reset);
+                    sendPostRequest("0",Integer.toString(numOfPeople),reset,"");
                 }else {
                     allPeopleAdapter.notifyDataSetChanged();
                 }
@@ -179,7 +180,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         public boolean onQueryTextSubmit(String s) {
             Log.d("AllFragment","query submitted");
             //TODO send the query to the server
-            sendSearchPostRequestToServer(s);
+            if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())) {
+                searching = true;
+                indexSearch =0;
+                peopleList.clear();
+                queryString = s;
+                sendPostRequest(Integer.toString(indexSearch), Integer.toString(numOfPeople), false, s);
+            }
             return false;
         }
         //when the query text changes ....
@@ -189,70 +196,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }
     };
 
-    //send a search request to the server
-    private void sendSearchPostRequestToServer(String searchQuery) {
-        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                String query = params[0];
 
 
-                return ServerComm.searchPeople(query);
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-                JSONObject jsonObject=null;
-                boolean outcome = false;
-                try {
-                    if (result != null) {
-                        jsonObject = new JSONObject(result);
-                        outcome = jsonObject.getBoolean("successful");
-                        JSONArray jsonArray = jsonObject.getJSONArray("users");
-                        peopleList.clear();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            if (jsonArray.get(i) instanceof JSONObject) {
-                                JSONObject ob = (JSONObject) jsonArray.get(i);
-                                OtherParticipant opart = new OtherParticipant(ob.getString("id"), ob.getString("prefix"), ob.getString("first_name"),
-                                        ob.getString("last_name"), ob.getString("university"), ob.getString("department"), ob.getString("email"),
-                                        ob.getString("is_speaker").contains("1"), ob.getBoolean("favourite"), ob.getString("qualification"));
-                                String imageStream = ob.getString("picture");
-                                if (!imageStream.equals("null")) {
-                                    Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
-                                    opart.setProfilePicture(bp);
-                                }
-                                peopleList.add(opart);
-                            }
-
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (outcome){
-                    allPeopleAdapter.notifyDataSetChanged();
-
-                }
-                else {
-                    //mSwipeRefreshLayout.setRefreshing(false);
-                    showToast("Fetching data failed...",Toast.LENGTH_SHORT);
-                }
-            }
-        }
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-        sendPostReqAsyncTask.execute(searchQuery);
-    }
-
-    private void sendPostRequest(String begin, String size, final boolean reSet) {
+    private void sendPostRequest(String begin, String size, final boolean reSet,String searchQuery) {
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             private List<Person> backupList;
 
@@ -275,8 +221,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
                 String paramStart = params[0];
                 String paramSize = params[1];
-
-                return ServerComm.getPeople(paramStart, paramSize);
+                String paramSearchQuery = params[2];
+                return ServerComm.getPeople(paramStart, paramSize,paramSearchQuery);
             }
 
             @Override
@@ -289,15 +235,28 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                         jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
                         JSONArray jsonArray = jsonObject.getJSONArray("users");
-                        if (jsonArray.length() == 0)
-                            noMoreData = true;
+
+/*                        if (jsonArray.length() == 0)
+                            noMoreData = true;*/
 
                         if (reSet) {
                             peopleList.clear();
                             reset = false;
+                            searching = false;
                             //recList.hideProgress();
                             startIndex =0;
                             noMoreData = false;
+                        }
+                        if (searching){
+                            if (indexSearch == 0)
+                                noMoreData = false;
+                            indexSearch +=numOfPeople;
+                        } else{
+                            indexSearch = 0;
+                        }
+                        int remaining = Integer.valueOf(jsonObject.getString("remaining"));
+                        if (remaining == 0){
+                            noMoreData = true;
                         }
                         for (int i = 0; i < jsonArray.length(); i++) {
                             if (jsonArray.get(i) instanceof JSONObject) {
@@ -315,7 +274,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
                         }
                         //increment index for the next time of querying the server
-                        startIndex += numOfPeople;
+                        if (!searching)
+                            startIndex += numOfPeople;
                     }else {
                         if(reset) {
                             peopleList = backupList;
@@ -337,6 +297,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                     recList.smoothScrollToPosition(lastVisibleItem+3);*/
                 }
                 else if (noMoreData){
+                    allPeopleAdapter.notifyDataSetChanged();
                     recList.hideMoreProgress();
                     //showToast("There are no more people to show...",Toast.LENGTH_SHORT);
                 }
@@ -347,7 +308,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
             }
         }
         SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-        sendPostReqAsyncTask.execute(begin, size);
+        sendPostReqAsyncTask.execute(begin, size,searchQuery);
 
 
 
@@ -383,7 +344,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
                 reset = true;
 
-                sendPostRequest("0",Integer.toString(numOfPeople),reset);
+                sendPostRequest("0",Integer.toString(numOfPeople),reset,"");
         }else {
             allPeopleAdapter.notifyDataSetChanged();
             //showToast("Check your internet connection...",Toast.LENGTH_SHORT);
@@ -397,7 +358,12 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
             if (!noMoreData){
                 //send a post request to the server to query for a number of people
-                sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset);
+                if (!searching) {
+                    sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset, "");
+                }else {
+                    sendPostRequest(Integer.toString(indexSearch), Integer.toString(numOfPeople), reset,queryString);
+                }
+
             } else{
                 recList.hideMoreProgress();
             }
