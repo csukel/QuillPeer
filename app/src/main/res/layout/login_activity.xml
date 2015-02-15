@@ -20,12 +20,14 @@
             android:hint="Username"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
+            android:maxLength="40"
             android:background="@drawable/custom_input_box"/>
 
         <EditText
             android:id="@+id/edtPassword"
             android:layout_marginTop="20dp"
             android:hint="Password"
+            android:maxLength="10"
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

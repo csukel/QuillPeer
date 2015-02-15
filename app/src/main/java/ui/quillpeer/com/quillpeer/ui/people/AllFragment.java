@@ -46,7 +46,7 @@ import static android.widget.SearchView.OnQueryTextListener;
  * Created by loucas on 18/11/2014.
  */
 public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener, FragmentLifecycle {
-    static List<Person> peopleList;
+    private static List<Person> peopleList;
     private AllPeopleAdapter allPeopleAdapter=null;
     //Set search filter criteria in a string array
     private String[] searchCriteriaList;
@@ -101,7 +101,12 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     @Override
     public void onResume(){
         super.onResume();
+        //TODO refresh the list and the UI
         Log.i("AllFragment","on resume");
+/*        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
+        //set the adapter to the recycler view
+        recList.setAdapter(allPeopleAdapter);*/
+        allPeopleAdapter.notifyDataSetChanged();
         if (isVisible){
 
         }
@@ -415,7 +420,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         return super.onOptionsItemSelected(item);
     }
 
-
+    public static List<Person> getPeopleList(){
+        return peopleList;
+    }
 
 
 }

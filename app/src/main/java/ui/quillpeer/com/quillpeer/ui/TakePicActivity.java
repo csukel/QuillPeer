@@ -44,6 +44,7 @@ public class TakePicActivity extends Activity {
     final int PIC_CROP = 2;
     //uri to pass to intent camera.crop to pass the captured image
     private Uri picUri;
+    private File tempFile;
     private Toast m_currentToast;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -74,6 +75,7 @@ public class TakePicActivity extends Activity {
         public void onClick(View v) {
 
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            createFileTempFile();
             intent.putExtra(MediaStore.EXTRA_OUTPUT,
                     getTempUri());
             intent.putExtra("outputFormat",
@@ -111,14 +113,23 @@ public class TakePicActivity extends Activity {
                 if (data != null) {
                     Bundle extras = data.getExtras();
                     capturedImage = extras.getParcelable("data");
+
                 }
-
+                //set image file to profile pic image view
                 profilePic.setImageBitmap(capturedImage);
-
-                File tempFile = getTempFile();
-                File cacheDir = getCacheDir();
-                File file = new File(cacheDir, getTempFile().toString());
-                file.delete();
+                //delete temp file
+                try {
+                    getTempFile().delete();
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            } else if (resultCode == RESULT_CANCELED){
+                //delete temp file
+                try {
+                    getTempFile().delete();
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
             }
             //crop cancelled by user
             else if (resultCode==RESULT_CANCELED){
@@ -132,21 +143,23 @@ public class TakePicActivity extends Activity {
             }
         }
     }
+    private void createFileTempFile(){
+        tempFile = new File(Environment.getExternalStorageDirectory(),
+                TEMP_PHOTO_FILE);
+        try {
+            tempFile.createNewFile();
+        } catch (IOException e) {
+            Log.e("getTempFile()->", e.getMessage().toString());
+        }
+
+    }
     private Uri getTempUri() {
         return Uri.fromFile(getTempFile());
     }
 
     private File getTempFile() {
 
-        File f = new File(Environment.getExternalStorageDirectory(),
-                TEMP_PHOTO_FILE);
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            Log.e("getTempFile()->", e.getMessage().toString());
-        }
-
-        return f;
+        return tempFile;
     }
 
     private void performCrop() {
@@ -159,11 +172,15 @@ public class TakePicActivity extends Activity {
             //set crop properties
             cropIntent.putExtra("crop", "true");
             //indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 0);
-            cropIntent.putExtra("aspectY", 0);
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("scale", true);
             //indicate output X and Y
             cropIntent.putExtra("outputX", 256);
             cropIntent.putExtra("outputY", 256);
+            cropIntent.putExtra("FaceDetection", true);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    getTempUri());
             //retrieve data on return
             cropIntent.putExtra("return-data", true);
             //start the activity - we handle returning in onActivityResult
