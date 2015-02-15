@@ -64,7 +64,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     private boolean searching = false;
     private String screenName = "AllFragment";
     private String queryString;
-    @Override
+    private static final String TAG = AllFragment.class.getSimpleName();
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -97,8 +97,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     public void onPauseFragment(FragmentActivity activity) {
-/*        peopleList.clear();
-        allPeopleAdapter.notifyDataSetChanged();*/
+
+        Log.i(TAG,"onPauseFragment");
+        //isVisible =false;
     }
     @Override
     public void onResume(){
@@ -117,7 +118,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     @Override
     public void onResumeFragment(FragmentActivity activity) {
         Log.i("AllFragment","is visible");
-        isVisible = true;
+        //isVisible = true;
     }
 
 
@@ -337,14 +338,35 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
         }
     }*/
+    @Override
+    public void setUserVisibleHint(final boolean visibleHint){
+        super.setUserVisibleHint(visibleHint);
+        if (visibleHint){
+            Log.i(TAG,"visible hint");
+            isVisible = true;
+        }else {
+            Log.i(TAG,"not visible hint");
+            //if the user was on searching the last time visited this screen then reset the list
+            if (searching) {
+                resetList();
+
+            }
+            isVisible = false;
+        }
+    }
 
     @Override
     public void onRefresh() {
+        resetList();
+
+    }
+
+    private void resetList() {
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
-                reset = true;
+            reset = true;
 
-                sendPostRequest("0",Integer.toString(numOfPeople),reset,"");
+            sendPostRequest("0",Integer.toString(numOfPeople),reset,"");
         }else {
             allPeopleAdapter.notifyDataSetChanged();
             //showToast("Check your internet connection...",Toast.LENGTH_SHORT);
