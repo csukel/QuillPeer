@@ -21,7 +21,7 @@ public class SplashActivity extends Activity {
     private ImageView imgLogo;
     private ScaleAnimation animImg;
     private Animation animSlogan;
-    private TextView txtSlogan;
+
     private final int SPLASH_DISPLAY_LENGTH = 3000;
 
     @Override
@@ -29,17 +29,15 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
 
-        SharedPreferences settings=getSharedPreferences("prefs",0);
+/*        SharedPreferences settings=getSharedPreferences("prefs",0);
         boolean firstRun=settings.getBoolean("firstRun",false);
         if(firstRun==false)//if running for first time
         //Splash will load for first time
         {
             SharedPreferences.Editor editor=settings.edit();
             editor.putBoolean("firstRun",true);
-            editor.commit();
+            editor.commit();*/
             imgLogo = (ImageView)findViewById(R.id.imgLogo);
-            txtSlogan = (TextView)findViewById(R.id.txtSlogan);
-
 
             animImg = new ScaleAnimation(0,1 , 0, 1, 0.5f,0.5f);
             //Setup anim with desired properties
@@ -47,15 +45,14 @@ public class SplashActivity extends Activity {
             animImg.setRepeatCount(0); //Repeat animation indefinitely
             animImg.setDuration(1000); //Put desired duration per anim cycle here, in milliseconds
             //Start animation
-            imgLogo.startAnimation(animImg);
+            //imgLogo.startAnimation(animImg);
 
             animSlogan = new AlphaAnimation(0.0f, 1.0f);
             animSlogan.setDuration(500); //You can manage the time of the blink with this parameter
             animSlogan.setStartOffset(20);
             animSlogan.setRepeatMode(Animation.REVERSE);
             animSlogan.setRepeatCount(Animation.INFINITE);
-            txtSlogan.startAnimation(animSlogan);
-
+            imgLogo.startAnimation(animSlogan);
 
             //continue to the next screen after 3 secs
             new Handler().postDelayed(new Runnable(){
@@ -67,14 +64,14 @@ public class SplashActivity extends Activity {
                     SplashActivity.this.finish();
                 }
             }, SPLASH_DISPLAY_LENGTH);
-        }
-        else
+       // }
+/*        else
         {
 
             Intent a=new Intent(SplashActivity.this,LoginActivity.class);
             startActivity(a);
             finish();
-        }
+        }*/
 
 
     }
