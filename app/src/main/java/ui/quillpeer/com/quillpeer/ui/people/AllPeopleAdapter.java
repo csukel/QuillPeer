@@ -30,24 +30,28 @@ import ui.quillpeer.com.quillpeer.R;
 /**
  * Created by loucas on 23/11/2014.
  */
-public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllPeopleViewHolder>  {
+public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleViewHolder>  {
 
-    static List<Person> personList;
+    private List<Person> personList;
     private List<Person> orig;
     private Context mContext;
-
+    private String fragment;
     @Override
     public AllPeopleViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.card_list_people_item, viewGroup, false);
+        itemView.setTag(R.id.cardListPeople,personList);
+
+        itemView.setTag(R.id.people_pager,fragment);
 
         return new AllPeopleViewHolder(itemView);
     }
 
-    public AllPeopleAdapter(List<Person> personList,Context context){
+    public AllPeopleAdapter(List<Person> personList,Context context,String s){
         this.personList = personList;
         this.mContext = context;
+        this.fragment = s;
     }
 
     @Override
@@ -84,6 +88,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
     }
 
 
+/*
     public static class AllPeopleViewHolder extends RecyclerView.ViewHolder {
         protected ImageView imgPeopleProfilePic;
         protected TextView txtPeoplePersonalDetails;
@@ -225,4 +230,5 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.AllP
 
         }
     }
+*/
 }

@@ -38,7 +38,7 @@ public class PersonProfileActivity extends Activity {
     private Toast m_currentToast;
     private OtherParticipant person;
     private ImageView profileFavourite;
-
+    private int listIndex;
 
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -65,6 +65,7 @@ public class PersonProfileActivity extends Activity {
         if (intent!=null) {
             Bundle bundle = intent.getExtras();
             String person_id = bundle.getString("person_id");
+            listIndex = bundle.getInt("position");
             //get person's data from server
             sendPostRequest(person_id);
         }else Log.e("PersonProfileActivity","NUll intent passed");
@@ -147,6 +148,11 @@ public class PersonProfileActivity extends Activity {
                     }
                     //change the favourite status
                     person.changeFavouriteStatus();
+                    try{
+                        ((OtherParticipant)AllFragment.getPeopleList().get(listIndex)).changeFavouriteStatus();
+                    }catch (NullPointerException ex){
+                        ex.printStackTrace();
+                    }
                 }
                 else {
                     showToast("Posting data failed...",Toast.LENGTH_SHORT);

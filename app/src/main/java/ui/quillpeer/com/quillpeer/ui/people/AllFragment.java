@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -61,7 +62,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     private boolean reset = false;
     private SuperRecyclerView recList;
     private boolean isVisible = false;
-
+    private String screenName = "AllFragment";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +84,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //populate list with fake data
         populateList();
         //initialise the adapter
-        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
+        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext(),screenName);
         //set the adapter to the recycler view
         recList.setAdapter(allPeopleAdapter);
         recList.setRefreshListener(this);
@@ -397,6 +398,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
             if (!noMoreData){
                 //send a post request to the server to query for a number of people
                 sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset);
+            } else{
+                recList.hideMoreProgress();
             }
         }else {
             recList.hideMoreProgress();
@@ -425,4 +428,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
 
+/*    @Override
+    public void onBackPressed() {
+
+    }*/
 }

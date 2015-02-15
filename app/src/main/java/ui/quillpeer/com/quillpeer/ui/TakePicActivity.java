@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.devspark.appmsg.AppMsg;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,18 +49,44 @@ public class TakePicActivity extends Activity {
     private Uri picUri;
     private File tempFile;
     private Toast m_currentToast;
+    private Handler handleTakenPicMsg;
+    private AppMsg alertTakePicture;
+    private String prevScreen;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.take_pic_activity);
         try{
             getActionBar().setTitle("Plese take a profile picture!");
+            Intent prevIntent = getIntent();
+            prevScreen = prevIntent.getStringExtra("activity");
+            if (prevScreen!=null && prevScreen.equals("login")){
+                handleTakenPicMsg = new Handler();
+                handleTakenPicMsg.postDelayed(checkForTakenPicture,500);
+            }
         }catch(NullPointerException ex){
             Log.e("TakePicActivity: Error",ex.toString());
         }
         //initialise objects to resources
         initializeViewResources();
 
+
+    }
+
+    //display an alert when user is not connected to the internet
+    Runnable checkForTakenPicture = new Runnable() {
+        @Override
+        public void run() {
+            if (capturedImage==null){
+                AppMsg.makeText(TakePicActivity.this,"You have to take a profile picture to continue to the application...",AppMsg.STYLE_INFO).show();
+                handleTakenPicMsg.postDelayed(checkForTakenPicture,500);
+            } else AppMsg.cancelAll();
+        }
+    };
+
+    @Override
+    public void onResume(){
+        super.onResume();
 
     }
     //connect the objects with the corresponding resources in take_pic_activity.xml
@@ -68,6 +97,9 @@ public class TakePicActivity extends Activity {
         //set button listeners to corresponding button objects
         btnCallCameraApp.setOnClickListener(btnCallCameraAppOnClickListener);
         btnAcceptPic.setOnClickListener(btnAcceptPicOnClickListener);
+        if (User.getInstance().getProfilePicture()!=null){
+            profilePic.setImageBitmap(User.getInstance().getProfilePicture());
+        }
     }
 
     View.OnClickListener btnCallCameraAppOnClickListener = new View.OnClickListener() {
@@ -209,7 +241,10 @@ public class TakePicActivity extends Activity {
                 startActivity(intent);
                 //close this activity
                 finish();*/
-            }else showToast("Please take a picture...", Toast.LENGTH_SHORT);
+            }else if (User.getInstance().getProfilePicture()!=null){
+                finish();
+            }
+            else showToast("Please take a picture...", Toast.LENGTH_SHORT);
         }
     };
 
