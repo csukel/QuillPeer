@@ -7,22 +7,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
 import com.malinskiy.superrecyclerview.OnMoreListener;
@@ -35,12 +31,10 @@ import java.util.List;
 
 import core.FragmentLifecycle;
 import core.ImageProcessing;
-import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
-import ui.quillpeer.com.quillpeer.ui.MainActivity;
 
 import static android.widget.SearchView.OnQueryTextListener;
 
@@ -113,9 +107,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //set the adapter to the recycler view
         recList.setAdapter(allPeopleAdapter);*/
         allPeopleAdapter.notifyDataSetChanged();
-        if (isVisible){
 
-        }
     }
 
     @Override
@@ -137,7 +129,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         super.onCreateOptionsMenu(menu, inflater);
-
+        Log.i(TAG,"onCreateOptionsMenu");
         inflater.inflate(R.menu.search_menu, menu);
         //initialise the search menu item
         searchItem = menu.findItem(R.id.search);
@@ -147,7 +139,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         searchView.setQueryHint("Search for people");
         //assign a query text lister to the menu item
         searchView.setOnQueryTextListener(onQueryTextChange);
-        searchView.setIconifiedByDefault(true);
+        searchView.setIconifiedByDefault(false);
+        //if user was searching before then load the previous search state
+        if (searching) {
+            searchItem.expandActionView();
+            searchView.setQuery(queryString, false);
+            searchView.clearFocus();
+        }
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -232,7 +230,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
-                JSONObject jsonObject=null;
+                JSONObject jsonObject;
                 boolean outcome = false;
                 try {
                     if (result != null) {
@@ -360,9 +358,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }else {
             Log.i(TAG,"not visible hint");
             //if the user was on searching the last time visited this screen then reset the list
-            if (searching) {
+/*            if (searching) {
                 resetList();
-            }
+            }*/
             isVisible = false;
         }
     }
