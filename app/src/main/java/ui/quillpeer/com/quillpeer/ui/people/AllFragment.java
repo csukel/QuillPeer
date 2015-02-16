@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,6 +65,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     private boolean searching = false;
     private String screenName = "AllFragment";
     private String queryString;
+    private SearchView searchView;
+    private MenuItem searchItem;
     private static final String TAG = AllFragment.class.getSimpleName();
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,14 +140,14 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
         inflater.inflate(R.menu.search_menu, menu);
         //initialise the search menu item
-        MenuItem searchItem = menu.findItem(R.id.search);
+        searchItem = menu.findItem(R.id.search);
         //get the action register to the above menu item
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         //set a hint in the search input box
         searchView.setQueryHint("Search for people");
         //assign a query text lister to the menu item
         searchView.setOnQueryTextListener(onQueryTextChange);
-        searchView.setIconifiedByDefault(false);
+        searchView.setIconifiedByDefault(true);
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -344,12 +347,21 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         if (visibleHint){
             Log.i(TAG,"visible hint");
             isVisible = true;
+/*            if (searching) {
+                //searchView.setIconified(true);
+                //searchView.onActionViewCollapsed();
+                //searchItem.expandActionView();
+                //MenuItemCompat.expandActionView(searchItem);
+
+                //searchView.onActionViewExpanded();
+                //searchView.setQuery(queryString,false);
+               // searchView.invalidate();
+            }*/
         }else {
             Log.i(TAG,"not visible hint");
             //if the user was on searching the last time visited this screen then reset the list
             if (searching) {
                 resetList();
-
             }
             isVisible = false;
         }
