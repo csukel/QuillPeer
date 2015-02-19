@@ -231,7 +231,7 @@ public class TakePicActivity extends Activity {
     View.OnClickListener btnAcceptPicOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO send pic to the server
+
             //move to main activity
 
             if (capturedImage!=null) {

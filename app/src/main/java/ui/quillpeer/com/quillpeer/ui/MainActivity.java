@@ -31,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -182,7 +184,9 @@ public class MainActivity extends FragmentActivity
                         //wrap them up into a JSONObject
                         jsonObject.put("id", Beacons.getBeaconsIndices().get(macaddr));
                         jsonObject.put("mac_address",macaddr);
-                        jsonObject.put("beacon_dist",avgDist);
+                        BigDecimal averageDist = new BigDecimal(avgDist);
+
+                        jsonObject.put("beacon_dist",averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
