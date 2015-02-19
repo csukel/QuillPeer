@@ -50,6 +50,16 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        Preference prefTutorial = (Preference)findPreference("pref_tutorial");
+        prefTutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(),TutorialActivity.class);
+                startActivity(intent);
+                return false;
+            }
+        });
+
     }
 
 

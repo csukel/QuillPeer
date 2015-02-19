@@ -97,6 +97,7 @@
         </Preference>
         <Preference
             android:title="Tutorial"
+            android:key="pref_tutorial"
             android:summary="Tap here to access the tutorial section."
             >
 
