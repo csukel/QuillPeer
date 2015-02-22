@@ -85,6 +85,12 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleViewHolder> 
             peopleViewHolder.imgPeopleProfilePic.setImageResource(R.drawable.ic_action_person);
         }
 
+        //TODO set the color according to the correlation degree
+        double correlation = 0.0;
+        if (correlation<0.5){
+            peopleViewHolder.corrIndicator.setImageResource(R.color.blue);
+        }
+
     }
 
 

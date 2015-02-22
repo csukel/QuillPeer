@@ -66,11 +66,33 @@
 
 
             </LinearLayout>
-            <ImageView
-                android:id="@+id/imgPeopleFavourite"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:src="@drawable/ic_star_white"/>
+                android:orientation="vertical"
+                android:weightSum="1"
+                >
+
+                <ImageView
+                    android:id="@+id/imgPeopleFavourite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star_white"
+                    android:layout_weight="0.5"
+
+                    />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/corr_indicator_img"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@color/black"
+                    android:layout_weight="0.5"
+                    android:layout_marginLeft="8dp"
+                    />
+
+                </LinearLayout>
+
 
         </LinearLayout>
         </android.support.v7.widget.CardView>

@@ -96,9 +96,13 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
             if (visible) {
                 final AppMsg.Style style = AppMsg.STYLE_INFO;
                 final CharSequence msg = "To enjoy full functionality of the map please tap on the full screen button!";
-                appMsg = AppMsg.makeText(getActivity(), msg, style);
-                appMsg.setLayoutGravity(Gravity.BOTTOM);
-                appMsg.show();
+                try {
+                    appMsg = AppMsg.makeText(getActivity(), msg, style);
+                    appMsg.setLayoutGravity(Gravity.BOTTOM);
+                    appMsg.show();
+                }catch (NullPointerException nex){
+                    Log.e(TAG,nex.toString());
+                }
 
             }
             handlerInfoMsg.postDelayed(runnableMsgInfo, 50);

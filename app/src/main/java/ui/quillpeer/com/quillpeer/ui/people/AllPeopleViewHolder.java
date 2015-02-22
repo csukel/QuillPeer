@@ -20,6 +20,7 @@ import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
 import core.Server.ServerComm;
+import de.hdodenhof.circleimageview.CircleImageView;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -33,6 +34,7 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
     protected TextView txtPeopleQualification;
     protected ImageView imgPeopleFavourite;
     protected Toast m_currentToast;
+    protected CircleImageView corrIndicator;
     //private OtherParticipant op;
     private List<Person> personList;
     private String screenName;
@@ -47,7 +49,7 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
         txtPeopleDepartment = (TextView)v.findViewById(R.id.txtPeopleDepartment);
         txtPeopleUniversity = (TextView)v.findViewById(R.id.txtPeopleUniversity);
         txtPeopleQualification = (TextView)v.findViewById(R.id.txtPeopleQualification);
-
+        corrIndicator = (CircleImageView)v.findViewById(R.id.corr_indicator_img);
         //set listener to favourite image view
         imgPeopleFavourite.setOnTouchListener(imgStarListener);
         //set tap listener on the profile pic
