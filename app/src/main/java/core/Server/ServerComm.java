@@ -231,7 +231,7 @@ public class ServerComm {
         return result;
     }
     //send the average of 5 measurements collected fore each beacon (this method communicates with the corresponding api of the server)
-    public static String savePosition(JSONArray jsonArray){
+    public static String savePosition(JSONObject jsonArray){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.savePosition);
         String result=null;
 

@@ -13,33 +13,33 @@
             <CheckBoxPreference
                 android:key="qfilter_professor"
                 android:summary=""
-                android:title="Show professors on map"
+                android:title="Show Professors on map"
                 android:defaultValue="true"
                 />
 
             <CheckBoxPreference
                 android:key="qfilter_associate"
                 android:summary=""
-                android:title="Show associates on map"
+                android:title="Show Associates on map"
                 android:defaultValue="true"
                 />
 
         <CheckBoxPreference
             android:key="qfilter_assistant"
             android:summary=""
-            android:title="Show assistants on map"
+            android:title="Show Assistants on map"
             android:defaultValue="true"
             />
         <CheckBoxPreference
             android:key="qfilter_postdoc"
             android:summary=""
-            android:title="Show postdocs on map"
+            android:title="Show Postdocs on map"
             android:defaultValue="true"
             />
         <CheckBoxPreference
             android:key="qfilter_phd"
             android:summary=""
-            android:title="Show phd students on map"
+            android:title="Show PhD students on map"
             android:defaultValue="true"
             />
 <!--        <ListPreference

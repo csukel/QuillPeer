@@ -195,7 +195,13 @@ public class MainActivity extends FragmentActivity
                 }
                 //sent the json array to the server if you have measurements from more than 2 beacons
                 if (jsonArray.length()>2) {
-                    sendBeaconsToServer(jsonArray);
+                    JSONObject jsnObj = new JSONObject();
+                    try {
+                        jsnObj.put("beacon",jsonArray);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    sendBeaconsToServer(jsnObj);
                 }
                 Log.d(TAG,"beacon averaging");
                 measurementsCounter =0;
@@ -278,13 +284,13 @@ public class MainActivity extends FragmentActivity
             case 1:
                 gFragment = fragmentPeople;
                 break;
-            case 2:
+/*            case 2:
                 gFragment = fragmentTimetable;
-                break;
-            case 3:
+                break;*/
+            case 2:
                 gFragment = fragmentSettings;
                 break;
-            case 4:
+            case 3:
                 gFragment = fragmentAbout;
                 break;
         }
@@ -305,13 +311,13 @@ public class MainActivity extends FragmentActivity
             case 1:
                 mTitle = getString(R.string.title_section2);
                 break;
-            case 2:
+/*            case 2:
                 mTitle = getString(R.string.title_section3);
-                break;
-            case 3:
+                break;*/
+            case 2:
                 mTitle = getString(R.string.title_section4);
                 break;
-            case 4:
+            case 3:
                 mTitle = getString(R.string.title_section5);
                 break;
         }
@@ -404,13 +410,13 @@ public class MainActivity extends FragmentActivity
     }
 
     //create an async task to execute the post request to the server to send beacons' measurements
-    private void sendBeaconsToServer(JSONArray jsonArray) {
+    private void sendBeaconsToServer(JSONObject jsonArray) {
 
-        class SendPostReqAsyncTask extends AsyncTask<JSONArray, Void, String> {
+        class SendPostReqAsyncTask extends AsyncTask<JSONObject, Void, String> {
             @Override
-            protected String doInBackground(JSONArray... params) {
+            protected String doInBackground(JSONObject... params) {
 
-                JSONArray paramJArray = params[0];
+                JSONObject paramJArray = params[0];
 
                 return ServerComm.savePosition(paramJArray);
             }

@@ -36,9 +36,9 @@ public class NavigationDrawerAdapter extends ArrayAdapter<String> {
             imageView.setImageResource(R.drawable.ic_action_person);
         } else if (s.equals("People")) {
             imageView.setImageResource(R.drawable.ic_action_group);
-        } else if (s.equals("Timetable")) {
+        } /*else if (s.equals("Timetable")) {
             imageView.setImageResource(R.drawable.ic_action_time);
-        } else if (s.equals("About")){
+        }*/ else if (s.equals("About")){
             imageView.setImageResource(R.drawable.ic_action_about);
         } else if (s.equals("Settings")){
             imageView.setImageResource(R.drawable.ic_action_settings);
