@@ -193,8 +193,10 @@ public class MainActivity extends FragmentActivity
                     //add the jsonObject into a json array
                     jsonArray.put(jsonObject);
                 }
-                //sent the json array to the server
-                sendBeaconsToServer(jsonArray);
+                //sent the json array to the server if you have measurements from more than 2 beacons
+                if (jsonArray.length()>2) {
+                    sendBeaconsToServer(jsonArray);
+                }
                 Log.d(TAG,"beacon averaging");
                 measurementsCounter =0;
                 beaconsDistancesList.clear();

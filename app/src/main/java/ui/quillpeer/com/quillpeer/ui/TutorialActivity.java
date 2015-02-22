@@ -1,6 +1,7 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -22,16 +23,17 @@ public class TutorialActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //set the screen UI
         setContentView(R.layout.tutorial);
         //instantiate the page adapter
         mAdapter = new TutorialPageAdapter(getSupportFragmentManager());
         //instantiate the view pager
-        mPager = (ViewPager)findViewById(R.id.tutorial_pager);
+        mPager = (ViewPager) findViewById(R.id.tutorial_pager);
         //set the adapter to the view pager
         mPager.setAdapter(mAdapter);
         //set and indicator with circles at the bottom of the page
-        mIndicator = (CirclePageIndicator)findViewById(R.id.indicator);
+        mIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
         //set a page change listener
         mIndicator.setOnPageChangeListener(pageChangeListener);
         //bind the indicator to the pager

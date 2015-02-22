@@ -59,7 +59,8 @@ public class SplashActivity extends Activity {
                 @Override
                 public void run() {
                 /* Create an Intent that will start the login user activity. */
-                    Intent mainIntent = new Intent(SplashActivity.this,LoginActivity.class);
+                    Intent mainIntent = new Intent(SplashActivity.this,TutorialActivity.class);
+                    mainIntent.putExtra("class","SplashActivity");
                     SplashActivity.this.startActivity(mainIntent);
                     SplashActivity.this.finish();
                 }
@@ -69,6 +70,7 @@ public class SplashActivity extends Activity {
         {
 
             Intent a=new Intent(SplashActivity.this,LoginActivity.class);
+            //a.putExtra("class","SplashActivity");
             startActivity(a);
             finish();
         }
