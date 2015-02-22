@@ -1,5 +1,6 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.qozix.tileview.TileView;
 
 import core.FragmentLifecycle;
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.MapActivity;
 
 /**
  * Created by loucas on 18/11/2014.
@@ -82,7 +84,8 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         @Override
         public void onClick(View v) {
             Log.i(TAG,"full screen is clicked");
-
+            Intent intent = new Intent(getActivity(), MapActivity.class);
+            startActivity(intent);
         }
     };
 
