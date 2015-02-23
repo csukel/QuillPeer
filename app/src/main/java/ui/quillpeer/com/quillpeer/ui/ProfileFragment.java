@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ public class ProfileFragment extends Fragment {
     private TextView profilePaperAbstract;
     private TextView profilePaperAbstractTitle;
     private ImageView profileFavourite;
+    private static final String TAG = ProfileFragment.class.getSimpleName();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,7 +45,11 @@ public class ProfileFragment extends Fragment {
     private void initializeViewResources(View v) {
         User user = User.getInstance();
         profilePicture = (ImageView)v.findViewById(R.id.imgCardProfilePicture);
-        profilePicture.setImageBitmap(user.getProfilePicture());
+        try {
+            profilePicture.setImageBitmap(user.getProfilePicture());
+        }catch(NullPointerException nex){
+            Log.e(TAG,nex.toString());
+        }
         profilePicture.setOnTouchListener(profilePicTouchListener);
 
         profileName = (TextView)v.findViewById(R.id.txtCardProfileName);

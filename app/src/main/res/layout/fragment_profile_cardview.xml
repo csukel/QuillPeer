@@ -51,7 +51,7 @@
                     <TextView
                         android:id="@+id/txtCardProfileName"
                         android:layout_width="fill_parent"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="sans-serif-condensed"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -63,7 +63,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="sans-serif-thin"
+                        android:fontFamily="sans-serif-condensed"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="University of Warwick"
                         android:layout_marginLeft="5dp"
@@ -85,7 +85,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="sans-serif-light"
+                        android:fontFamily="sans-serif-condensed"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="MEng Computer Science Student (4th year)"
                         android:layout_marginLeft="5dp"
@@ -142,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="Abstract"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="sans-serif-condensed"
                         android:layout_marginLeft="5dp"
                     />
 
@@ -152,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:text="This report looks at the development of an Android instant messaging application that its main focus is to protect children and teenagers from becoming victims of cyberbullying. It goes through the whole development process. Starts from how to build an instant messaging application, then steps to the integration of Google Profanity filter in order to block profane words. Continues with the evaluation between the two different techniques which have been studied to improve the accuracy of the profanity filtering mechanism, a sentiment analysis model and a ruled based approach. Finished with the integration of the rule based approach. The project is then fully evaluated against the initial objectives and research done with each component of the system studied. Further work is suggested to improve the techniques employed for tackling cyberbullying."
                         android:layout_marginLeft="5dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="sans-serif-condensed"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         />
                     </LinearLayout>

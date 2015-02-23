@@ -37,6 +37,8 @@ public class MapData {
                     if (result!=null) {
                         jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
+                        maxX = jsonObject.getJSONObject("coordinates").getDouble("x");
+                        maxY = jsonObject.getJSONObject("coordinates").getDouble("y");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
