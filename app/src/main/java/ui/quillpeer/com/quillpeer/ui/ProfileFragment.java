@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -58,7 +59,8 @@ public class ProfileFragment extends Fragment {
         profilePaperAbstractTitle = (TextView)v.findViewById(R.id.txtCardProfilePaperAbstractTitle);
         profilePaperAbstractTitle.setText(user.getPaperAbstractTitle());
         profileFavourite = (ImageView)v.findViewById(R.id.imgCardProfileFavourite);
-        profileFavourite.setVisibility(View.INVISIBLE);
+        //remove the profile favourit view
+        ((LinearLayout)profileFavourite.getParent()).removeView(profileFavourite);
     }
 
     @Override
