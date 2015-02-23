@@ -20,6 +20,7 @@ import com.melnykov.fab.ObservableScrollView;
 import com.qozix.tileview.TileView;
 
 import core.FragmentLifecycle;
+import core.MapData;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.MapActivity;
 
@@ -30,6 +31,7 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
     private TileView tileView;
     private LinearLayout mapLayout;
     private Handler handlerInfoMsg;
+    private Handler handlerCheckMapSize;
     private AppMsg appMsg;
     private boolean visible = false;
     private static final String TAG = MapFragment.class.getSimpleName();
@@ -38,6 +40,8 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        MapData.getMapSize();
+        MapData.getRecommendation();
         tileView = new TileView(getActivity());
 
         int width = 256 * 10;
@@ -77,6 +81,8 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         handlerInfoMsg = new Handler();
         handlerInfoMsg.postDelayed(runnableMsgInfo,200);
 
+        handlerCheckMapSize = new Handler();
+        handlerInfoMsg.postDelayed(runnableCheckMapSize,200);
         return rootView;
     }
 
@@ -86,6 +92,19 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
             Log.i(TAG,"full screen is clicked");
             Intent intent = new Intent(getActivity(), MapActivity.class);
             startActivity(intent);
+        }
+    };
+
+    //check if the map size is returned by the server
+    Runnable runnableCheckMapSize = new Runnable() {
+        @Override
+        public void run() {
+            if (MapData.haveMapSize){
+                Log.i(TAG,"map size has been provided by the server");
+            }else {
+                Log.i(TAG,"map size not provided");
+                handlerCheckMapSize.postDelayed(runnableCheckMapSize,100);
+            }
         }
     };
 
@@ -142,5 +161,13 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
                 appMsg.cancel();
             visible = false;
         }
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        //prevent runnable from running again after this fragment is destroyed
+        handlerInfoMsg.removeCallbacks(runnableMsgInfo);
+        //stop runnable check map size when fragment is destroyed
+        handlerCheckMapSize.removeCallbacks(runnableCheckMapSize);
     }
 }

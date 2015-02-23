@@ -282,6 +282,59 @@ public class ServerComm {
         return result;
     }
 
+    //GET method to get the max X and max Y coordinates
+    public static String getMapSize(){
+        String result = null;
+
+        //instantiate the http get request
+        HttpGet httpGet = new HttpGet(Server.getHost()+APIs.getMapSize);
+        try {
+            // HttpResponse is an interface just like HttpPost.
+            //Therefore we can't initialize them
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpEntity entity = httpResponse.getEntity();
+            //write the response in the result string
+            result = EntityUtils.toString(entity);
+
+        } catch (ClientProtocolException cpe) {
+            System.out.println("First Exception caz of HttpResponese :" + cpe);
+            cpe.printStackTrace();
+        } catch (IOException ioe) {
+            System.out.println("Second Exception caz of HttpResponse :" + ioe);
+            ioe.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * to test recommendation and map
+     * @return
+     */
+    public static String getRecommendation(){
+        String result = null;
+
+        //instantiate the http get request
+        HttpGet httpGet = new HttpGet(Server.getHost()+APIs.getRecommendation);
+        try {
+            // HttpResponse is an interface just like HttpPost.
+            //Therefore we can't initialize them
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpEntity entity = httpResponse.getEntity();
+            //write the response in the result string
+            result = EntityUtils.toString(entity);
+
+        } catch (ClientProtocolException cpe) {
+            System.out.println("First Exception caz of HttpResponese :" + cpe);
+            cpe.printStackTrace();
+        } catch (IOException ioe) {
+            System.out.println("Second Exception caz of HttpResponse :" + ioe);
+            ioe.printStackTrace();
+        }
+
+        return result;
+    }
+
 
 
 

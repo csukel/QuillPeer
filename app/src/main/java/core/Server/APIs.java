@@ -12,6 +12,7 @@ public class APIs {
     public static final String removeFavourite = "/api/removeFavourite";
     public static final String uploadProfilPicture = "/api/savePicture";
     public static final String savePosition = "/api/savePosition";
-
+    public static final String getMapSize ="/api/getMapSize";
+    public static final String getRecommendation = "/api/getRecommendation";
     private APIs(){}
 }
