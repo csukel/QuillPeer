@@ -44,9 +44,6 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         MapData.getRecommendation();
         tileView = new TileView(getActivity());
 
-        int width = 256 * 10;
-        int height = 256 * 7 + 144;
-
         //tileView.setSize(width, height);
         tileView.setSize( 3090, 2536 );
         tileView.addDetailLevel(1f, "1000_%col%_%row%.png", "downsamples/map.png");
@@ -55,7 +52,7 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         tileView.addDetailLevel(.125f, "125_%col%_%row%.png", "downsamples/map.png");
 
         tileView.setScaleLimits(0, 4);
-        tileView.setScale(.5);
+        tileView.setScale(0.5);
 
         // let's use 0-1 positioning...
         tileView.defineRelativeBounds( 0, 0, 10,  10 );
