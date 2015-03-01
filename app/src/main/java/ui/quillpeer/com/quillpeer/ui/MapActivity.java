@@ -1,8 +1,10 @@
 package ui.quillpeer.com.quillpeer.ui;
 
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 import android.widget.LinearLayout;
 
 import com.qozix.tileview.TileView;
@@ -33,7 +35,10 @@ public class MapActivity extends TileViewActivity {
         tileView = getTileView();
 
         //tileView.setSize(width, height);
-        tileView.setSize( 3090, 2536 );
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        tileView.setSize( size.x, size.y );
         tileView.addDetailLevel(1f, "1000_%col%_%row%.png", "downsamples/map.png");
         tileView.addDetailLevel(.5f, "500_%col%_%row%.png", "downsamples/map.png");
         tileView.addDetailLevel(.25f, "250_%col%_%row%.png", "downsamples/map.png");
@@ -43,7 +48,7 @@ public class MapActivity extends TileViewActivity {
         tileView.setScale(.5);
 
         // let's use 0-1 positioning...
-        tileView.defineRelativeBounds(0, 0, MapData.screenMaxX, MapData.screenMaxY);
+        tileView.defineRelativeBounds( MapData.screenMaxX, MapData.screenMaxY,0, 0);
         // center markers along both axes
         tileView.setMarkerAnchorPoints( -0.5f, -0.5f );
 

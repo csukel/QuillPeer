@@ -1,13 +1,17 @@
 package core;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 
+import core.People.OtherParticipant;
 import core.People.Person;
 import core.People.User;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ui.quillpeer.com.quillpeer.R;
+import ui.quillpeer.com.quillpeer.ui.people.PersonProfileActivity;
 
 /**
  * Created by loucas on 01/03/2015.
@@ -42,7 +46,21 @@ public class MapMarker {
         markerView.setScaleY(0.75f);
         markerView.setBorderColor(Color.parseColor("#9B30FF"));
         markerView.setBorderWidth(15);
+        /*user can only click on other people markers*/
+        if (person instanceof OtherParticipant)
+            markerView.setOnClickListener(markerOnClickListener);
     }
+
+    /*when a marker is clicked go to the corresponding person profile page*/
+    View.OnClickListener markerOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
+            intent.putExtra("person_id", ((OtherParticipant) person).getUserId());
+            intent.putExtra("fragment","map");
+            context.startActivity(intent);
+        }
+    };
     /*get the person object*/
     public Person getPerson(){
         return this.person;

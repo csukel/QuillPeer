@@ -48,8 +48,7 @@ public class MapData {
                     if (result!=null) {
                         jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
-                        maxX = jsonObject.getJSONObject("coordinates").getDouble("x");
-                        maxY = jsonObject.getJSONObject("coordinates").getDouble("y");
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -57,8 +56,14 @@ public class MapData {
 
 
                 if (outcome){
-                    //TODO check the outome when the api from the server is ready
                     haveMapSize = true;
+                    try {
+                        maxX = jsonObject.getJSONObject("coordinates").getDouble("x");
+                        maxY = jsonObject.getJSONObject("coordinates").getDouble("y");
+                    } catch (JSONException e) {
+                        Log.e(TAG,e.toString());
+                    }
+
                 }
                 else{
                     //showToast(msg,Toast.LENGTH_SHORT);
@@ -82,7 +87,7 @@ public class MapData {
             @Override
             protected String doInBackground(Void... params) {
 
-                return ServerComm.getRecommendation();
+                return ServerComm.getRecommendation("20");
             }
 
             @Override
@@ -102,7 +107,6 @@ public class MapData {
 
 
                 if (outcome){
-                    //TODO check the outome when the api from the server is ready
                     markerList = new ArrayList<MapMarker>();
 
                     try {
@@ -124,7 +128,7 @@ public class MapData {
                                     JSONObject ob = (JSONObject) jsonArray.get(i);
                                     OtherParticipant person = new OtherParticipant(ob.getString("id"),ob.getString("prefix"),
                                             ob.getString("first_name"),ob.getString("last_name"),ob.getString("university"),
-                                            ob.getString("department"),ob.getString("email"),ob.getString("is_speaker").equals("1"),ob.getBoolean("favourite"),
+                                            ob.getString("department"),ob.getString("email"),ob.getString("is_speaker").equals("1"),false,
                                             ob.getString("qualification"));
                                     String picture = ob.getString("picture");
                                     if (!(picture.equals("null"))){
@@ -180,12 +184,12 @@ public class MapData {
         double xcoor = (screenMaxX/getMaxX())*originalX;
         xcoor = screenMaxY/getMaxY()*(originalX);
         int i =1;
-        while (xcoor>=screenMaxY){
+        while (xcoor>=screenMaxY-0.5){
             xcoor = screenMaxY/getMaxY()*(originalX-i);
             i++;
         }
         i=1;
-        while(xcoor<=0){
+        while(xcoor<=0.5){
             xcoor = screenMaxY/getMaxY()*(originalX+i);
             i++;
         }
@@ -196,12 +200,12 @@ public class MapData {
         double ycoor = (screenMaxY/getMaxY()*originalY);
         ycoor = screenMaxY/getMaxY()*(originalY);
         int i =1;
-        while (ycoor>=screenMaxY){
+        while (ycoor>=screenMaxY-0.5){
             ycoor = screenMaxY/getMaxY()*(originalY-i);
             i++;
         }
         i=1;
-        while(ycoor<=0){
+        while(ycoor<=0.5){
             ycoor = screenMaxY/getMaxY()*(originalY+i);
             i++;
         }

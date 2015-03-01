@@ -38,7 +38,8 @@ public class PersonProfileActivity extends Activity {
     private Toast m_currentToast;
     private OtherParticipant person;
     private ImageView profileFavourite;
-    private int listIndex;
+    private int listIndex=-1;
+    private static final String TAG = PersonProfileActivity.class.getSimpleName();
 
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -65,7 +66,11 @@ public class PersonProfileActivity extends Activity {
         if (intent!=null) {
             Bundle bundle = intent.getExtras();
             String person_id = bundle.getString("person_id");
-            listIndex = bundle.getInt("position");
+            try {
+                listIndex = bundle.getInt("position");
+            }catch (NullPointerException ex){
+                Log.e(TAG,ex.toString());
+            }
             //get person's data from server
             sendPostRequest(person_id);
         }else Log.e("PersonProfileActivity","NUll intent passed");

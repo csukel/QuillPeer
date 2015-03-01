@@ -311,15 +311,26 @@ public class ServerComm {
      * to test recommendation and map
      * @return
      */
-    public static String getRecommendation(){
+    public static String getRecommendation(String size){
         String result = null;
 
         //instantiate the http get request
-        HttpGet httpGet = new HttpGet(Server.getHost()+APIs.getRecommendation);
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getRecommendation);
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
         try {
+
+            jsonObject.put("size",size);
+            jsonObject.put("qualification","");
+            //jsonArray.put(jsonObject);
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
             // HttpResponse is an interface just like HttpPost.
             //Therefore we can't initialize them
-            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpResponse httpResponse = httpClient.execute(httpPost);
             HttpEntity entity = httpResponse.getEntity();
             //write the response in the result string
             result = EntityUtils.toString(entity);
@@ -330,6 +341,8 @@ public class ServerComm {
         } catch (IOException ioe) {
             System.out.println("Second Exception caz of HttpResponse :" + ioe);
             ioe.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return result;
