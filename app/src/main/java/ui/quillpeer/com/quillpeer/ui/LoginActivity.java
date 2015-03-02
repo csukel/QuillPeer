@@ -102,7 +102,7 @@ public class LoginActivity extends Activity {
     };
 
 
-
+    /*trigger the authentication api comm between client and server*/
     private void sendPostRequest(String givenUsername, String givenPassword) {
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {

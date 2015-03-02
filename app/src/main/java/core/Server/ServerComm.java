@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.http.AndroidHttpClient;
+import android.preference.Preference;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -311,17 +312,18 @@ public class ServerComm {
      * to test recommendation and map
      * @return
      */
-    public static String getRecommendation(String size){
+    public static String getRecommendation(String size,JSONArray jsonArray){
         String result = null;
 
         //instantiate the http get request
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getRecommendation);
         JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
+
         try {
 
             jsonObject.put("size",size);
-            jsonObject.put("qualification","");
+            /*put json array which includes the qualifications that the user selects as filters for the map*/
+            jsonObject.put("qualification",jsonArray);
             //jsonArray.put(jsonObject);
             httpPost.setHeader("Content-type", "application/json");
 

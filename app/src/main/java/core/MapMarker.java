@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import core.People.OtherParticipant;
 import core.People.Person;
@@ -23,6 +24,7 @@ public class MapMarker {
     private CircleImageView markerView;
     private double x =0.0;
     private double y=0.0;
+    private Toast m_currentToast;
 
     public MapMarker(Context context,Person p,double xcoor,double ycoor ){
         this.person =p;
@@ -42,13 +44,17 @@ public class MapMarker {
         }catch (NullPointerException nex){
             Log.e(TAG,nex.toString());
         }
-        markerView.setScaleX(0.75f);
-        markerView.setScaleY(0.75f);
+/*        markerView.setScaleX(0.75f);
+        markerView.setScaleY(0.75f);*/
+        markerView.setScaleX(0.60f);
+        markerView.setScaleY(0.60f);
         markerView.setBorderColor(Color.parseColor("#9B30FF"));
         markerView.setBorderWidth(15);
         /*user can only click on other people markers*/
         if (person instanceof OtherParticipant)
             markerView.setOnClickListener(markerOnClickListener);
+        else if (person instanceof User)
+            markerView.setOnClickListener(userMarkerClickListener);
     }
 
     /*when a marker is clicked go to the corresponding person profile page*/
@@ -61,6 +67,15 @@ public class MapMarker {
             context.startActivity(intent);
         }
     };
+
+    //TODO click on marker corresponding to user-testing purposes-should be removed later on
+    View.OnClickListener userMarkerClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showToast(v.getContext(),"x:" + getX() + " \ny:" + getY(),Toast.LENGTH_SHORT);
+        }
+    };
+
     /*get the person object*/
     public Person getPerson(){
         return this.person;
@@ -76,5 +91,16 @@ public class MapMarker {
     /*return the image view*/
     public CircleImageView getMarkerView(){
         return this.markerView;
+    }
+
+    void showToast(Context context, String text,int toast_length)
+    {
+        if(m_currentToast != null)
+        {
+            m_currentToast.cancel();
+        }
+        m_currentToast = Toast.makeText(context, text, toast_length);
+        m_currentToast.show();
+
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.qozix.tileview.TileView;
 
@@ -24,6 +25,7 @@ public class MapActivity extends TileViewActivity {
     private TileView tileView;
     private Handler handlerUpdateMap;
     private static List<MapMarker> markerList;
+
     @Override
     public void onCreate( Bundle savedInstanceState ) {
 
@@ -48,7 +50,8 @@ public class MapActivity extends TileViewActivity {
         tileView.setScale(.5);
 
         // let's use 0-1 positioning...
-        tileView.defineRelativeBounds( MapData.screenMaxX, MapData.screenMaxY,0, 0);
+        if (MapData.haveMapSize)
+            tileView.defineRelativeBounds( 0, 0,MapData.getMaxX(), MapData.getMaxY());
         // center markers along both axes
         tileView.setMarkerAnchorPoints( -0.5f, -0.5f );
 
@@ -66,6 +69,7 @@ public class MapActivity extends TileViewActivity {
         @Override
         public void run() {
             if (MapData.haveMapSize){
+                tileView.defineRelativeBounds( 0, 0,MapData.getMaxX(), MapData.getMaxY());
                 if ( !MapData.isUpdating() && MapData.getMarkerList()!=null){
                     //TODO get data from list and show the markers
                     updateMap();
@@ -103,6 +107,8 @@ public class MapActivity extends TileViewActivity {
         super.onDestroy();
         handlerUpdateMap.removeCallbacks(runnableUpdateMap);
     }
+
+
 
 
 }

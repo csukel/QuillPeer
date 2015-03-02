@@ -1,7 +1,10 @@
 package core;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -45,7 +48,9 @@ public class MapData {
                 //String msg = "Something went wrong";
                 boolean outcome = false;
                 try {
+                    /*if the result is not a null object*/
                     if (result!=null) {
+                        /*get the result returned back from the server api*/
                         jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
 
@@ -54,9 +59,11 @@ public class MapData {
                     e.printStackTrace();
                 }
 
-
+                /*if the api returns successful call then*/
                 if (outcome){
+                    /*the map size is retrieved*/
                     haveMapSize = true;
+                    /*set the values that have been got back from the server*/
                     try {
                         maxX = jsonObject.getJSONObject("coordinates").getDouble("x");
                         maxY = jsonObject.getJSONObject("coordinates").getDouble("y");
@@ -82,12 +89,42 @@ public class MapData {
 
     //trigger the get request from ServerComm responsible for getting the map size
     public static void getRecommendation(){
+
         isUpdating =true;
         class SendGetReqAsyncTask extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... params) {
+                /*get the filter criteria for map which can be found in the settings screen*/
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.currentActivity());
+                boolean isProfessorsSelected = preferences.getBoolean("qqfilter_professor",true);
+                boolean isAssociateSelected = preferences.getBoolean("qfilter_associate",true);
+                boolean isAssistantSelected = preferences.getBoolean("qfilter_assistant",true);
+                boolean isPostdocSelected = preferences.getBoolean("qfilter_postdoc",true);
+                boolean isPhdSelected = preferences.getBoolean("qfilter_phd",true);
+                boolean isOtherSelected = preferences.getBoolean("qfilter_other",true);
 
-                return ServerComm.getRecommendation("20");
+                /*set the corresponding strings in a json array*/
+                JSONArray jsonArray = new JSONArray();
+                if (isProfessorsSelected){
+                    jsonArray.put("Professor");
+                }
+                if (isAssociateSelected){
+                    jsonArray.put("Associate / Senior lecturer / Reader");
+                }
+                if (isAssistantSelected){
+                    jsonArray.put("Assistant / Lecturer");
+                }
+                if (isPostdocSelected){
+                    jsonArray.put("Postdoc");
+                }
+                if (isPhdSelected){
+                    jsonArray.put("PhD students");
+                }
+                if (isOtherSelected){
+                    jsonArray.put("Other");
+                }
+                /*send the request to the server*/
+                return ServerComm.getRecommendation("20",jsonArray);
             }
 
             @Override
@@ -110,8 +147,10 @@ public class MapData {
                     markerList = new ArrayList<MapMarker>();
 
                     try {
-                        markerList.add(new MapMarker(MyApplication.currentActivity(), User.getInstance(),jsonObject.getJSONObject("user").getDouble("x_axis"),
-                                jsonObject.getJSONObject("user").getDouble("y_axis")));
+                        double x = jsonObject.getJSONObject("user").getDouble("x_axis");
+                        double y = jsonObject.getJSONObject("user").getDouble("y_axis");
+                        markerList.add(new MapMarker(MyApplication.currentActivity(), User.getInstance(),x,y));
+
                     } catch (JSONException e) {
                         Log.e(TAG,e.toString());
                     }
@@ -137,7 +176,7 @@ public class MapData {
                                     }
                                     double x = ob.getJSONObject("location").getDouble("x_axis");
                                     double y = ob.getJSONObject("location").getDouble("y_axis");
-                                    markerList.add(new MapMarker(MyApplication.currentActivity(),person,MapData.calcScreenX(x),MapData.calcScreenY(y)));
+                                    markerList.add(new MapMarker(MyApplication.currentActivity(),person,x,y));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
