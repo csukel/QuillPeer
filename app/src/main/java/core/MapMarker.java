@@ -102,7 +102,7 @@ public class MapMarker {
         {
             m_currentToast.cancel();
         }
-        m_currentToast = Toast.makeText(context, text, toast_length);
+        m_currentToast = Toast.makeText(MyApplication.getAppContext(), text, toast_length);
         m_currentToast.show();
 
     }

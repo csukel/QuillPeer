@@ -39,6 +39,10 @@ public class MyApplication extends Application {
         return sharedPreferences;
     }
 
+    public static void setApplicationContext(Context c){
+        context = c;
+    }
+
     public static void setPrefs(SharedPreferences preferences){
         sharedPreferences = preferences;
     }

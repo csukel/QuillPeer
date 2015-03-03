@@ -100,6 +100,7 @@ public class MainActivity extends FragmentActivity
         handleInternetStateMsg.postDelayed(checkInternetState,2000);
         //start the communication with beacons
         startBeaconsComm();
+        MyApplication.setApplicationContext(getApplicationContext());
     }
 
     Runnable ckeckBleOn = new Runnable(){

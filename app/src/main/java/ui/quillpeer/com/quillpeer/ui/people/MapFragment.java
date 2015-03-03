@@ -19,8 +19,11 @@ import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
 import com.qozix.tileview.TileView;
 
+import java.util.List;
+
 import core.FragmentLifecycle;
 import core.MapData;
+import core.MapMarker;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.MapActivity;
 
@@ -31,8 +34,9 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
     private TileView tileView;
     private LinearLayout mapLayout;
     private Handler handlerInfoMsg;
-    private Handler handlerCheckMapSize;
     private AppMsg appMsg;
+    private Handler handlerUpdateMap;
+    private static List<MapMarker> markerList;
     private boolean visible = false;
     private static final String TAG = MapFragment.class.getSimpleName();
     @Override
@@ -41,17 +45,16 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         MapData.getMapSize();
-        MapData.getRecommendation();
         tileView = new TileView(getActivity());
 
         //tileView.setSize(width, height);
-        tileView.setSize( 3090, 2536 );
+        tileView.setSize( 2536, 2536 );
         tileView.addDetailLevel(1f, "1000_%col%_%row%.png", "downsamples/map.png");
         tileView.addDetailLevel(.5f, "500_%col%_%row%.png", "downsamples/map.png");
         tileView.addDetailLevel(.25f, "250_%col%_%row%.png", "downsamples/map.png");
         tileView.addDetailLevel(.125f, "125_%col%_%row%.png", "downsamples/map.png");
 
-        tileView.setScaleLimits(0, 4);
+        tileView.setScaleLimits(0.5, 0.5);
         tileView.setScale(0.5);
 
         // let's use 0-1 positioning...
@@ -72,14 +75,13 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
 
         fab.setOnClickListener(fullScreenOnClickListener);
 
-        // add some pins...
-        addPin(5, 5);
 
         handlerInfoMsg = new Handler();
         handlerInfoMsg.postDelayed(runnableMsgInfo,200);
 
-        handlerCheckMapSize = new Handler();
-        handlerInfoMsg.postDelayed(runnableCheckMapSize,200);
+        handlerUpdateMap = new Handler();
+        handlerUpdateMap.postDelayed(runnableUpdateMap, 1000);
+
         return rootView;
     }
 
@@ -92,18 +94,6 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         }
     };
 
-    //check if the map size is returned by the server
-    Runnable runnableCheckMapSize = new Runnable() {
-        @Override
-        public void run() {
-            if (MapData.haveMapSize){
-                Log.i(TAG,"map size has been provided by the server");
-            }else {
-                Log.i(TAG,"map size not provided");
-                handlerCheckMapSize.postDelayed(runnableCheckMapSize,100);
-            }
-        }
-    };
 
     //show msg if the fragment is visible
     Runnable runnableMsgInfo = new Runnable() {
@@ -124,13 +114,6 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
             handlerInfoMsg.postDelayed(runnableMsgInfo, 50);
         }
     };
-
-    private void addPin( double x, double y ) {
-        ImageView imageView = new ImageView(getActivity() );
-        imageView.setImageResource( R.drawable.maps_marker_blue);
-        tileView.addMarker(imageView, x, y);
-
-    }
 
 
     @Override
@@ -164,7 +147,46 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         super.onDestroy();
         //prevent runnable from running again after this fragment is destroyed
         handlerInfoMsg.removeCallbacks(runnableMsgInfo);
-        //stop runnable check map size when fragment is destroyed
-        handlerCheckMapSize.removeCallbacks(runnableCheckMapSize);
+        /*when this screen is destroyed remove runnable update map from handler to avoid running forever*/
+        handlerUpdateMap.removeCallbacks(runnableUpdateMap);
     }
+
+    Runnable runnableUpdateMap = new Runnable() {
+        @Override
+        public void run() {
+            if (MapData.haveMapSize){
+                tileView.defineRelativeBounds( 0, 0,MapData.getMaxX(), MapData.getMaxY());
+                if ( !MapData.isUpdating() && MapData.getMarkerList()!=null){
+                    //TODO get data from list and show the markers
+                    updateMap();
+                    MapData.getRecommendation();
+                }else if (!MapData.isUpdating()) {
+                    MapData.getRecommendation();
+                }
+            }else {
+                MapData.getMapSize();
+            }
+
+            handlerUpdateMap.postDelayed(runnableUpdateMap,2000);
+        }
+    };
+
+    /*update the map with adding removing markers*/
+    private void updateMap() {
+        /*is not null then remove every existing marker on the map*/
+        if (markerList!=null){
+            for (MapMarker marker: markerList ){
+                tileView.removeMarker(marker.getMarkerView());
+            }
+
+        }
+        /*add the new markers on the map*/
+        markerList = MapData.getMarkerList();
+        for (MapMarker marker: markerList){
+            tileView.addMarker(marker.getMarkerView(),marker.getX(),marker.getY());
+        }
+        tileView.refresh();
+
+    }
+
 }
