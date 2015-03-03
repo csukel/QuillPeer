@@ -54,8 +54,12 @@ public class MapMarker {
         /*user can only click on other people markers*/
         if (person instanceof OtherParticipant)
             markerView.setOnClickListener(markerOnClickListener);
-        else if (person instanceof User)
+        else if (person instanceof User) {
             markerView.setOnClickListener(userMarkerClickListener);
+            markerView.setBorderColor(Color.parseColor("#007373"));
+        }
+
+
     }
 
     /*when a marker is clicked go to the corresponding person profile page*/
