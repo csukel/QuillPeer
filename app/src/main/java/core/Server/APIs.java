@@ -14,5 +14,6 @@ public class APIs {
     public static final String savePosition = "/api/savePosition";
     public static final String getMapSize ="/api/getMapSize";
     public static final String getRecommendation = "/api/getRecommendation";
+    public static final String getSuggestion = "/api/getSuggestion";
     private APIs(){}
 }

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import core.ImageProcessing;
 import core.MyApplication;
 import core.People.OtherParticipant;
+import core.People.Person;
 import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
@@ -39,6 +40,7 @@ public class PersonProfileActivity extends Activity {
     private OtherParticipant person;
     private ImageView profileFavourite;
     private int listIndex=-1;
+    private String screenName;
     private static final String TAG = PersonProfileActivity.class.getSimpleName();
 
     public void onCreate(Bundle savedInstance){
@@ -68,6 +70,7 @@ public class PersonProfileActivity extends Activity {
             String person_id = bundle.getString("person_id");
             try {
                 listIndex = bundle.getInt("position");
+                screenName = bundle.getString("fragment");
             }catch (NullPointerException ex){
                 Log.e(TAG,ex.toString());
             }
@@ -154,7 +157,44 @@ public class PersonProfileActivity extends Activity {
                     //change the favourite status
                     person.changeFavouriteStatus();
                     try{
-                        ((OtherParticipant)AllFragment.getPeopleList().get(listIndex)).changeFavouriteStatus();
+                        String user_id = "";
+                        /*if last screen was the all peaople screen then do*/
+                        if (screenName.equals("AllFragment")){
+                            ((OtherParticipant)AllFragment.getPeopleList().get(listIndex)).changeFavouriteStatus();
+                            user_id = ((OtherParticipant)AllFragment.getPeopleList().get(listIndex)).getUserId();
+                            /*search for the corresponding person in the person list for suggestions fragment and change favourite option*/
+                            for (Person p:SuggestionsFragment.getPeopleList()){
+                                if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                    ((OtherParticipant) p).changeFavouriteStatus();
+                                }
+                            }
+                            /*else if the last screen was the suggestions list then do. ...*/
+                        }else if (screenName.equals("SuggestionsFragment")){
+                            ((OtherParticipant)SuggestionsFragment.getPeopleList().get(listIndex)).changeFavouriteStatus();
+                            user_id = ((OtherParticipant)AllFragment.getPeopleList().get(listIndex)).getUserId();
+                            /*search for the corresponding person in the person list for all fragment and change favourite option*/
+                            for (Person p:AllFragment.getPeopleList()){
+                                if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                    ((OtherParticipant) p).changeFavouriteStatus();
+                                }
+                            }
+                        }else {
+                            /*if the last screen was from map activity or map fragment then find the corresponding person using
+                            * the user id in the lists if it exists and change its favourite status*/
+                            user_id = person.getUserId();
+                            for (Person p:AllFragment.getPeopleList()){
+                                if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                    ((OtherParticipant) p).changeFavouriteStatus();
+                                }
+                            }
+                            for (Person p:SuggestionsFragment.getPeopleList()){
+                                if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                    ((OtherParticipant) p).changeFavouriteStatus();
+                                }
+                            }
+                        }
+
+
                     }catch (NullPointerException ex){
                         ex.printStackTrace();
                     }

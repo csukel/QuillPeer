@@ -1,30 +1,17 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
+
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import android.widget.LinearLayout;
 import java.util.List;
-
-import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
-import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
@@ -36,13 +23,14 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleViewHolder> 
     private List<Person> orig;
     private Context mContext;
     private String fragment;
-    @Override
+    private static final String TAG = AllPeopleAdapter.class.getSimpleName();
     public AllPeopleViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.card_list_people_item, viewGroup, false);
         itemView.setTag(R.id.cardListPeople,personList);
 
+        /*screen name can be SuggestionsFragment or AllFragment*/
         itemView.setTag(R.id.people_pager,fragment);
 
         return new AllPeopleViewHolder(itemView);
@@ -62,7 +50,6 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleViewHolder> 
     //bind data of people on the cards
     @Override
     public void onBindViewHolder(AllPeopleViewHolder peopleViewHolder, int i) {
-
         OtherParticipant person = (OtherParticipant) personList.get(i);
         String speaker = "";
         if (person.isSpeaker()) speaker = "(Speaker)";
@@ -85,11 +72,21 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleViewHolder> 
             peopleViewHolder.imgPeopleProfilePic.setImageResource(R.drawable.ic_action_person);
         }
 
-        //TODO set the color according to the correlation degree
-        double correlation = 0.0;
-        if (correlation<0.5){
-            peopleViewHolder.corrIndicator.setImageResource(R.color.blue);
+        /*if the person is not correlated to the user then set the visibility of the corrIndicator image to invisible otherwise set to visible*/
+        if (!person.isCorrelated()){
+            peopleViewHolder.corrIndicator.setVisibility(View.INVISIBLE);
+/*            try {
+                ((LinearLayout) peopleViewHolder.corrIndicator.getParent()).removeView(peopleViewHolder.corrIndicator);
+                peopleViewHolder.imgPeopleFavourite.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,1.0f));
+            } catch (NullPointerException nex) {
+                Log.e(TAG, nex.toString());
+            }*/
+
+        }else {
+            peopleViewHolder.corrIndicator.setVisibility(View.VISIBLE);
         }
+
 
     }
 

@@ -187,6 +187,26 @@ public class MainActivity extends FragmentActivity
                         BigDecimal averageDist = new BigDecimal(avgDist);
 
                         jsonObject.put("beacon_dist",averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP));
+                        switch ((int)Beacons.getBeaconsIndices().get(macaddr)){
+                            case 1:
+                                Beacons.setDist1(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                            case 2:
+                                Beacons.setDist2(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                            case 3:
+                                Beacons.setDist3(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                            case 4:
+                                Beacons.setDist4(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                            case 5:
+                                Beacons.setDist5(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                            case 6:
+                                Beacons.setDist6(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                break;
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

@@ -56,6 +56,7 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
         imgPeopleProfilePic.setOnClickListener(imgProfPicTapListener);
 
         personList = (ArrayList<Person>)v.getTag(R.id.cardListPeople);
+        /*screen name can be SuggestionsFragment or AllFragment*/
         screenName = (String)v.getTag(R.id.people_pager);
 
     }
@@ -153,6 +154,23 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
                     }
                     //change the favourite status
                     ((OtherParticipant)personList.get(positionIndex)).changeFavouriteStatus();
+                    String user_id = ((OtherParticipant) personList.get(positionIndex)).getUserId();
+                    if (screenName.equals("AllFragment")){
+                        /*search for the corresponding person in the person list for suggestions fragment and change favourite option*/
+                        for (Person p:SuggestionsFragment.getPeopleList()){
+                            if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                ((OtherParticipant) p).changeFavouriteStatus();
+                            }
+                        }
+
+                    }else {
+                        /*search for the corresponding person in the person list for suggestions fragment and change favourite option*/
+                        for (Person p:AllFragment.getPeopleList()){
+                            if (((OtherParticipant)p).getUserId().equals(user_id)){
+                                ((OtherParticipant) p).changeFavouriteStatus();
+                            }
+                        }
+                    }
                 }
                 else {
                     showToast("Posting data failed...",Toast.LENGTH_SHORT,v);

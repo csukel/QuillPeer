@@ -140,10 +140,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         //assign a query text lister to the menu item
         searchView.setOnQueryTextListener(onQueryTextChange);
         searchView.setIconifiedByDefault(false);
-        //if user was searching before then load the previous search state
-        if (searching) {
-            searchItem.expandActionView();
-            searchView.setQuery(queryString, false);
+        if (!searching) {
+            searchItem.collapseActionView();
             searchView.clearFocus();
         }
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
@@ -174,6 +172,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     public void onPrepareOptionsMenu(Menu menu)
     {
         super.onPrepareOptionsMenu(menu);
+        //if user was searching before then load the previous search state
+        if (searching) {
+            searchItem.expandActionView();
+            searchView.setQuery(queryString, false);
+            searchView.clearFocus();
+        }
+
     }
 
     private OnQueryTextListener onQueryTextChange = new OnQueryTextListener() {
@@ -271,6 +276,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                                     Bitmap bp = ImageProcessing.decodeImage(ob.getString("picture"));
                                     opart.setProfilePicture(bp);
                                 }
+                                boolean correlated = false;
+                                try {
+                                    correlated = ob.getBoolean("group");
+                                }catch (JSONException jex){
+                                    Log.e(TAG,jex.toString());
+                                }
+                                opart.setCorrelated(correlated);
                                 peopleList.add(opart);
                             }
 
@@ -345,6 +357,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         if (visibleHint){
             Log.i(TAG,"visible hint");
             isVisible = true;
+            /*call the on prepare menu method*/
+            getActivity().invalidateOptionsMenu();
+            allPeopleAdapter.notifyDataSetChanged();
 /*            if (searching) {
                 //searchView.setIconified(true);
                 //searchView.onActionViewCollapsed();

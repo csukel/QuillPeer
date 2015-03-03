@@ -90,7 +90,7 @@
                     android:id="@+id/corr_indicator_img"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:src="@color/black"
+                    android:src="@color/purple"
                     android:layout_weight="0.5"
                     android:layout_marginLeft="8dp"
                     />

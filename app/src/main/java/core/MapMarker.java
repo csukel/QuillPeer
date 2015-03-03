@@ -25,6 +25,7 @@ public class MapMarker {
     private double x =0.0;
     private double y=0.0;
     private Toast m_currentToast;
+    private String screenName="map";
 
     public MapMarker(Context context,Person p,double xcoor,double ycoor ){
         this.person =p;
@@ -63,7 +64,7 @@ public class MapMarker {
         public void onClick(View v) {
             Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
             intent.putExtra("person_id", ((OtherParticipant) person).getUserId());
-            intent.putExtra("fragment","map");
+            intent.putExtra("fragment",screenName);
             context.startActivity(intent);
         }
     };
@@ -72,7 +73,9 @@ public class MapMarker {
     View.OnClickListener userMarkerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            showToast(v.getContext(),"x:" + getX() + " \ny:" + getY(),Toast.LENGTH_SHORT);
+            String msg = "x:"+getX()+"\ny:"+getY()+"\nb1:"+Beacons.getDist1()+"\nb2:"+Beacons.getDist2()+
+                    "\nb3:"+Beacons.getDist3()+"\nb4:"+Beacons.getDist4()+"\nb5:"+Beacons.getDist5()+"\nb6:"+Beacons.getDist6();
+            showToast(v.getContext(),msg,Toast.LENGTH_LONG);
         }
     };
 

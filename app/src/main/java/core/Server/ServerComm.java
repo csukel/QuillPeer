@@ -149,6 +149,38 @@ public class ServerComm {
         return result;
     }
 
+
+
+    /*http post request to the server for getting suggested people according to the matching and searching criteria*/
+    public static String getSuggestion(String start,String size,String searchQuery){
+        //HttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getSuggestion);
+        JSONObject jsonObject = new JSONObject();
+        String result=null;
+
+        try {
+            jsonObject.put("start", start);
+            jsonObject.put("size",size);
+            jsonObject.put("search",searchQuery);
+            httpPost.setHeader("Content-type", "application/json");
+
+            StringEntity se = new StringEntity(jsonObject.toString());
+            se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            httpPost.setEntity(se);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity());
+        }catch(ClientProtocolException cex){
+            cex.printStackTrace();
+        }catch(IOException ioex){
+            ioex.printStackTrace();
+        }
+        catch (JSONException jex){
+            jex.printStackTrace();
+        }
+        return result;
+    }
+
     //add a participant to the favourites (this method communicates with the corresponding api of the server)
     public static String addFavourite(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.addFavourite);
