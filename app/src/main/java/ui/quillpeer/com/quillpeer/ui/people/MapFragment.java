@@ -76,13 +76,28 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         fab.setOnClickListener(fullScreenOnClickListener);
 
 
+/*        handlerInfoMsg = new Handler();
+        handlerInfoMsg.postDelayed(runnableMsgInfo,200);
+
+        handlerUpdateMap = new Handler();
+        handlerUpdateMap.postDelayed(runnableUpdateMap, 100);*/
+
+        return rootView;
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
         handlerInfoMsg = new Handler();
         handlerInfoMsg.postDelayed(runnableMsgInfo,200);
 
         handlerUpdateMap = new Handler();
-        handlerUpdateMap.postDelayed(runnableUpdateMap, 1000);
-
-        return rootView;
+        handlerUpdateMap.postDelayed(runnableUpdateMap, 100);
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        handlerInfoMsg.removeCallbacks(runnableMsgInfo);
+        handlerUpdateMap.removeCallbacks(runnableUpdateMap);
     }
 
     View.OnClickListener fullScreenOnClickListener = new View.OnClickListener() {
@@ -167,7 +182,7 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
                 MapData.getMapSize();
             }
 
-            handlerUpdateMap.postDelayed(runnableUpdateMap,2000);
+            handlerUpdateMap.postDelayed(runnableUpdateMap,3000);
         }
     };
 

@@ -3,6 +3,7 @@ package ui.quillpeer.com.quillpeer.ui;
 import android.app.ActionBar;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -26,6 +27,9 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.Utils;
+import com.estimote.sdk.connection.BeaconConnection;
+import com.estimote.sdk.connection.EstimoteService;
+import com.estimote.sdk.connection.VersionService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,8 +50,7 @@ import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
 import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 
 
-public class MainActivity extends FragmentActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private BeaconManager beaconManager;
     private boolean  doubleBackToExitPressedOnce;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -59,7 +62,7 @@ public class MainActivity extends FragmentActivity
     private HashMap<String,ArrayList<Double>> beaconsDistancesList;
     private int measurementsCounter = 0;
     private Toast m_currentToast;
-
+    private Activity activity;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -77,6 +80,7 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         setContentView(R.layout.activity_main);
         beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -91,6 +95,7 @@ public class MainActivity extends FragmentActivity
 
         // Configure BeaconManager.
         beaconManager = new BeaconManager(this);
+        beaconManager.setForegroundScanPeriod(40,0);
 
         beaconManager.setRangingListener(rangingListener);
         //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
@@ -101,6 +106,8 @@ public class MainActivity extends FragmentActivity
         //start the communication with beacons
         startBeaconsComm();
         MyApplication.setApplicationContext(getApplicationContext());
+
+
     }
 
     Runnable ckeckBleOn = new Runnable(){
@@ -143,12 +150,14 @@ public class MainActivity extends FragmentActivity
                         nex.printStackTrace();
                     }
                     //beaconsList = (ArrayList)beacons;
-                    beaconsList = new ArrayList<Beacon>(beacons);
+
+                    //Log.i(TAG,"beacons ranging");
 
                 }
             });
+            beaconsList = new ArrayList<Beacon>(beacons);
             //if measurements are less than 5 then store the next set of measurements
-            if (measurementsCounter < 5) {
+            if (measurementsCounter < 45) {
                 for (Beacon beacon : beaconsList) {
                     String beaconId = beacon.getMacAddress();
                     double distance = Utils.computeAccuracy(beacon);
@@ -215,14 +224,14 @@ public class MainActivity extends FragmentActivity
                     jsonArray.put(jsonObject);
                 }
                 //sent the json array to the server if you have measurements from more than 2 beacon
-                    JSONObject jsnObj = new JSONObject();
-                    try {
-                        jsnObj.put("beacon",jsonArray);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    sendBeaconsToServer(jsnObj);
-                Log.d(TAG,"beacon averaging");
+                JSONObject jsnObj = new JSONObject();
+                try {
+                    jsnObj.put("beacon",jsonArray);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                sendBeaconsToServer(jsnObj);
+                Log.i(TAG,"beacon averaging");
                 measurementsCounter =0;
                 beaconsDistancesList.clear();
             }
@@ -230,6 +239,7 @@ public class MainActivity extends FragmentActivity
             //Log.d(TAG,"Beacon 0: " + beacons.get(0).getMacAddress() + " Distance: " + Utils.computeAccuracy(beacons.get(0)));
         }
     };
+
 
 
 
@@ -417,8 +427,12 @@ public class MainActivity extends FragmentActivity
                             Toast.LENGTH_LONG).show();
                     Log.e( TAG,"Cannot start ranging",e);
                 }
+
+
             }
         });
+
+
     }
 
     @Override
@@ -500,4 +514,6 @@ public class MainActivity extends FragmentActivity
         m_currentToast.show();
 
     }
+
+
 }

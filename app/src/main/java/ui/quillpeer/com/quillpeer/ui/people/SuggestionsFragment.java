@@ -48,7 +48,7 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
     private LinearLayoutManager llm;
     private int startIndex = 0;
     private int indexSearch = 0;
-    private static final int numOfPeople = 10;
+    private static final int numOfPeople = 5;
     //when user has retrieved or people this should be turn to true
     private boolean noMoreData = false;
     private boolean reset = false;

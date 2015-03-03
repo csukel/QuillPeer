@@ -8,6 +8,8 @@ import android.view.Display;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.estimote.sdk.connection.BeaconConnection;
+import com.estimote.sdk.connection.EstimoteService;
 import com.qozix.tileview.TileView;
 
 import java.util.List;
@@ -56,7 +58,8 @@ public class MapActivity extends TileViewActivity {
         tileView.setMarkerAnchorPoints( -0.5f, -0.5f );
 
         handlerUpdateMap = new Handler();
-        handlerUpdateMap.postDelayed(runnableUpdateMap, 1000);
+        handlerUpdateMap.postDelayed(runnableUpdateMap, 100);
+
 
     }
     @Override
@@ -81,7 +84,7 @@ public class MapActivity extends TileViewActivity {
                 MapData.getMapSize();
             }
 
-            handlerUpdateMap.postDelayed(runnableUpdateMap,2000);
+            handlerUpdateMap.postDelayed(runnableUpdateMap,3000);
         }
     };
 
