@@ -96,7 +96,7 @@ public class MapData {
             protected String doInBackground(Void... params) {
                 /*get the filter criteria for map which can be found in the settings screen*/
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.currentActivity());
-                boolean isProfessorsSelected = preferences.getBoolean("qqfilter_professor",true);
+                boolean isProfessorsSelected = preferences.getBoolean("qfilter_professor",true);
                 boolean isAssociateSelected = preferences.getBoolean("qfilter_associate",true);
                 boolean isAssistantSelected = preferences.getBoolean("qfilter_assistant",true);
                 boolean isPostdocSelected = preferences.getBoolean("qfilter_postdoc",true);
