@@ -33,7 +33,7 @@
         <activity
             android:name=".ui.MapActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name=".ui.MapActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

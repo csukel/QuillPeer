@@ -95,7 +95,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
 
         // Configure BeaconManager.
         beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(40,0);
+        beaconManager.setForegroundScanPeriod(200,0);
 
         beaconManager.setRangingListener(rangingListener);
         //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
@@ -157,7 +157,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
             });
             beaconsList = new ArrayList<Beacon>(beacons);
             //if measurements are less than 5 then store the next set of measurements
-            if (measurementsCounter < 45) {
+            if (measurementsCounter < 15) {
                 for (Beacon beacon : beaconsList) {
                     String beaconId = beacon.getMacAddress();
                     double distance = Utils.computeAccuracy(beacon);

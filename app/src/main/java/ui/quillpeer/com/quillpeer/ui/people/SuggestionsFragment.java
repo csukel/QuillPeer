@@ -308,6 +308,7 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
                 } else {
                     //mSwipeRefreshLayout.setRefreshing(false);
                     showToast("Fetching data failed...", Toast.LENGTH_SHORT);
+                    recList.hideMoreProgress();
                 }
             }
         }

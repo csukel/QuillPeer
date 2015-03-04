@@ -229,7 +229,8 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                 String paramStart = params[0];
                 String paramSize = params[1];
                 String paramSearchQuery = params[2];
-                return ServerComm.getPeople(paramStart, paramSize,paramSearchQuery);
+                String result = ServerComm.getPeople(paramStart, paramSize,paramSearchQuery);
+                return result;
             }
 
             @Override
@@ -318,6 +319,7 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                 else {
                     //mSwipeRefreshLayout.setRefreshing(false);
                     showToast("Fetching data failed...",Toast.LENGTH_SHORT);
+                    recList.hideMoreProgress();
                 }
             }
         }

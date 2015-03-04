@@ -28,8 +28,8 @@ public class MapData {
     private static final String TAG = MapData.class.getSimpleName();
     private static List<MapMarker> markerList;
     private MapData(){}
-    public static double screenMaxX = 20;
-    public static double screenMaxY = 20;
+/*    public static double screenMaxX = 20;
+    public static double screenMaxY = 20;*/
     private static boolean isUpdating = false;
 
     //trigger the get request from ServerComm responsible for getting the map size
@@ -149,7 +149,7 @@ public class MapData {
                     try {
                         double x = jsonObject.getJSONObject("user").getDouble("x_axis");
                         double y = jsonObject.getJSONObject("user").getDouble("y_axis");
-                        markerList.add(new MapMarker(MyApplication.currentActivity(), User.getInstance(),x,y));
+                        markerList.add(new MapMarker(MyApplication.currentActivity(), User.getInstance(),calcScreenX(x),calcScreenY(y)));
 
                     } catch (JSONException e) {
                         Log.e(TAG,e.toString());
@@ -176,7 +176,7 @@ public class MapData {
                                     }
                                     double x = ob.getJSONObject("location").getDouble("x_axis");
                                     double y = ob.getJSONObject("location").getDouble("y_axis");
-                                    markerList.add(new MapMarker(MyApplication.currentActivity(),person,x,y));
+                                    markerList.add(new MapMarker(MyApplication.currentActivity(),person,calcScreenX(x),calcScreenY(y)));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -190,6 +190,7 @@ public class MapData {
                     //showToast(msg,Toast.LENGTH_SHORT);
                     Log.e(TAG, "Error when sending beacon values");
                 }
+                isUpdating = false;
             }
         }
         //check the network state and proceed if there is internet connection
@@ -220,35 +221,34 @@ public class MapData {
     }
 
     public static double calcScreenX(double originalX){
-        double xcoor = (screenMaxX/getMaxX())*originalX;
-        xcoor = screenMaxY/getMaxY()*(originalX);
-        int i =1;
-        while (xcoor>=screenMaxY-0.5){
-            xcoor = screenMaxY/getMaxY()*(originalX-i);
-            i++;
+
+        double i =0.5;
+        while (originalX>=maxX-0.5){
+            originalX -= i;
+
         }
-        i=1;
-        while(xcoor<=0.5){
-            xcoor = screenMaxY/getMaxY()*(originalX+i);
-            i++;
+        i=0.5;
+        while(originalX<=0.5){
+            originalX +=i;
+
         }
-        return xcoor;
+        return originalX;
     }
 
     public static double calcScreenY(double originalY){
-        double ycoor = (screenMaxY/getMaxY()*originalY);
-        ycoor = screenMaxY/getMaxY()*(originalY);
-        int i =1;
-        while (ycoor>=screenMaxY-0.5){
-            ycoor = screenMaxY/getMaxY()*(originalY-i);
-            i++;
+
+        double i =0.5;
+        while (originalY>=maxY-0.5){
+            originalY -= i;
+
         }
         i=1;
-        while(ycoor<=0.5){
-            ycoor = screenMaxY/getMaxY()*(originalY+i);
-            i++;
+        while(originalY<=0.5){
+            originalY +=i;
+
         }
-        return ycoor;
+
+        return originalY;
     }
 
     public static boolean isUpdating(){
