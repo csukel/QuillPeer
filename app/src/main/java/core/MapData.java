@@ -3,6 +3,7 @@ package core;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class MapData {
     private static final String TAG = MapData.class.getSimpleName();
     private static List<MapMarker> markerList;
     private MapData(){}
+    private static double maxD = 0.0;
 /*    public static double screenMaxX = 20;
     public static double screenMaxY = 20;*/
     private static boolean isUpdating = false;
@@ -67,6 +69,7 @@ public class MapData {
                     try {
                         maxX = jsonObject.getJSONObject("coordinates").getDouble("x");
                         maxY = jsonObject.getJSONObject("coordinates").getDouble("y");
+                        calcMaxD();
                     } catch (JSONException e) {
                         Log.e(TAG,e.toString());
                     }
@@ -254,4 +257,14 @@ public class MapData {
     public static boolean isUpdating(){
         return isUpdating;
     }
+
+    private static void calcMaxD(){
+        maxD = Math.sqrt(Math.pow(getMaxX(),2)+Math.pow(getMaxY(),2));
+        Log.i(TAG,"Max distance: " + maxD);
+    }
+
+    public static double getMaxD(){
+        return maxD;
+    }
+
 }

@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import core.Beacons;
+import core.MapData;
 import core.MyApplication;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
@@ -80,6 +81,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         activity = this;
         setContentView(R.layout.activity_main);
         beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
@@ -156,87 +158,90 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
                 }
             });
             beaconsList = new ArrayList<Beacon>(beacons);
-            //if measurements are less than 5 then store the next set of measurements
-            if (measurementsCounter < 15) {
-                for (Beacon beacon : beaconsList) {
-                    String beaconId = beacon.getMacAddress();
-                    double distance = Utils.computeAccuracy(beacon);
-                    if (beaconsDistancesList.containsKey(beaconId)) {
-                        ArrayList<Double> distanceList = beaconsDistancesList.get(beaconId);
-                        distanceList.add(distance);
-                        Log.d(TAG, "Distance list length: " + distanceList.size());
-                    } else {
-                        ArrayList<Double> distanceList = new ArrayList<Double>();
-                        distanceList.add(distance);
-                        beaconsDistancesList.put(beacon.getMacAddress(), distanceList);
-                    }
-                }
-                measurementsCounter++;
-            }
-            //otherwise iterate through the hash map
-            else {
-                //do the averaging for each beacon
-                Iterator iterator = beaconsDistancesList.keySet().iterator();
-                JSONArray jsonArray = new JSONArray();
-                while (iterator.hasNext()){
-                    String macaddr = (String)iterator.next();
-                    ArrayList<Double> distanceList = beaconsDistancesList.get(macaddr);
-                    double sum=0.0;
-                    for (int i =0;i<distanceList.size(); i++){
-                        //calc the sum of the double stored in the array list of distances for each beacon
-                        sum += distanceList.get(i);
-                    }
-                    //calc the average for each one
-                    double avgDist = sum/distanceList.size();
-                    Log.d(TAG,"Average of beacon: " + macaddr + " is " + (sum/distanceList.size()));
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        //wrap them up into a JSONObject
-                        jsonObject.put("id", Beacons.getBeaconsIndices().get(macaddr));
-                        jsonObject.put("mac_address",macaddr);
-                        BigDecimal averageDist = new BigDecimal(avgDist);
-
-                        jsonObject.put("beacon_dist",averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP));
-                        switch ((int)Beacons.getBeaconsIndices().get(macaddr)){
-                            case 1:
-                                Beacons.setDist1(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
-                            case 2:
-                                Beacons.setDist2(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
-                            case 3:
-                                Beacons.setDist3(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
-                            case 4:
-                                Beacons.setDist4(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
-                            case 5:
-                                Beacons.setDist5(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
-                            case 6:
-                                Beacons.setDist6(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
-                                break;
+            if (MapData.haveMapSize){
+                //if measurements are less than 5 then store the next set of measurements
+                if (measurementsCounter < 15) {
+                    for (Beacon beacon : beaconsList) {
+                        String beaconId = beacon.getMacAddress();
+                        double distance = Utils.computeAccuracy(beacon);
+                        distance = Math.min(distance,MapData.getMaxD());
+                        if (beaconsDistancesList.containsKey(beaconId)) {
+                            ArrayList<Double> distanceList = beaconsDistancesList.get(beaconId);
+                            distanceList.add(distance);
+                            Log.d(TAG, "Distance list length: " + distanceList.size());
+                        } else {
+                            ArrayList<Double> distanceList = new ArrayList<Double>();
+                            distanceList.add(distance);
+                            beaconsDistancesList.put(beacon.getMacAddress(), distanceList);
                         }
+                    }
+                    measurementsCounter++;
+                }
+                //otherwise iterate through the hash map
+                else {
+                    //do the averaging for each beacon
+                    Iterator iterator = beaconsDistancesList.keySet().iterator();
+                    JSONArray jsonArray = new JSONArray();
+                    while (iterator.hasNext()){
+                        String macaddr = (String)iterator.next();
+                        ArrayList<Double> distanceList = beaconsDistancesList.get(macaddr);
+                        double sum=0.0;
+                        for (int i =0;i<distanceList.size(); i++){
+                            //calc the sum of the double stored in the array list of distances for each beacon
+                            sum += distanceList.get(i);
+                        }
+                        //calc the average for each one
+                        double avgDist = sum/distanceList.size();
+                        Log.d(TAG,"Average of beacon: " + macaddr + " is " + (sum/distanceList.size()));
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            //wrap them up into a JSONObject
+                            jsonObject.put("id", Beacons.getBeaconsIndices().get(macaddr));
+                            jsonObject.put("mac_address",macaddr);
+                            BigDecimal averageDist = new BigDecimal(avgDist);
+
+                            jsonObject.put("beacon_dist",averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP));
+                            switch ((int)Beacons.getBeaconsIndices().get(macaddr)){
+                                case 1:
+                                    Beacons.setDist1(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                                case 2:
+                                    Beacons.setDist2(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                                case 3:
+                                    Beacons.setDist3(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                                case 4:
+                                    Beacons.setDist4(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                                case 5:
+                                    Beacons.setDist5(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                                case 6:
+                                    Beacons.setDist6(averageDist.divide(new BigDecimal("1"), 3, BigDecimal.ROUND_HALF_UP).toString());
+                                    break;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //add the jsonObject into a json array
+                        jsonArray.put(jsonObject);
+                    }
+                    //sent the json array to the server if you have measurements from more than 2 beacon
+                    JSONObject jsnObj = new JSONObject();
+                    try {
+                        jsnObj.put("beacon",jsonArray);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //add the jsonObject into a json array
-                    jsonArray.put(jsonObject);
+                    sendBeaconsToServer(jsnObj);
+                    Log.i(TAG,"beacon averaging");
+                    measurementsCounter =0;
+                    beaconsDistancesList.clear();
                 }
-                //sent the json array to the server if you have measurements from more than 2 beacon
-                JSONObject jsnObj = new JSONObject();
-                try {
-                    jsnObj.put("beacon",jsonArray);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                sendBeaconsToServer(jsnObj);
-                Log.i(TAG,"beacon averaging");
-                measurementsCounter =0;
-                beaconsDistancesList.clear();
-            }
-            Log.d(TAG,"Beacons ranging continues...");
-            //Log.d(TAG,"Beacon 0: " + beacons.get(0).getMacAddress() + " Distance: " + Utils.computeAccuracy(beacons.get(0)));
+                Log.d(TAG,"Beacons ranging continues...");
+            }else MapData.getMapSize();
+
         }
     };
 
