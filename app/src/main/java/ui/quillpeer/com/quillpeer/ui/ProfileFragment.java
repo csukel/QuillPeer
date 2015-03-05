@@ -119,7 +119,7 @@ public class ProfileFragment extends Fragment {
         topicsChart.setMaxVisibleValueCount(6);
 
         // scaling can now only be done on x- and y-axis separately
-        topicsChart.setPinchZoom(false);
+        topicsChart.setPinchZoom(true);
 
         // draw shadows for each bar that show the maximum value
         // mChart.setDrawBarShadow(true);

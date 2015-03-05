@@ -47,13 +47,13 @@ public class PeopleFragmentPageAdapter extends FragmentPagerAdapter {
         String title="Error";
         switch (position){
             case 0:
-                title = "MapView";
+                title = "Map";
                 break;
             case 1:
-                title="Suggestions";
+                title="Suggested";
                 break;
             case 2:
-                title = "All People";
+                title = "Participants";
                 break;
         }
         return(title);
