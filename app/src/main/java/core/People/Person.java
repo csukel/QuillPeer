@@ -2,6 +2,7 @@ package core.People;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,8 @@ public class Person {
     private String paperAbstractTitle;
     //profile picture
     private Bitmap profilePicture;
+    //list of topics
+    private List<Topic> topicList = new ArrayList<Topic>();
 
 
     //person class constructor
@@ -94,6 +97,20 @@ public class Person {
 
     public Bitmap getProfilePicture(){
         return this.profilePicture;
+    }
+
+    /*get the list with the topics related to this person*/
+    public List<Topic> getTopicList(){
+        return this.topicList;
+    }
+
+    /*save a topic list corresponding to this person*/
+    public void setTopicList(List<Topic> list){
+        this.topicList = list;
+    }
+    /*add a topic to the topic list for this person*/
+    public void addTopicToList(Topic topic){
+        this.topicList.add(topic);
     }
 
 }
