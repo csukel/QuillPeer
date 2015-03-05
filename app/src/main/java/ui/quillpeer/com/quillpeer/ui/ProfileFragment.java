@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -86,11 +87,17 @@ public class ProfileFragment extends Fragment {
         profilePaperAbstractTitle = (TextView)v.findViewById(R.id.txtCardProfilePaperAbstractTitle);
         profilePaperAbstractTitle.setText(user.getPaperAbstractTitle());
         profileFavourite = (ImageView)v.findViewById(R.id.imgCardProfileFavourite);
-        topicsChart = (HorizontalBarChart)v.findViewById(R.id.topicHorizontalChart);
-        topicWordsLayout = (LinearLayout)v.findViewById(R.id.topicWordsLayout);
+        //if there are data available from topic model then draw the graph
+
+        topicsChart = (HorizontalBarChart) v.findViewById(R.id.topicHorizontalChart);
+        topicWordsLayout = (LinearLayout) v.findViewById(R.id.topicWordsLayout);
         topicWordsLayout.setVisibility(View.INVISIBLE);
-        txtTopicWords = (TextView)v.findViewById(R.id.txtTopicWords);
-        initialiseChartView(v);
+        txtTopicWords = (TextView) v.findViewById(R.id.txtTopicWords);
+        if (!User.getInstance().getTopicList().isEmpty()) {
+            initialiseChartView(v);
+        }else {
+
+        }
         //remove the profile favourit view
         ((LinearLayout)profileFavourite.getParent()).removeView(profileFavourite);
     }
@@ -187,9 +194,12 @@ public class ProfileFragment extends Fragment {
         @SuppressLint("NewApi")
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-
-            topicWordsLayout.setVisibility(View.VISIBLE);
-            txtTopicWords.setText(User.getInstance().getTopicList().get(e.getXIndex()).getTitle().toString());
+            try {
+                topicWordsLayout.setVisibility(View.VISIBLE);
+                txtTopicWords.setText(User.getInstance().getTopicList().get(e.getXIndex()).getTitle().toString());
+            } catch (Exception ex){
+                Log.e(TAG,ex.toString());
+            }
         }
 
         @Override

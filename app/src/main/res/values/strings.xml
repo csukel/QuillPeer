@@ -12,13 +12,12 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="about_description">
-        This app aims to connect various academics of similar research interests with each other, while also providing a visual heat map to show the user other academics in their map’s range.
+        Quill Peer is an application built to aid the networking of delegates within academic conferences, using a combination of data analysis and wireless technology. Quill Peer comes equipped with machine learning techniques that calculate which delegates share similar interests. These matching delegates are also visible on an indoor map that gives a visual representation of surrounding matching people, powered by a network of beacons.
     </string>
     <string name="about_motivation">
-        This problem was first brought to our attention by Dr Weisi Guo and Dr Maria Liakata. They discussed the many problems of trying to meet people in their area of research. Some of the problems that they faced included talking to academics that were not in their field of research, talking to the professors’ students rather than the professor themselves, and many more. As a result this was how the 4th year project came about.
-    </string>
+Quill Peer is inspired by the suggestions of Doctors Maria Liakata and Weisi Guo, who told of the issues they had trying to meet people in their areas of research, such as talking to academics from the wrong field of research or talking to a professor\'s students instead of the professor themselves. Hence, Quill Peer is a project formed and developed by a team of six Masters level students aiming to solve this issue.    </string>
     <string name="about_team_roles">
-        Hao Dong - Project Manager/Client Side Developer\n\nLoucas Stylianou - Client Side Developer\n\nSirandjivy Gocouladasse alias Soulormane - Client Side Developer\n\nAndrew Brooks - Client Side Developer\n\nKevin Lee - Server Side Developer\n\nMan-Yin Yiu - Server Side Developer
+        Hao Dong - Server Side Developer\n\nLoucas Stylianou - Client Side Lead Developer\n\nSirandjivy Gocouladasse alias Soulormane - Client Side Developer\n\nAndrew Brooks - Project Manager\n\nKevin Lee - Server Side Developer\n\nMan-Yin Yiu - Server Side Developer
     </string>
     <string-array name="radius_visibility_list_entries">
         <item>15 metres</item>

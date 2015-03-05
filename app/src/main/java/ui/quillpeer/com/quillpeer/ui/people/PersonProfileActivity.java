@@ -346,8 +346,10 @@ public class PersonProfileActivity extends Activity {
             profileFavourite.setTag(R.drawable.ic_star_white);
         }
         profileFavourite.setOnTouchListener(profileFavouriteOnTouchListener);
-        initialiseChartView();
-
+        /*if there are data available from topic models for this person then draw the graph*/
+        if (!person.getTopicList().isEmpty())
+            initialiseChartView();
+        else {}
     }
 
     private void initialiseChartView() {
@@ -427,7 +429,7 @@ public class PersonProfileActivity extends Activity {
 
         BarData data = new BarData(xVals, dataSets);
         data.setValueTextSize(10f);
-        //data.setValueTypeface(tf);
+        //+data.setValueTypeface(tf);
 
         topicsChart.setData(data);
         topicsChart.animateY(2500);
@@ -442,9 +444,12 @@ public class PersonProfileActivity extends Activity {
         @SuppressLint("NewApi")
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-
-            topicWordsLayout.setVisibility(View.VISIBLE);
-            txtTopicWords.setText(person.getTopicList().get(e.getXIndex()).getTitle().toString());
+            try {
+                topicWordsLayout.setVisibility(View.VISIBLE);
+                txtTopicWords.setText(person.getTopicList().get(e.getXIndex()).getTitle().toString());
+            }catch (Exception ex){
+                Log.e(TAG,ex.toString());
+            }
         }
 
         @Override

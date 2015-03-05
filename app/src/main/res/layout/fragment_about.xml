@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/cardcolor">
+        >
 
         <android.support.v7.widget.CardView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            card_view:cardBackgroundColor="@color/cardview_light_background"
+            card_view:cardBackgroundColor="@color/cardcolor"
             android:layout_marginTop="20dp"
             android:elevation = "100dp"
             card_view:cardCornerRadius="8dp"
@@ -71,9 +71,8 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:elevation = "100dp"
-
                 card_view:cardCornerRadius="8dp"
-                card_view:cardBackgroundColor="@color/cardview_light_background"
+                card_view:cardBackgroundColor="@color/cardcolor"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 >
@@ -125,9 +124,8 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:elevation = "100dp"
-
                 card_view:cardCornerRadius="8dp"
-                card_view:cardBackgroundColor="@color/cardview_light_background"
+                card_view:cardBackgroundColor="@color/cardcolor"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 >

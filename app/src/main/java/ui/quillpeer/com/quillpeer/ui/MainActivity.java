@@ -147,7 +147,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
                     // Note that beacons reported here are already sorted by estimated
                     // distance between device and beacon.
                     try {
-                        getActionBar().setSubtitle("Found beacons: " + beacons.size());
+                        getActionBar().setSubtitle("Beacons detected: " + beacons.size());
                     }catch (NullPointerException nex){
                         nex.printStackTrace();
                     }
