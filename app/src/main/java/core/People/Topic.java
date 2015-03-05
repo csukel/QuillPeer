@@ -11,6 +11,7 @@ public class Topic {
     private double weight;
 
     public Topic(String t,double w){
+        t = t.replaceAll(" ",", ");
         this.title = t;
         this.weight = w;
     }

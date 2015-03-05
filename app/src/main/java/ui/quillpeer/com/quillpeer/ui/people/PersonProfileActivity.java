@@ -1,8 +1,10 @@
 package ui.quillpeer.com.quillpeer.ui.people;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,12 +13,27 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Highlight;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import core.ImageProcessing;
 import core.MyApplication;
@@ -44,6 +61,9 @@ public class PersonProfileActivity extends Activity {
     private int listIndex=-1;
     private String screenName;
     private static final String TAG = PersonProfileActivity.class.getSimpleName();
+    private HorizontalBarChart topicsChart;
+    private LinearLayout topicWordsLayout;
+    private TextView txtTopicWords;
 
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -66,6 +86,10 @@ public class PersonProfileActivity extends Activity {
         profilePaperAbstract = (TextView)findViewById(R.id.txtCardProfilePaperAbstract);
         profilePaperAbstractTitle = (TextView)findViewById(R.id.txtCardProfilePaperAbstractTitle);
         profileFavourite = (ImageView)findViewById(R.id.imgCardProfileFavourite);
+        topicsChart = (HorizontalBarChart)findViewById(R.id.topicHorizontalChart);
+        topicWordsLayout = (LinearLayout)findViewById(R.id.topicWordsLayout);
+        topicWordsLayout.setVisibility(View.INVISIBLE);
+        txtTopicWords = (TextView)findViewById(R.id.txtTopicWords);
         Intent intent = getIntent();
         if (intent!=null) {
             Bundle bundle = intent.getExtras();
@@ -267,7 +291,7 @@ public class PersonProfileActivity extends Activity {
                                 JSONObject topicObject = topicsArray.getJSONObject(i);
                                 //name , weight
                                 person.addTopicToList(new Topic(topicObject.getString("name")
-                                        ,topicObject.getDouble("weight")));
+                                        , topicObject.getDouble("weight")));
                             }
                         }
                         setViewValues();
@@ -322,8 +346,112 @@ public class PersonProfileActivity extends Activity {
             profileFavourite.setTag(R.drawable.ic_star_white);
         }
         profileFavourite.setOnTouchListener(profileFavouriteOnTouchListener);
+        initialiseChartView();
 
     }
+
+    private void initialiseChartView() {
+
+        topicsChart.setOnChartValueSelectedListener(topicChartValueSelectedListener);
+        // mChart.setHighlightEnabled(false);
+        topicsChart.setContentDescription("skjflkjhklsfd");
+        topicsChart.setDrawBarShadow(false);
+
+        topicsChart.setDrawValueAboveBar(true);
+
+        topicsChart.setDescription("");
+
+
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
+        topicsChart.setMaxVisibleValueCount(6);
+
+        // scaling can now only be done on x- and y-axis separately
+        topicsChart.setPinchZoom(false);
+
+        // draw shadows for each bar that show the maximum value
+        // mChart.setDrawBarShadow(true);
+
+        //topicsChart.setDrawXLabels(true);
+
+        topicsChart.setDrawGridBackground(false);
+
+        // mChart.setDrawYLabels(false);
+
+        Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+
+        XAxis xl = topicsChart.getXAxis();
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        //xl.setTypeface(tf);
+        xl.setDrawAxisLine(true);
+        xl.setDrawGridLines(true);
+        xl.setGridLineWidth(0.3f);
+        // xl.setEnabled(false);
+
+        YAxis yl = topicsChart.getAxisLeft();
+        //yl.setTypeface(tf);
+        yl.setDrawAxisLine(true);
+        yl.setDrawGridLines(true);
+        yl.setGridLineWidth(0.3f);
+
+        YAxis yr = topicsChart.getAxisRight();
+        //yr.setTypeface(tf);
+        yr.setDrawAxisLine(true);
+        yr.setDrawGridLines(false);
+
+        setData(tf);
+        topicsChart.animateY(2500);
+
+    }
+
+    private void setData(Typeface tf) {
+        List<Topic> topicList = person.getTopicList();
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < topicList.size(); i++) {
+            String xval = topicList.get(i).getTitle();
+            xVals.add("Topic " + (i+1));
+        }
+
+        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+
+        for (int i = 0; i < topicList.size(); i++) {
+            float val = (float) (topicList.get(i).getWeight())*1000;
+            yVals1.add(new BarEntry(val, i));
+        }
+
+        BarDataSet set1 = new BarDataSet(yVals1, "Match Rating");
+        set1.setBarSpacePercent(35f);
+
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(xVals, dataSets);
+        data.setValueTextSize(10f);
+        //data.setValueTypeface(tf);
+
+        topicsChart.setData(data);
+        topicsChart.animateY(2500);
+        Legend l = topicsChart.getLegend();
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+        l.setFormSize(8f);
+        l.setXEntrySpace(4f);
+
+    }
+
+    OnChartValueSelectedListener topicChartValueSelectedListener = new OnChartValueSelectedListener() {
+        @SuppressLint("NewApi")
+        @Override
+        public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+
+            topicWordsLayout.setVisibility(View.VISIBLE);
+            txtTopicWords.setText(person.getTopicList().get(e.getXIndex()).getTitle().toString());
+        }
+
+        @Override
+        public void onNothingSelected() {
+
+        }
+    };
 
     //show toasts
     void showToast(String text,int toast_length)

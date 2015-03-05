@@ -80,7 +80,7 @@
 
     </PreferenceCategory>
 
-
+<!--
     <PreferenceCategory
         android:title="Usability Preferences">
         <CheckBoxPreference
@@ -90,7 +90,7 @@
 
             </CheckBoxPreference>
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory android:title="Other">
         <Preference
