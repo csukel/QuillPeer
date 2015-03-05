@@ -14,11 +14,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import core.ImageProcessing;
 import core.MyApplication;
+import core.People.Topic;
 import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
@@ -153,6 +156,15 @@ public class LoginActivity extends Activity {
                         User.getInstance().setPaperAbstract(jsonAbstract.getString("abstract"));
                         User.getInstance().setPaperAbstractTitle(jsonAbstract.getString("title"));
                         imageStream = jsonUser.getString("picture");
+                        JSONArray topicsArray = jsonObject.getJSONArray("topics");
+                        for (int i = 0; i<topicsArray.length();i++){
+                            if (topicsArray.get(i) instanceof JSONObject){
+                                JSONObject topicObject = topicsArray.getJSONObject(i);
+                                //name , weight
+                                User.getInstance().addTopicToList(new Topic(topicObject.getString("name")
+                                        ,topicObject.getDouble("weight")));
+                            }
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -22,6 +23,9 @@ public class ImageProcessing {
     public static Bitmap decodeImage(String imgStream){
         byte[] byte_arr = Base64.decode(imgStream,Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(byte_arr, 0, byte_arr.length);
+/*        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
+        Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));*/
         return bitmap;
     }
 }

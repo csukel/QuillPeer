@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +22,7 @@ import core.ImageProcessing;
 import core.MyApplication;
 import core.People.OtherParticipant;
 import core.People.Person;
+import core.People.Topic;
 import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
@@ -259,6 +261,15 @@ public class PersonProfileActivity extends Activity {
                         person.setPaperAbstract(jsonObject.getJSONObject("abstract").getString("abstract"));
                         person.setProfilePicture(ImageProcessing.decodeImage(user.getString("picture")));
                         person.setPaperAbstractTitle(jsonObject.getJSONObject("abstract").getString("title"));
+                        JSONArray topicsArray = jsonObject.getJSONArray("topics");
+                        for (int i = 0; i<topicsArray.length();i++){
+                            if (topicsArray.get(i) instanceof JSONObject){
+                                JSONObject topicObject = topicsArray.getJSONObject(i);
+                                //name , weight
+                                person.addTopicToList(new Topic(topicObject.getString("name")
+                                        ,topicObject.getDouble("weight")));
+                            }
+                        }
                         setViewValues();
                         new Handler(){
                         }.postDelayed(new Runnable() {
