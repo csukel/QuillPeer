@@ -515,12 +515,13 @@ public class MainActivity extends MaterialNavigationDrawer {
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
                 JSONObject jsonObject=null;
-                //String msg = "Something went wrong";
+                String msg = "Error when sending beacon values";
                 boolean outcome = false;
                 try {
                     if (result!=null) {
                         jsonObject = new JSONObject(result);
                         outcome = jsonObject.getBoolean("successful");
+                        msg = jsonObject.getString("msg");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -532,7 +533,7 @@ public class MainActivity extends MaterialNavigationDrawer {
                 }
                 else{
                     //showToast(msg,Toast.LENGTH_SHORT);
-                    Log.e(TAG,"Error when sending beacon values");
+                    Log.e(TAG,msg);
                 }
             }
         }

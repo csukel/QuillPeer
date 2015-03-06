@@ -55,7 +55,7 @@ public class MapMarker {
         if (person instanceof OtherParticipant)
             markerView.setOnClickListener(markerOnClickListener);
         else if (person instanceof User) {
-            markerView.setOnClickListener(userMarkerClickListener);
+            //markerView.setOnClickListener(userMarkerClickListener);
             markerView.setBorderColor(Color.parseColor("#007373"));
         }
 
