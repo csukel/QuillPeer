@@ -96,8 +96,13 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         drawerHeaderView = LayoutInflater.from(this).inflate(R.layout.drawable_header_layout,null);
         txtDrawerHeaderDetails = (TextView)drawerHeaderView.findViewById(R.id.txtDrawerHeaderDetails);
-        String profileDetails = User.getInstance().getName() + " " + User.getInstance().getSurname() +
-                "\n" + User.getInstance().getEmail();
+        String profileDetails = "";
+        try {
+            profileDetails = User.getInstance().getName() + " " + User.getInstance().getSurname() +
+                    "\n" + User.getInstance().getEmail();
+        } catch (NullPointerException nex){
+            Log.e(TAG,nex.toString());
+        }
         txtDrawerHeaderDetails.setText(profileDetails);
         drawerHeaderImage = (CircleImageView)drawerHeaderView.findViewById(R.id.drawer_header_profile_image);
         drawerHeaderImage.setImageBitmap(User.getInstance().getProfilePicture());
