@@ -152,7 +152,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         //start the communication with beacons
         startBeaconsComm();
         MyApplication.setApplicationContext(getApplicationContext());
-        setDrawerBackgroundColor(Color.parseColor("#007373"));
+        //setDrawerBackgroundColor(Color.parseColor("#007373"));
 
 
     }

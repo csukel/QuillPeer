@@ -4,7 +4,7 @@
     <color name="cardcolor">#ffc0b6b9</color>
 
 
-    <style name="MyNavigationDrawerTheme" parent="MaterialNavigationDrawerTheme">
+    <style name="MyNavigationDrawerTheme" parent="MaterialNavigationDrawerTheme.Light.DarkActionBar">
         <item name="colorPrimary">#007373</item>
         <item name="colorPrimaryDark">#558b2f</item>
         <item name="android:windowBackground">@color/white</item>
