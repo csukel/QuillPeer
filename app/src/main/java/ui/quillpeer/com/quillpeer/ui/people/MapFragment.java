@@ -24,6 +24,7 @@ import java.util.List;
 import core.FragmentLifecycle;
 import core.MapData;
 import core.MapMarker;
+import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.MapActivity;
 
@@ -117,16 +118,18 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
             if (visible) {
                 final AppMsg.Style style = AppMsg.STYLE_INFO;
                 final CharSequence msg = "To enjoy full functionality of the map please tap on the full screen button!";
-                try {
-                    appMsg = AppMsg.makeText(getActivity(), msg, style);
-                    appMsg.setLayoutGravity(Gravity.BOTTOM);
-                    appMsg.show();
-                }catch (NullPointerException nex){
-                    Log.e(TAG,nex.toString());
+                if (ServerComm.isNetworkConnected(getActivity(), getActivity())) {
+                    try {
+                        appMsg = AppMsg.makeText(getActivity(), msg, style);
+                        appMsg.setLayoutGravity(Gravity.BOTTOM);
+                        appMsg.show();
+                    } catch (NullPointerException nex) {
+                        Log.e(TAG, nex.toString());
+                    }
                 }
 
             }
-            handlerInfoMsg.postDelayed(runnableMsgInfo, 50);
+            handlerInfoMsg.postDelayed(runnableMsgInfo, 100);
         }
     };
 
@@ -148,12 +151,17 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         if (visibleHint){
             Log.i(TAG, "visible hint");
             visible = true;
+            handlerInfoMsg = new Handler();
+            handlerInfoMsg.postDelayed(runnableMsgInfo,50);
 
         }else {
             Log.i(TAG,"not visible hint");
+            if (handlerInfoMsg!=null)
+                handlerInfoMsg.removeCallbacks(runnableMsgInfo);
             if (appMsg!=null)
                 //cancel the msg
                 appMsg.cancel();
+
             visible = false;
         }
     }

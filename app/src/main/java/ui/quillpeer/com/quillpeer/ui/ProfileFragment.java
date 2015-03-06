@@ -211,7 +211,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
+        //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
     View.OnTouchListener profilePicTouchListener = new View.OnTouchListener(){

@@ -58,7 +58,7 @@ public class PeopleFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
+        //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
     private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {

@@ -122,7 +122,7 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
+        //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
     void showToast(String text,int toast_length)

@@ -3,4 +3,20 @@
     <color name="actionBarColor">#007373</color>
     <color name="cardcolor">#ffc0b6b9</color>
 
+
+    <style name="MyNavigationDrawerTheme" parent="MaterialNavigationDrawerTheme">
+        <item name="colorPrimary">#007373</item>
+        <item name="colorPrimaryDark">#558b2f</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">#000000</item>
+        <item name="singleAccount">true</item><!-- Remove the change account button -->
+        <item name="drawerType">@integer/DRAWERTYPE_CUSTOM</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
 </resources>

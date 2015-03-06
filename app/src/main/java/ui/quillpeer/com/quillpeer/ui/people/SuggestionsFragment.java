@@ -134,7 +134,12 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         //get the action register to the above menu item
         searchView = (SearchView) searchItem.getActionView();
         //set a hint in the search input box
-        searchView.setQueryHint("Search for people");
+        try {
+            searchView.setQueryHint("Search for people");
+        }
+        catch(NullPointerException nex){
+
+        }
         //assign a query text lister to the menu item
         searchView.setOnQueryTextListener(onQueryTextChange);
         searchView.setIconifiedByDefault(false);

@@ -94,8 +94,7 @@
 
     <PreferenceCategory android:title="Other">
         <Preference
-            android:title="Change Profile Picture"
-            android:summary="Tap here to change your profile picture.">
+            android:title="Change Profile Picture">
             <intent
                 android:action=".ui.TakePicActivity"
                 >
@@ -104,7 +103,6 @@
         <Preference
             android:title="Tutorial"
             android:key="pref_tutorial"
-            android:summary="Tap here to access the tutorial."
             >
 
         </Preference>

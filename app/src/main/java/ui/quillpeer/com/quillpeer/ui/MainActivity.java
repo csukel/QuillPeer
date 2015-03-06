@@ -7,6 +7,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -16,10 +20,14 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.devspark.appmsg.AppMsg;
@@ -45,13 +53,18 @@ import java.util.List;
 import core.Beacons;
 import core.MapData;
 import core.MyApplication;
+import core.People.User;
 import core.Server.ServerComm;
+import de.hdodenhof.circleimageview.CircleImageView;
+import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
+
 import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
+import ui.quillpeer.com.quillpeer.ui.people.PeopleFragmentActivity;
 import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 
 
-public class MainActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends MaterialNavigationDrawer {
     private BeaconManager beaconManager;
     private boolean  doubleBackToExitPressedOnce;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -64,21 +77,82 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
     private int measurementsCounter = 0;
     private Toast m_currentToast;
     private Activity activity;
+    private View drawerHeaderView;
+    private TextView txtDrawerHeaderDetails;
+    private CircleImageView drawerHeaderImage;
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-
-    private static boolean isPeopleFragmentVisible = false;
     private ArrayList<Beacon> beaconsList = new ArrayList<Beacon>();
 
     @Override
+    public void init(Bundle savedInstanceState) {
+
+        // set header data
+
+        //setDrawerBackgroundColor(R.color.actionBarColor);
+/*        Drawable userProfilePicture = new BitmapDrawable(this.getResources(),User.getInstance().getProfilePicture());
+        setFirstAccountPhoto(userProfilePicture);
+        setUsername(User.getInstance().getName() + " " + User.getInstance().getSurname());
+        setUserEmail(User.getInstance().getEmail());*/
+
+        drawerHeaderView = LayoutInflater.from(this).inflate(R.layout.drawable_header_layout,null);
+        txtDrawerHeaderDetails = (TextView)drawerHeaderView.findViewById(R.id.txtDrawerHeaderDetails);
+        String profileDetails = User.getInstance().getName() + " " + User.getInstance().getSurname() +
+                "\n" + User.getInstance().getEmail();
+        txtDrawerHeaderDetails.setText(profileDetails);
+        drawerHeaderImage = (CircleImageView)drawerHeaderView.findViewById(R.id.drawer_header_profile_image);
+        drawerHeaderImage.setImageBitmap(User.getInstance().getProfilePicture());
+        setDrawerHeaderCustom(drawerHeaderView);
+
+
+        // create sections
+        this.addSection(newSection("Profile Page",R.drawable.ic_action_person,new ProfileFragment()));
+        this.addSection(newSection("People", R.drawable.ic_action_group,new Intent(this,PeopleFragmentActivity.class)));
+        this.addSection(newSection("About",R.drawable.ic_action_about,new AboutFragment()));
+
+        this.addBottomSection(newSection("Settings",R.drawable.ic_action_settings,new SettingsFragment()));
+        getSupportActionBar().setLogo(R.drawable.logo);
+/*        this.addSection(newSection("Section 1", new FragmentIndex()));
+        this.addSection(newSection("Section 2",new FragmentIndex()));
+        this.addSection(newSection("Section 3",R.drawable.ic_mic_white_24dp,new FragmentButton()).setSectionColor(Color.parseColor("#9c27b0")));
+        this.addSection(newSection("Section",R.drawable.ic_hotel_grey600_24dp,new FragmentButton()).setSectionColor(Color.parseColor("#03a9f4")));*/
+
+        // create bottom section
+/*
+        this.addBottomSection(newSection("Bottom Section",R.drawable.ic_settings_black_24dp,new Intent(this,Settings.class)));
+*/
+
+        activity = this;
+       /* setContentView(R.layout.activity_main);*/
+        beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
+/*        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);*/
+        //mTitle = getTitle();
+        //get bluetooth adapter
+        bleAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Set up the drawer.
+/*        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));*/
+
+        // Configure BeaconManager.
+        beaconManager = new BeaconManager(this);
+        beaconManager.setForegroundScanPeriod(200,0);
+
+        beaconManager.setRangingListener(rangingListener);
+        //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
+        handleBleEnabled.postDelayed(ckeckBleOn,2000);
+        //run a handler to check every 1 sec (with initial post delay of 2 secs) the internet state and
+        //display to the user the corresponding alert msg
+        handleInternetStateMsg.postDelayed(checkInternetState,2000);
+        //start the communication with beacons
+        startBeaconsComm();
+        MyApplication.setApplicationContext(getApplicationContext());
+        setDrawerBackgroundColor(Color.parseColor("#007373"));
+
+
+    }
+
+/*    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -91,9 +165,9 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         //get bluetooth adapter
         bleAdapter = BluetoothAdapter.getDefaultAdapter();
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
+*//*        mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout));*//*
 
         // Configure BeaconManager.
         beaconManager = new BeaconManager(this);
@@ -110,7 +184,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         MyApplication.setApplicationContext(getApplicationContext());
 
 
-    }
+    }*/
 
     Runnable ckeckBleOn = new Runnable(){
 
@@ -129,7 +203,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         @Override
         public void run() {
             if (!ServerComm.isNetworkConnected(getApplicationContext(),MainActivity.this)){
-                AppMsg.makeText(MainActivity.this,"You are not connected to the internet...",AppMsg.STYLE_ALERT).show();
+                AppMsg.makeText(MainActivity.this,"You are not connected to the internet...",AppMsg.STYLE_ALERT).setLayoutGravity(Gravity.BOTTOM).show();
             }else {
                 AppMsg.cancelAll(MainActivity.this);
             }
@@ -147,7 +221,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
                     // Note that beacons reported here are already sorted by estimated
                     // distance between device and beacon.
                     try {
-                        getActionBar().setSubtitle("Beacons detected: " + beacons.size());
+                        getSupportActionBar().setSubtitle("Beacons detected: " + beacons.size());
                     }catch (NullPointerException nex){
                         nex.printStackTrace();
                     }
@@ -295,7 +369,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
     * Loucas
     * When on of the navigation drawer item is selected then show the corresponding fragment
     * */
-    @Override
+/*    @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -318,9 +392,9 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
             case 1:
                 gFragment = fragmentPeople;
                 break;
-/*            case 2:
+*//*            case 2:
                 gFragment = fragmentTimetable;
-                break;*/
+                break;*//*
             case 2:
                 gFragment = fragmentSettings;
                 break;
@@ -334,30 +408,11 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         fragmentManager.beginTransaction()
                 .replace(R.id.container, gFragment)
                 .commit();
-    }
+    }*/
 
-    //Set title on the action bar when a list item is selected from navigation drawer
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 0:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 1:
-                mTitle = getString(R.string.title_section2);
-                break;
-/*            case 2:
-                mTitle = getString(R.string.title_section3);
-                break;*/
-            case 2:
-                mTitle = getString(R.string.title_section4);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section5);
-                break;
-        }
-    }
 
-    public void restoreActionBar() {
+
+/*    public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
         try {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -366,20 +421,8 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         }catch  (Exception ex){
             Log.e(TAG,"Main activity",ex);
         }
-    }
+    }*/
 
-    /* Called whenever invalidateOptionsMenu() is called */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-/*        if(isPeopleFragmentVisible){
-            menu.findItem(R.id.search).setVisible(true);
-        }else{
-            menu.findItem(R.id.search).setVisible(false);
-        }*/
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
 /*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -404,7 +447,7 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         return super.onCreateOptionsMenu(menu);
     }*/
 
-    @Override
+/*    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -417,10 +460,10 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void connectToService() {
-        getActionBar().setSubtitle("Scanning...");
+        getSupportActionBar().setSubtitle("Scanning...");
         beaconsList.clear();
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
@@ -444,6 +487,10 @@ public class MainActivity extends FragmentActivity implements NavigationDrawerFr
     public void onResume(){
         super.onResume();
         //set this activity as the current activity
+        Log.i(TAG,"onResume");
+
+        drawerHeaderImage.setImageBitmap(User.getInstance().getProfilePicture());
+        closeDrawer();
         MyApplication.setCurrentActivity(this);
     }
 

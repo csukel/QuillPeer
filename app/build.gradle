@@ -41,4 +41,5 @@ dependencies {
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile files('libs/mpandroidchartlibrary-2-0-7.jar')
+    compile 'it.neokree:MaterialNavigationDrawer:1.3.2'
 }
