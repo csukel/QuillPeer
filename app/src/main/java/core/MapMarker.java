@@ -18,15 +18,46 @@ import ui.quillpeer.com.quillpeer.ui.people.PersonProfileActivity;
  * Created by loucas on 01/03/2015.
  */
 public class MapMarker {
+    /**
+     * The class name
+     */
     private static final String TAG = MapMarker.class.getSimpleName();
+    /**
+     * The person related to the MapMarker object
+     */
     private Person person;
+    /**
+     * The context in which this class will be instantiated
+     */
     private Context context;
+    /**
+     * The UI element which will depict the MapMarker. Circular image
+     */
     private CircleImageView markerView;
+    /**
+     * The x coordinate
+     */
     private double x =0.0;
+    /**
+     * The y coordinate
+     */
     private double y=0.0;
+    /**
+     * Info message
+     */
     private Toast m_currentToast;
+    /**
+     * Screen name
+     */
     private String screenName="map";
 
+    /**
+     * Class constructor responsible for the instantiation and initialisation of a MapMarker object
+     * @param context The context in which the corresponding MapMarker object is created
+     * @param p The person object which is related to this MapMarker
+     * @param xcoor The x coordinate
+     * @param ycoor The y coordinate
+     */
     public MapMarker(Context context,Person p,double xcoor,double ycoor ){
         this.person =p;
         this.context = context;
@@ -35,6 +66,10 @@ public class MapMarker {
         createMarkerView(context);
     }
 
+    /**
+     * Configure the view of the corresponding marker
+     * @param context The context in which the MapMarker object is instantiated
+     */
     private void createMarkerView(Context context){
         this.markerView = new CircleImageView(context);
 
@@ -63,7 +98,14 @@ public class MapMarker {
     }
 
     /*when a marker is clicked go to the corresponding person profile page*/
+    /**
+     * Handles click events for the marker
+     */
     View.OnClickListener markerOnClickListener = new View.OnClickListener() {
+        /**
+         * When the user clicks on a marker, the application loads the profile page of the corresponding person
+         * @param v The view of the UI element which is clicked by the user
+         */
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(MyApplication.currentActivity(), PersonProfileActivity.class);
@@ -73,7 +115,7 @@ public class MapMarker {
         }
     };
 
-    //TODO click on marker corresponding to user-testing purposes-should be removed later on
+/*
     View.OnClickListener userMarkerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -82,24 +124,46 @@ public class MapMarker {
             showToast(v.getContext(),msg,Toast.LENGTH_LONG);
         }
     };
+*/
 
-    /*get the person object*/
+    /**
+     * Get the person which is mapped to this marker object
+     * @return person object
+     */
     public Person getPerson(){
         return this.person;
     }
-    /*get x coordinate*/
+
+    /**
+     * Get the x coordinate
+     * @return X coordinate
+     */
     public double getX(){
         return this.x;
     }
-    /*get y coordinate*/
+
+    /**
+     * Get the y coordinate
+     * @return y coordinate
+     */
     public double getY(){
         return this.y;
     }
-    /*return the image view*/
+
+    /**
+     * Get the UI element which is mapped to the MapMarker object
+     * @return CircleImageView
+     */
     public CircleImageView getMarkerView(){
         return this.markerView;
     }
 
+    /**
+     * Display info message to the user
+     * @param context The context in which the Toast object is instantiated
+     * @param text The message which will be displayed
+     * @param toast_length The duration of the message that will be displayed
+     */
     void showToast(Context context, String text,int toast_length)
     {
         if(m_currentToast != null)
