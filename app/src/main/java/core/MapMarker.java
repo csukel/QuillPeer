@@ -15,7 +15,10 @@ import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.people.PersonProfileActivity;
 
 /**
- * Created by loucas on 01/03/2015.
+ * This class will be used for the creation of map markers. Each map marker corresponds to one person in the conference
+ * Created on 01/03/2015.
+ * @author Loucas Stylianou
+ *
  */
 public class MapMarker {
     /**
