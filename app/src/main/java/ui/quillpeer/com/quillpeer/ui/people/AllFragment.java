@@ -39,34 +39,66 @@ import ui.quillpeer.com.quillpeer.R;
 import static android.widget.SearchView.OnQueryTextListener;
 
 /**
- * Created by loucas on 18/11/2014.
+ * This class is used to describe the behaviour of the All People screen
+ * Created on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener, FragmentLifecycle {
+    /** People's list */
     private static List<Person> peopleList;
+    /**
+     * Adapter object
+     */
     private AllPeopleAdapter allPeopleAdapter=null;
-    //toast for displaying small messages to the user
+    /** toast for displaying small messages to the user */
     private Toast m_currentToast;
+    /** The root view  */
     private View rootView;
+    /** Layout which contains the recycler */
     private LinearLayoutManager llm;
+    /** Start index for retrieving results from the server */
     private int startIndex = 0;
+    /** Start index when it is in search mode */
     private int indexSearch = 0;
+    /** Number of results expected to be returned by the server */
     private static final int numOfPeople = 5;
-    //when user has retrieved or people this should be turn to true
+    /**hen user has retrieved or people this should be turn to true*/
     private boolean noMoreData = false;
+    /** reset the screen ui to the default */
     private boolean reset = false;
+    /** Recycle view object */
     private SuperRecyclerView recList;
+    /** determines the visibility of this screen */
     private boolean isVisible = false;
+    /** determines if the screen is in search mode or not */
     private boolean searching = false;
+    /** screen name */
     private String screenName = "AllFragment";
+    /** the query string that user gives when is searching for other people */
     private String queryString;
+    /** Search view object is responsible for the search area of the screen */
     private SearchView searchView;
+    /** The search item is the parent of the search view */
     private MenuItem searchItem;
+    /** TAG is used for debugging this screen. It is the name of the class */
     private static final String TAG = AllFragment.class.getSimpleName();
+
+    /**
+     * When this fragment is created declare that the options menu will be used
+     * @param savedInstanceState
+     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /**
+     * This method defines the behaviour of the fragment when the view of the screen is initialised.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -93,23 +125,31 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         return rootView;
     }
 
+    /**
+     * This method is used for debugging purposes
+     * @param activity
+     */
     public void onPauseFragment(FragmentActivity activity) {
 
         Log.i(TAG,"onPauseFragment");
         //isVisible =false;
     }
+
+    /**
+     * When the fragment enters the onResume state check for any updates
+     */
     @Override
     public void onResume(){
         super.onResume();
-        //TODO refresh the list and the UI
         Log.i("AllFragment","on resume");
-/*        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
-        //set the adapter to the recycler view
-        recList.setAdapter(allPeopleAdapter);*/
         allPeopleAdapter.notifyDataSetChanged();
 
     }
 
+    /**
+     * This method is used for debugging purposes
+     * @param activity
+     */
     @Override
     public void onResumeFragment(FragmentActivity activity) {
         Log.i("AllFragment","is visible");
@@ -117,7 +157,9 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
 
-
+    /**
+     * Initialise the people list
+     */
     private void populateList(){
         //instantiate the list
         peopleList = new ArrayList<Person>();
@@ -125,6 +167,11 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         sendPostRequest(Integer.toString(startIndex),Integer.toString(numOfPeople),reset,"");
     }
 
+    /**
+     * This method defines the behaviour of the screen when the options menu is created
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
@@ -151,6 +198,11 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
                 return true;
             }
 
+            /**
+             * When the search item is collapsed set the initial state of the screen
+             * @param item
+             * @return
+             */
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.i("AllFragment","search is closed");
@@ -168,6 +220,10 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     }
 
+    /**
+     * When the options menu is invalidated then check if the screen mode is in searching and restore the given query string
+     * @param menu
+     */
     @Override
     public void onPrepareOptionsMenu(Menu menu)
     {
@@ -181,8 +237,15 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     }
 
+    /**
+     * This method listens to any changes when the user inputs a query string
+     */
     private OnQueryTextListener onQueryTextChange = new OnQueryTextListener() {
-        //when the user submits a query using the button
+        /**
+         * When the user submits a query using the button send the request to the server
+         * @param s
+         * @return
+         */
         @Override
         public boolean onQueryTextSubmit(String s) {
             Log.d("AllFragment","query submitted");
@@ -204,7 +267,13 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     };
 
 
-
+    /**
+     * This method triggers an asynchronous task which performs the internet operation for retrieving people's data
+     * @param begin
+     * @param size
+     * @param reSet
+     * @param searchQuery
+     */
     private void sendPostRequest(String begin, String size, final boolean reSet,String searchQuery) {
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             private List<Person> backupList;
@@ -329,7 +398,12 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
 
     }
-    //show toasts
+
+    /**
+     * Displays info message to the user
+     * @param text
+     * @param toast_length
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
@@ -346,13 +420,10 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     }
 
-/*    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        if (visible) {
-
-        }
-    }*/
+    /**
+     * This method determines the visibility state of the screen and acts accordingly.
+     * @param visibleHint
+     */
     @Override
     public void setUserVisibleHint(final boolean visibleHint){
         super.setUserVisibleHint(visibleHint);
@@ -382,12 +453,19 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }
     }
 
+    /**
+     * When the user refreshes the list using the gesture (pull from top) then the app resets the people list and refreshes
+     * the UI of this screen
+     */
     @Override
     public void onRefresh() {
         resetList();
 
     }
 
+    /**
+     * Reset the list
+     */
     private void resetList() {
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(),getActivity())){
@@ -400,6 +478,12 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }
     }
 
+    /**
+     * When the user scrolls to the end of the list check and show if there are any more results
+     * @param i
+     * @param i2
+     * @param i3
+     */
     @Override
     public void onMoreAsked(int i, int i2, int i3) {
 
@@ -424,6 +508,11 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     }
 
+    /**
+     * This method is triggered when the user selects an option from the options menu.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i("AllFragment","menu item was pressed");
@@ -438,13 +527,12 @@ public class AllFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Retrieve the people's list
+     * @return peopleList
+     */
     public static List<Person> getPeopleList(){
         return peopleList;
     }
 
-
-/*    @Override
-    public void onBackPressed() {
-
-    }*/
 }
