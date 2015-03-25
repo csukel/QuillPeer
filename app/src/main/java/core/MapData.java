@@ -20,21 +20,32 @@ import core.People.User;
 import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.ui.people.MapFragment;
 /**
- * Created by loucas on 23/02/2015.
+ * This class is used to accommodate client-server communication related to creation and updating of the map
+ * Created on 23/02/2015.
+ * @author Loucas Stylianou
  */
 public class MapData {
+
     private static double maxX;
     private static double maxY;
+    /**Determines if the client app has retrieved the max x and max y of the map */
     public static boolean haveMapSize;
+    /** Class name which is used for testing purposes */
     private static final String TAG = MapData.class.getSimpleName();
+    /** List of MapMarker objects */
     private static List<MapMarker> markerList;
+    /** Disallow the instantiation of this class */
     private MapData(){}
+    /** Greatest distance in a map */
     private static double maxD = 0.0;
 /*    public static double screenMaxX = 20;
     public static double screenMaxY = 20;*/
+    /** Boolean which is used to determine if the map is in updating mode or not */
     private static boolean isUpdating = false;
 
-    //trigger the get request from ServerComm responsible for getting the map size
+    /**
+     * Trigger the get request from ServerComm responsible for getting the map size
+     */
     public static void getMapSize(){
         class SendGetReqAsyncTask extends AsyncTask<Void, Void, String> {
             @Override
@@ -90,7 +101,9 @@ public class MapData {
     }
 
 
-    //trigger the get request from ServerComm responsible for getting the map size
+    /**
+     * Trigger the get request from ServerComm responsible for getting the map size
+     */
     public static void getRecommendation(){
 
         isUpdating =true;
@@ -203,26 +216,52 @@ public class MapData {
         }
 
     }
+
+    /**
+     * Retrieve the max X coordinate
+     * @return maxX
+     */
     public static double getMaxX(){
         return maxX;
     }
 
+    /**
+     * Retrieve the max Y coordinate
+     * @return maxY
+     */
     public static double getMaxY(){
         return maxY;
     }
 
+    /**
+     * Set the max X coordinate
+     * @param x
+     */
     public static void setMaxX(double x){
         maxX = x;
     }
 
+    /**
+     * Set the max Y coordinate
+     * @param y
+     */
     public static void setMaxY(double y){
         maxY = y;
     }
 
+    /**
+     * Retrieve the list containing all the Map markers
+     * @return markerList
+     */
     public static List<MapMarker> getMarkerList(){
         return markerList;
     }
 
+    /**
+     * This method is used to calculate the x coordinate and fix any issues like getting out of map boundaries
+     * @param originalX
+     * @return
+     */
     public static double calcScreenX(double originalX){
 
         double i =0.5;
@@ -238,6 +277,11 @@ public class MapData {
         return originalX;
     }
 
+    /**
+     * This method is used to calculate the y coordinate and fix any issues like getting out of map boundaries
+     * @param originalY
+     * @return
+     */
     public static double calcScreenY(double originalY){
 
         double i =0.5;
@@ -254,15 +298,26 @@ public class MapData {
         return originalY;
     }
 
+    /**
+     * Check whether the map is in updating state
+     * @return isUpdating
+     */
     public static boolean isUpdating(){
         return isUpdating;
     }
 
+    /**
+     * Calculate the greatest distance in a map using the euclidean distance formula
+     */
     private static void calcMaxD(){
         maxD = Math.sqrt(Math.pow(getMaxX(),2)+Math.pow(getMaxY(),2));
         Log.i(TAG,"Max distance: " + maxD);
     }
 
+    /**
+     * Retrieve the greatest distance in a map
+     * @return maxD
+     */
     public static double getMaxD(){
         return maxD;
     }

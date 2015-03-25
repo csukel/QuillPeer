@@ -10,15 +10,23 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Created by loucas on 24/01/2015.
+ * This class will be used to encrypt and decrypt passwords
+ * Created on 24/01/2015.
+ * @author Loucas Stylianou
  */
 public class AESCrypt {
-
+    /**
+     * Cipher object
+     */
     private final Cipher cipher;
     private final SecretKeySpec key;
     private AlgorithmParameterSpec spec;
 
-
+    /**
+     * Custom constructor
+     * @param password
+     * @throws Exception
+     */
     public AESCrypt(String password) throws Exception {
         // hash password with SHA-256 and crop the output to 128-bit for key
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -31,6 +39,10 @@ public class AESCrypt {
         spec = getIV();
     }
 
+    /**
+     * This method is used to calc the parameter specification
+     * @return
+     */
     public AlgorithmParameterSpec getIV() {
         byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
         IvParameterSpec ivParameterSpec;
@@ -39,6 +51,12 @@ public class AESCrypt {
         return ivParameterSpec;
     }
 
+    /**
+     * This method is used to encrypt the password
+     * @param plainText The password in a plain text format
+     * @return An encrypted format of the password
+     * @throws Exception
+     */
     public String encrypt(String plainText) throws Exception {
         cipher.init(Cipher.ENCRYPT_MODE, key, spec);
         byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
@@ -47,6 +65,12 @@ public class AESCrypt {
         return encryptedText;
     }
 
+    /**
+     * This method performs password decryption
+     * @param cryptedText The encrypted password
+     * @return The plain text form of the password
+     * @throws Exception
+     */
     public String decrypt(String cryptedText) throws Exception {
         cipher.init(Cipher.DECRYPT_MODE, key, spec);
         byte[] bytes = Base64.decode(cryptedText, Base64.DEFAULT);

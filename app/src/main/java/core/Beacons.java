@@ -3,15 +3,22 @@ package core;
 import java.util.HashMap;
 
 /**
- * Created by loucas on 11/02/2015.
+ * This class captures all info related to the beacons hardware
+ * Created on 11/02/2015.
+ * @author Loucas Stylianou
  */
 public class Beacons {
-
+    /** Mac Address of the beacon */
     private static final String mac1 = "CB:06:80:62:D2:AF";
+    /** Mac Address of the beacon */
     private static final String mac2 = "D8:43:98:B3:3D:DC";
+    /** Mac Address of the beacon */
     private static final String mac3 = "C8:4F:8E:87:04:EE";
+    /** Mac Address of the beacon */
     private static final String mac4 = "C7:2D:CC:B4:CF:B8";
+    /** Mac Address of the beacon */
     private static final String mac5 = "E2:C7:B0:CB:D8:68";
+    /** Mac Address of the beacon */
     private static final String mac6 = "F4:ED:13:F3:F8:46";
 
     /*testing vars*/
@@ -23,7 +30,14 @@ public class Beacons {
     private static String dist6;
 
 
+    /**
+     * A hash map that contains beacons mac address and given unique identifier. It is used to simplify the testing process.
+     */
     private static HashMap<String,Integer> beaconIndexTable = new HashMap<String,Integer>();
+
+    /**
+     * this block is used to store an identifier for each beacon
+     */
     static {
        beaconIndexTable.put(mac1,1);
        beaconIndexTable.put(mac2,2);
@@ -33,6 +47,10 @@ public class Beacons {
        beaconIndexTable.put(mac6,6);
     }
 
+    /**
+     * Retrieve the hash map that contains beacons mac addresses and unique identifiers
+     * @return
+     */
     public static HashMap getBeaconsIndices(){
         return beaconIndexTable;
     }

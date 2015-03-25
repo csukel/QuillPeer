@@ -10,7 +10,9 @@ import android.util.Log;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
- * Created by loucas on 24/01/2015.
+ * This class will be used to accommodate any client database transactions like creating the database, creating tables, querying the db e.t.c
+ * Created on 24/01/2015.
+ * @author Loucas Stylianou
  */
 public class DBHelper extends SQLiteOpenHelper {
 

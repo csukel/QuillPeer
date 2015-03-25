@@ -7,7 +7,9 @@ import android.util.Log;
 import core.AESCrypt;
 
 /**
- * Created by loucas on 24/01/2015.
+ * This class will serve as data provider for the UserInfo table which will be in the client side database
+ * Created on 24/01/2015.
+ * @author Loucas Stylianou
  */
 public class UserInfoProvider {
     private DBHelper dbHelper = null;
@@ -16,7 +18,7 @@ public class UserInfoProvider {
     public static final String KEY_USERNAME = "USERNAME";
     public static final String KEY_PASSWORD = "PASSWORD";
 
-    /** Constructor */
+    /** Custom Constructor */
     public UserInfoProvider(Context context) {
         Log.v(LOG_TAG, "context=" + context.toString());
         dbHelper = new DBHelper(context);
@@ -58,11 +60,22 @@ public class UserInfoProvider {
         }
     }
 
+    /**
+     * Check if the user given its username exists in the db
+     * @param username
+     * @return True if the username is stored in the user table, otherwise false
+     */
     public boolean usernameExists(String username){
         String[] whereArgs = new String[]{KEY_USERNAME +" = "+ "'"+username+"'"+";"};
         return dbHelper.isDataExist(TABLE_NAME,whereArgs);
     }
 
+    /**
+     * Checks if a user exists in the database
+     * @param username
+     * @param pass
+     * @return
+     */
     public boolean userExists(String username, String pass){
         AESCrypt crypt;
         String encryptedPass="";

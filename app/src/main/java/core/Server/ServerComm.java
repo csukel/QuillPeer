@@ -30,14 +30,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by loucas on 08/02/2015.
+ * @author Loucas Stylianou
+ * Created on 08/02/2015.
+ * This class is created to capture the communication behaviour between client and server app
  */
 public class ServerComm {
-    //use a single httpClient instead of creating a new instance every time to store the laravel session
+    /**
+     * Use a single httpClient in order to keep alive the connection with the server(session)
+     */
     private static DefaultHttpClient httpClient = new DefaultHttpClient();
+
+    /**
+     * Disallow instantiation of this class
+     */
     private ServerComm(){}
 
-    //login to the server and return response
+
+    /**
+     * Authenticate the user with the server and capture its response
+     * @param paramUsername Username which is the email address
+     * @param paramPassword Password
+     * @return result Server's response
+     */
     public static String login(String paramUsername,String paramPassword){
         String result = null;
         //HttpClient httpClient = new DefaultHttpClient();
@@ -91,13 +105,13 @@ public class ServerComm {
         return result;
     }
 
-    //logout from the server and return response
+    /**
+     * Logout from the server and capture the server's response
+     * @return result Server's response
+     */
     public static String logout(){
         String result = null;
-        //HttpClient httpClient = new DefaultHttpClient();
-/*
-        HttpClient httpClient = AndroidHttpClient.newInstance("Android");
-*/
+
         // In a POST request, we don't pass the values in the URL.
         //Therefore we use only the web page URL as the parameter of the HttpPost argument
         HttpGet httpGet = new HttpGet(Server.getHost()+APIs.logoutAPI);
@@ -119,7 +133,13 @@ public class ServerComm {
         return result;
     }
 
-    //post a request to the server to get a number of people according to the give search criteria
+    /**
+     * Post a request to the server to get a number of people according to the give search criteria
+     * @param start Start index
+     * @param size The number of the expected results
+     * @param searchQuery The search query given by the user if it exists
+     * @return result Server
+     */
     public static String getPeople(String start,String size,String searchQuery){
         //HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getPeople);
@@ -150,8 +170,13 @@ public class ServerComm {
     }
 
 
-
-    /*http post request to the server for getting suggested people according to the matching and searching criteria*/
+    /**
+     * http post request to the server for getting suggested people according to the matching and searching criteria
+     * @param start The start index
+     * @param size The number of the expected results
+     * @param searchQuery The search query given by the user if it exists
+     * @return result Server's response
+     */
     public static String getSuggestion(String start,String size,String searchQuery){
         //HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getSuggestion);
@@ -181,7 +206,11 @@ public class ServerComm {
         return result;
     }
 
-    //add a participant to the favourites (this method communicates with the corresponding api of the server)
+    /**
+     * Add a participant to the favourites (this method communicates with the corresponding api of the server)
+     * @param userId The user id
+     * @return result Server's response
+     */
     public static String addFavourite(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.addFavourite);
         JSONObject jsonObject = new JSONObject();
@@ -208,7 +237,11 @@ public class ServerComm {
         return result;
     }
 
-    //remove a participant from the favourites (this method communicates with the corresponding api of the server)
+    /**
+     * Remove a participant from the favourites (this method communicates with the corresponding api of the server)
+     * @param userId The user id
+     * @return result Server's response
+     */
     public static String removeFavourite(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.removeFavourite);
         JSONObject jsonObject = new JSONObject();
@@ -236,7 +269,11 @@ public class ServerComm {
         return result;
     }
 
-    //get a person (this method communicates with the corresponding api of the server)
+    /**
+     * Get a person (this method communicates with the corresponding api of the server)
+     * @param userId The user id
+     * @return result The server's response
+     */
     public static String getPerson(String userId){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.getPerson);
         JSONObject jsonObject = new JSONObject();
@@ -263,7 +300,12 @@ public class ServerComm {
         }
         return result;
     }
-    //send the average of 5 measurements collected fore each beacon (this method communicates with the corresponding api of the server)
+
+    /**
+     * Send the average of 5 measurements collected fore each beacon (this method communicates with the corresponding api of the server)
+     * @param jsonArray A json array containing the distance of the device from the beacons
+     * @return result The server's response
+     */
     public static String savePosition(JSONObject jsonArray){
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.savePosition);
         String result=null;
@@ -286,7 +328,11 @@ public class ServerComm {
         return result;
     }
 
-    //this method send a post request to the server to upload the profile image
+    /**
+     * This method send a post request to the server to upload the profile image
+     * @param picture The captured profile picture from the camera app
+     * @return result The server's response to this request
+     */
     public static String savePicture(String picture){
 
         HttpPost httpPost = new HttpPost(Server.getHost()+APIs.uploadProfilPicture);
@@ -315,7 +361,10 @@ public class ServerComm {
         return result;
     }
 
-    //GET method to get the max X and max Y coordinates
+    /**
+     * GET method to get the max X and max Y coordinates
+     * @return result The server's response related to this request
+     */
     public static String getMapSize(){
         String result = null;
 
@@ -341,8 +390,8 @@ public class ServerComm {
     }
 
     /**
-     * to test recommendation and map
-     * @return
+     * Get the recommended people's data from the server
+     * @return result The server's response related to this request
      */
     public static String getRecommendation(String size,JSONArray jsonArray){
         String result = null;
@@ -383,9 +432,13 @@ public class ServerComm {
     }
 
 
-
-
-    //return true if the device is connected to the internet
+    /**
+     * This method is used every time the client app is about to trigger an internet operation in order to check if the device
+     * actually supports it, i.e if the device is connected to the internet
+     * @param context The context within this method is called
+     * @param activity The current running activity when this method in invoked
+     * @return True if the device is connected to the internet, false otherwise
+     */
     public static boolean isNetworkConnected(Context context,Activity activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(context.CONNECTIVITY_SERVICE);
         return (cm.getActiveNetworkInfo()!=null);
