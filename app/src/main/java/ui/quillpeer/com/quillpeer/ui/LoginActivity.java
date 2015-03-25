@@ -29,14 +29,26 @@ import ui.quillpeer.com.quillpeer.R;
 /**
  * Created by loucas on 18/11/2014.
  * This is the activity corresponding to login screen
+ * @author Loucas Stylianou
  */
 public class LoginActivity extends Activity {
+    /**
+     * The login button
+     */
     private Button btnLogin;
+    /** The input text box for the username */
     private EditText edtUsername;
+    /** The input text box for the password */
     private EditText edtPassword;
+    /** A toast object to display info messages to the user */
     private Toast m_currentToast;
+    /** Shared preferences object to store some data */
     private SharedPreferences settings;
 
+    /**
+     * When this activity is created initialise the UI of the corresponding screen.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +65,9 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * Initialise the views (ui elements)
+     */
     private void initializeViewResources() {
         //initialize resources objects with the corresponding resources found in login_activity.xml file
         btnLogin = (Button)findViewById(R.id.btnLogin);
@@ -63,8 +78,15 @@ public class LoginActivity extends Activity {
         btnLogin.setOnClickListener(btnLoginClickListener);
     }
 
-    //set on editor action listener to pass edit text in order to handle the enter action
+    /** set on editor action listener to pass edit text in order to handle the enter action */
     TextView.OnEditorActionListener edtPassOnEditorActionListener = new TextView.OnEditorActionListener() {
+        /**
+         * When the user presses the confirm button of the keyboard perform the authentication process
+         * @param v
+         * @param actionId
+         * @param event
+         * @return
+         */
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == 6) {
@@ -75,6 +97,9 @@ public class LoginActivity extends Activity {
         }
     };
 
+    /**
+     * Perform the authentication process
+     */
     private void performLoginAction(){
         //get the username from the input box
         String username = edtUsername.getText().toString();
@@ -97,7 +122,14 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * Login button click listener
+     */
     View.OnClickListener btnLoginClickListener = new View.OnClickListener() {
+        /**
+         * When the login button is clicked by the user perform the authentication process
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             performLoginAction();
@@ -105,7 +137,11 @@ public class LoginActivity extends Activity {
     };
 
 
-    /*trigger the authentication api comm between client and server*/
+    /**
+     * Trigger the authentication api comm between client and server
+     * @param givenUsername
+     * @param givenPassword
+     */
     private void sendPostRequest(String givenUsername, String givenPassword) {
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
@@ -203,7 +239,10 @@ public class LoginActivity extends Activity {
 
 
     }
-    //check if the credentials are stored
+
+    /**
+     * Check if the credentials are stored
+     */
     private void checkIfCredStored() {
         //if no then store them in shared preferences
         if (!settings.getBoolean("credStored",false)) {
@@ -216,6 +255,11 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
