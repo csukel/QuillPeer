@@ -9,7 +9,7 @@ public class OtherParticipant extends Person {
 
 
     /**
-     * to check if this person instance is in user's favourite list of people
+     * To check if this person instance is in user's favourite list of people
      */
     private boolean isFavourite;
     /**
