@@ -71,7 +71,10 @@ public class OtherParticipant extends Person {
     public void setCorrelated(boolean correlated){
         this.isCorrelated=correlated;
     }
-    /*return true if this person is correlated to the user*/
+    /**
+     * Get the correlated boolean value state
+     * @return True if the person is correlated to the user, false otherwise
+     */
     public boolean isCorrelated(){
         return this.isCorrelated;
     }
