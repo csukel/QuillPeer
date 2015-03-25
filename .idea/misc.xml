@@ -4,7 +4,7 @@
     <entry_points version="2.0" />
   </component>
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$" />
+    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Documents/cs/cs4/cs407_group_project/client_app_javadocs" />
     <option name="OPTION_SCOPE" value="private" />
     <option name="OPTION_HIERARCHY" value="true" />
     <option name="OPTION_NAVIGATOR" value="true" />
