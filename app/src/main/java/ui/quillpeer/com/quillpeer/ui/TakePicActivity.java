@@ -34,24 +34,39 @@ import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
+ * This class defines the behaviour of the screen which is used by the user to take a profile picture or update the existing.
  * Created by loucas on 18/11/2014.
- * This class defines the Take a picture screen which is intended to be used by the user to take a profile picture
+ * @author Loucas Stylianou
  */
 public class TakePicActivity extends Activity {
+    /** temp file location to store the result from image capture using the camera app */
     private static final String TEMP_PHOTO_FILE = "tmp_ihis.jpg";
+    /** image view which displays the captured image */
     private ImageView profilePic;
+    /** the button which launches the camer app */
     private ImageButton btnCallCameraApp;
+    /** this button is used to store the image and continue to the app */
     private ImageButton btnAcceptPic;
+    /** this bitmap object is used to store the captured image */
     private Bitmap capturedImage = null;
-    //keep track of cropping intent
+    /** keep track of cropping intent */
     final int PIC_CROP = 2;
-    //uri to pass to intent camera.crop to pass the captured image
+    /** uri to pass to intent camera.crop to pass the captured image */
     private Uri picUri;
+    /** temp file */
     private File tempFile;
+    /** a toast object to display small info msges to the user */
     private Toast m_currentToast;
+    /** handler responsible for checking if the user has taken a picture and display an info msg accordingly */
     private Handler handleTakenPicMsg;
     private AppMsg alertTakePicture;
+    /** the name of the screen from which this activity was launched */
     private String prevScreen;
+
+    /**
+     * Initialise the UI of this screen
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -73,8 +88,8 @@ public class TakePicActivity extends Activity {
 
     }
 
-    //display an alert when user is not connected to the internet
     Runnable checkForTakenPicture = new Runnable() {
+        /** Check if a picture is captured. If it is false then display an informative message to the user */
         @Override
         public void run() {
             if (capturedImage==null){
@@ -89,7 +104,7 @@ public class TakePicActivity extends Activity {
         super.onResume();
 
     }
-    //connect the objects with the corresponding resources in take_pic_activity.xml
+    /** Connect the objects with the corresponding resources in take_pic_activity.xml */
     private void initializeViewResources() {
         profilePic = (ImageView)findViewById(R.id.imgProfilePic);
         btnCallCameraApp = (ImageButton)findViewById(R.id.btnCallCameraApp);
@@ -102,7 +117,12 @@ public class TakePicActivity extends Activity {
         }
     }
 
+    /** Listen to click events for the button which triggers the camer app */
     View.OnClickListener btnCallCameraAppOnClickListener = new View.OnClickListener() {
+        /**
+         * If the button is clicked then launch the camer app
+         * @param v View
+         */
         @Override
         public void onClick(View v) {
 
@@ -118,7 +138,12 @@ public class TakePicActivity extends Activity {
         }
     };
 
-    //when the camera activity is closed check the result
+    /**
+     * This method defines the screen behaviour when it returns from the camera app activity or the crop image activity.
+     * @param requestCode
+     * @param resultCode
+     * @param data Data including the image
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -175,6 +200,10 @@ public class TakePicActivity extends Activity {
             }
         }
     }
+
+    /**
+     * Create a temporary file on the device's memory
+     */
     private void createFileTempFile(){
         tempFile = new File(Environment.getExternalStorageDirectory(),
                 TEMP_PHOTO_FILE);
@@ -185,15 +214,27 @@ public class TakePicActivity extends Activity {
         }
 
     }
+
+    /**
+     * Get the uri of the file
+     * @return
+     */
     private Uri getTempUri() {
         return Uri.fromFile(getTempFile());
     }
 
+    /**
+     * Get the temporary file object
+     * @return tempFile
+     */
     private File getTempFile() {
 
         return tempFile;
     }
 
+    /**
+     * Launch the activity which is responsible to perform image cropping
+     */
     private void performCrop() {
 
         try {
@@ -222,13 +263,18 @@ public class TakePicActivity extends Activity {
         catch(ActivityNotFoundException anfe){
             //display an error message
             String errorMessage = "Whoops - your device doesn't support the crop action!";
-            //TODO if the device does not support crop then crop it ussing bitmap method for scaling
             Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
     }
 
+    /** Listens to click events for the accept button */
     View.OnClickListener btnAcceptPicOnClickListener = new View.OnClickListener() {
+        /**
+         * When the accept button is pressed check if a picture is captured and then send it to the server and
+         * continue to next screen.
+         * @param v
+         */
         @Override
         public void onClick(View v) {
 
@@ -249,7 +295,11 @@ public class TakePicActivity extends Activity {
     };
 
 
-
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
@@ -261,6 +311,10 @@ public class TakePicActivity extends Activity {
 
     }
 
+    /**
+     * Send the profile picture to the server.
+     * @param image_str
+     */
     private void sendPictureToServer(final String image_str) {
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             ProgressDialog dialog = ProgressDialog.show(TakePicActivity.this,

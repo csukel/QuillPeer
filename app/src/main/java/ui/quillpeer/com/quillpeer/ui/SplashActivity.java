@@ -15,15 +15,26 @@ import android.widget.TextView;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
+ * This class defines the behaviour of the splash screen. This screen is shown only the first time
+ * this application is launched.
  * Created by loucas on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class SplashActivity extends Activity {
+    /** logo */
     private ImageView imgLogo;
+    /** scale animation */
     private ScaleAnimation animImg;
+    /** slogan animation */
     private Animation animSlogan;
 
+    /** display duration is set to 3 secs */
     private final int SPLASH_DISPLAY_LENGTH = 3000;
 
+    /**
+     * When this activity is created initialise the view and trigger the animations.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

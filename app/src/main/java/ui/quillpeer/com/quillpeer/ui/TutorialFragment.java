@@ -14,11 +14,23 @@ import java.nio.BufferUnderflowException;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
+ * This class defines the behaviour of each slide from the Tutorial slideshow
  * Created by loucas on 19/02/2015.
+ * @author Loucas StylianouS
  */
 public class TutorialFragment extends Fragment {
+    /** the background of the screen */
     private ImageView backgroundImg;
+    /** the class name which is used for debugging/testing purposes */
     private static final String TAG = TutorialFragment.class.getSimpleName();
+
+    /**
+     * This method initialises the UI of the corresponding slide from the Tutorial
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tutorial, container, false);
@@ -74,6 +86,10 @@ public class TutorialFragment extends Fragment {
     }
 
 
+    /**
+     * This method defines the behaviour of the fragment when it is attached on an activity
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
