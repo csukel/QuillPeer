@@ -39,21 +39,42 @@ import ui.quillpeer.com.quillpeer.R;
 
 
 /**
+ * This class defines the behaviour of the user's profile page
  * Created by loucas on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class ProfileFragment extends Fragment {
+    /** profile picture image view */
     private ImageView profilePicture;
+    /** first and last name */
     private TextView profileName;
+    /** user's university */
     private TextView profileUniversity;
+    /** user's department */
     private TextView profileDepartment;
+    /** user's academic qualification */
     private TextView profileQualification;
+    /** user's submitted abstract */
     private TextView profilePaperAbstract;
+    /** title of user's submitted abstract */
     private TextView profilePaperAbstractTitle;
+    /** favourite image view. for this screen is removed from its parent view since it is not needed */
     private ImageView profileFavourite;
+    /** the horizontal bar chart which displays the top 5 topics for the user according to his submitted abstract */
     private HorizontalBarChart topicsChart;
     private LinearLayout topicWordsLayout;
+    /** set of words which represents a specific topic */
     private TextView txtTopicWords;
+    /** the class name which is used for debugging/testing purposes */
     private static final String TAG = ProfileFragment.class.getSimpleName();
+
+    /**
+     * This method initialises the view for this screen.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return rootView
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,6 +123,10 @@ public class ProfileFragment extends Fragment {
         ((LinearLayout)profileFavourite.getParent()).removeView(profileFavourite);
     }
 
+    /**
+     * Initialise the view for the horizontal bar chart that displays the top 5 topics
+     * @param v
+     */
     private void initialiseChartView(View v) {
 
         topicsChart.setOnChartValueSelectedListener(topicChartValueSelectedListener);
@@ -156,6 +181,10 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Set the data to the bar chart
+     * @param tf
+     */
     private void setData(Typeface tf) {
         List<Topic> topicList = User.getInstance().getTopicList();
         ArrayList<String> xVals = new ArrayList<String>();
@@ -190,7 +219,16 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * When a bar is selected from the chart ....
+     */
     OnChartValueSelectedListener topicChartValueSelectedListener = new OnChartValueSelectedListener() {
+        /**
+         * Display the corresponding set of words which represents the selected topic
+         * @param e
+         * @param dataSetIndex
+         * @param h
+         */
         @SuppressLint("NewApi")
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
@@ -208,14 +246,27 @@ public class ProfileFragment extends Fragment {
         }
     };
 
+    /**
+     * This method defines the fragment's behaviour when it is attached to an activity
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
+    /**
+     * This listener defines the behaviour when a user clicks on his profile picture
+     */
     View.OnTouchListener profilePicTouchListener = new View.OnTouchListener(){
 
+        /**
+         * When the user touches his profile picture, then it launches the screen which is responsible for taking a new profile picture
+         * @param v
+         * @param event
+         * @return
+         */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             Intent intent = new Intent(MyApplication.currentActivity(),TakePicActivity.class);
@@ -224,6 +275,9 @@ public class ProfileFragment extends Fragment {
         }
     };
 
+    /**
+     * When the fragment enters the onResume state update the profile picture
+     */
     @Override
     public void onResume(){
         super.onResume();

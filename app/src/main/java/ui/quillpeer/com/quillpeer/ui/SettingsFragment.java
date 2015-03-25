@@ -20,13 +20,22 @@ import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
+ * This class defines the behaviour of the settings' screen.
  * Created by loucas on 18/11/2014.
  * Library used for PreferenceFragment is a third party library downloaded from
  * https://github.com/kolavar/android-support-v4-preferencefragment
+ * @author Loucas Stylianou
  */
 public class SettingsFragment extends PreferenceFragment {
+    /** a toast object to display small info msgs to the user */
     private Toast m_currentToast;
+    /** shared preferences */
     private SharedPreferences sharedPrefs;
+
+    /**
+     * When this fragment is created, initialise the UI of the screen and define the behaviour of the UI elements.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +46,11 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference prefLogout = (Preference) findPreference("pref_log_out");
         prefLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /**
+             * When the logout button is clicked send the request to the server and exit the app
+             * @param preference
+             * @return
+             */
             public boolean onPreferenceClick(Preference preference) {
                 //open browser or intent here
                 //Toast.makeText(getActivity().getApplicationContext(), "Log out is pressed", Toast.LENGTH_SHORT).show();
@@ -52,6 +66,11 @@ public class SettingsFragment extends PreferenceFragment {
 
         Preference prefTutorial = (Preference)findPreference("pref_tutorial");
         prefTutorial.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /**
+             * When the tutorial option is clicked then launch the TutorialActivity which contains the tutorial slided show
+             * @param preference
+             * @return
+             */
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(getActivity(),TutorialActivity.class);
@@ -63,7 +82,9 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
 
-
+    /**
+     * This method is used to send a log out request to the server.
+     */
     private void logout(){
         class SendGetReqAsyncTask extends AsyncTask<Void, Void, String> {
             ProgressDialog dialog = ProgressDialog.show(getActivity(),
@@ -125,6 +146,11 @@ public class SettingsFragment extends PreferenceFragment {
         //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
