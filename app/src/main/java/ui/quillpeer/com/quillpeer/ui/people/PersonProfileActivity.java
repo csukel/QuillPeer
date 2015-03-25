@@ -45,26 +45,46 @@ import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
- * Created by loucas on 11/02/2015.
+ * This class defines the behaviour of the profile page for other people than the user
+ * Created on 11/02/2015.
+ * @author Loucas Stylianou
  */
 public class PersonProfileActivity extends Activity {
+    /** the profile picture */
     private ImageView profilePicture;
+    /** first and last name */
     private TextView profileName;
+    /** person's university */
     private TextView profileUniversity;
+    /** person's department */
     private TextView profileDepartment;
+    /** person's qualification */
     private TextView profileQualification;
+    /** the submitted abstract */
     private TextView profilePaperAbstract;
+    /** the abstract's title */
     private TextView profilePaperAbstractTitle;
+    /** a toast object to display info messages to the user */
     private Toast m_currentToast;
+    /** the other participant object */
     private OtherParticipant person;
+    /** the image which depicts if the person is a favourite to the user or not */
     private ImageView profileFavourite;
     private int listIndex=-1;
+    /** screen name from which the app has launched this activity */
     private String screenName;
+    /** the class name which is used for debugging/testing purposes */
     private static final String TAG = PersonProfileActivity.class.getSimpleName();
+    /** the horizontal bar chart object which is used to display the top 5 topics for this person */
     private HorizontalBarChart topicsChart;
     private LinearLayout topicWordsLayout;
+    /** the set of words for a specific topic which is displayed to the user when it selects a topic from the graph */
     private TextView txtTopicWords;
 
+    /**
+     * This method initialises the UI when this activity is created
+     * @param savedInstance
+     */
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.fragment_profile_cardview);
@@ -77,6 +97,9 @@ public class PersonProfileActivity extends Activity {
         }
     }
 
+    /**
+     * UI initialisation
+     */
     private void initializeViewResources() {
         profilePicture = (ImageView)findViewById(R.id.imgCardProfilePicture);
         profileName = (TextView)findViewById(R.id.txtCardProfileName);
@@ -107,7 +130,16 @@ public class PersonProfileActivity extends Activity {
 
     }
 
+    /**
+     * This listener defines the behaviour of the profile favourite image view when is touched by the user
+     */
     View.OnTouchListener profileFavouriteOnTouchListener = new View.OnTouchListener() {
+        /**
+         * When the user touched the favourite star image view then the app sends the corresponding request to the server
+         * @param v
+         * @param event
+         * @return
+         */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             //Send post request to the server
@@ -127,7 +159,12 @@ public class PersonProfileActivity extends Activity {
         }
     };
 
-    //send a post request to the server to add or remove the person from user favourite's list
+    /**
+     * send a post request to the server to add or remove the person from user favourite's list
+     * @param userId
+     * @param v
+     * @param favouriteAction
+     */
     private void sendPostRequestFavourite(String userId, final View v,String favouriteAction) {
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
@@ -237,7 +274,10 @@ public class PersonProfileActivity extends Activity {
     }
 
 
-    //send a post request to server to get the person's data
+    /**
+     * send a post request to server to get the person's data
+     * @param userId
+     */
     private void sendPostRequest(String userId) {
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
@@ -325,6 +365,9 @@ public class PersonProfileActivity extends Activity {
 
     }
 
+    /**
+     * After the person details are retrieved from the server fill the corresponding views (UI elements) with the details accordingly
+     */
     private void setViewValues() {
         String speaker = "";
         if (person.isSpeaker()) speaker = "(Speaker)";
@@ -352,6 +395,9 @@ public class PersonProfileActivity extends Activity {
         else {}
     }
 
+    /**
+     * Initialise the horizontal chart view
+     */
     private void initialiseChartView() {
 
         topicsChart.setOnChartValueSelectedListener(topicChartValueSelectedListener);
@@ -406,6 +452,10 @@ public class PersonProfileActivity extends Activity {
 
     }
 
+    /**
+     * Set the data to the chart
+     * @param tf
+     */
     private void setData(Typeface tf) {
         List<Topic> topicList = person.getTopicList();
         ArrayList<String> xVals = new ArrayList<String>();
@@ -440,7 +490,16 @@ public class PersonProfileActivity extends Activity {
 
     }
 
+    /**
+     * Defines the behaviour of the screen when the user touches to one of the bars on the chart
+     */
     OnChartValueSelectedListener topicChartValueSelectedListener = new OnChartValueSelectedListener() {
+        /**
+         * When the user touches to one of the bars on the chart then display the corresponding topic models (set of words)
+         * @param e
+         * @param dataSetIndex
+         * @param h
+         */
         @SuppressLint("NewApi")
         @Override
         public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
@@ -458,7 +517,11 @@ public class PersonProfileActivity extends Activity {
         }
     };
 
-    //show toasts
+    /**
+     * Display info messages to the user
+     * @param text
+     * @param toast_length
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
@@ -471,6 +534,11 @@ public class PersonProfileActivity extends Activity {
     }
 
 
+    /**
+     * When the user selects the home button from the options menu then close this activity.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

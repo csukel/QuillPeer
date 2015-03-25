@@ -6,12 +6,16 @@ import android.os.Bundle;
 import com.qozix.tileview.TileView;
 
 /**
- * Created by loucas on 22/02/2015.
+ * This class defines the behaviour of the tile view which represents the map
+ * Created on 22/02/2015.
+ * @author Loucas Stylianou
  */
 public class TileViewActivity extends Activity {
 
+    /** tile view object */
     private TileView tileView;
 
+    /** When this activity is created initialise the tile view */
     @Override
     public void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
@@ -19,18 +23,25 @@ public class TileViewActivity extends Activity {
         setContentView( tileView );
     }
 
+    /** On pause clear the tile view  */
     @Override
     public void onPause() {
         super.onPause();
         tileView.clear();
     }
 
+    /**
+     * On resume restart the tile view
+     */
     @Override
     public void onResume() {
         super.onResume();
         tileView.resume();
     }
 
+    /**
+     * On destroy, destroy the tile view
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -38,6 +49,10 @@ public class TileViewActivity extends Activity {
         tileView = null;
     }
 
+    /**
+     * Get the tile view instance
+     * @return tileView
+     */
     public TileView getTileView(){
         return tileView;
     }

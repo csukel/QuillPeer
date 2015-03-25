@@ -16,11 +16,24 @@ import ui.quillpeer.com.quillpeer.ui.MainActivity;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragmentPageAdapter;
 
 /**
- * Created by loucas on 18/11/2014.
+ * This class defines the behaviour of the people fragment which contains 3 other fragments (MapFragment,SuggestionsFragment,AllFragment)
+ * and a view pager is used to display these three and navigate.
+ * Created on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class PeopleFragment extends Fragment {
+    /** View pager navigation */
     private ViewPager pager;
+    /** pager adapter */
     private PeopleFragmentPageAdapter pagerAdapter;
+
+    /**
+     * This method creates the UI when the fragment is initialised.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,6 +51,10 @@ public class PeopleFragment extends Fragment {
 
             }
 
+            /**
+             * When a page is selected trigger the corresponding fragment lifecycle method.
+             * @param newPosition
+             */
             @Override
             public void onPageSelected(int newPosition) {
                 FragmentLifecycle fragmentToShow = (FragmentLifecycle)pagerAdapter.getItem(newPosition);
@@ -55,24 +72,14 @@ public class PeopleFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * This method defines the behaviour of the screen when a fragment is attached on an activity
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         //((MainActivity) activity).onSectionAttached(getArguments().getInt("Position"));
     }
 
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-
-
-        @Override
-        public void onPageSelected(int newPosition) {
-
-
-        }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-        public void onPageScrollStateChanged(int arg0) { }
-    };
 }

@@ -14,10 +14,19 @@ import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
- * Created by loucas on 06/03/2015.
+ * This class defines the behaviour of the activity which is launched when the user selects the People option from the navigation drawer
+ * in the MainActivity
+ * Created on 06/03/2015.
+ * @author Loucas Stylianou
  */
 public class PeopleFragmentActivity extends FragmentActivity {
+    /** handler that checks the network state */
     private Handler handleInternetStateMsg = new Handler();
+
+    /**
+     * When the activity is created the UI is initialised and the PeopleFragment is launched.
+     * @param savedInstance
+     */
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
@@ -38,12 +47,21 @@ public class PeopleFragmentActivity extends FragmentActivity {
         //display to the user the corresponding alert msg
         handleInternetStateMsg.postDelayed(checkInternetState,2000);
     }
+
+    /**
+     * OnResume set this activity as the current activity in the MyApplication class
+     */
     @Override
     public void onResume(){
         super.onResume();
         MyApplication.setCurrentActivity(this);
     }
 
+    /**
+     * When the home button is selected from the options menu close this activity
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -55,7 +73,9 @@ public class PeopleFragmentActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //display an alert when user is not connected to the internet
+    /**
+     * display an alert when user is not connected to the internet
+     */
     Runnable checkInternetState = new Runnable() {
         @Override
         public void run() {
@@ -68,6 +88,9 @@ public class PeopleFragmentActivity extends FragmentActivity {
         }
     };
 
+    /**
+     * When this activity is destroyed, remove any other than the main ui running threads
+     */
     @Override
     public void onDestroy(){
         super.onDestroy();
