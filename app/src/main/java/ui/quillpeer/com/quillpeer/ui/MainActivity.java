@@ -63,25 +63,52 @@ import ui.quillpeer.com.quillpeer.ui.people.PeopleFragment;
 import ui.quillpeer.com.quillpeer.ui.people.PeopleFragmentActivity;
 import ui.quillpeer.com.quillpeer.ui.timetable.TimetableFragment;
 
-
+/**
+ * This class is responsible for the main application's screen which contains also the applications' navigation between different
+ * screens.
+ * Created on 15/11/2014.
+ * @author Loucas Stylianou
+ */
 public class MainActivity extends MaterialNavigationDrawer {
+    /** beacon manager responsible for communication between beacons' hardware and the device */
     private BeaconManager beaconManager;
+    /** It is used to determine whether the back button is pressed twice in order to exit the app */
     private boolean  doubleBackToExitPressedOnce;
+    /** The class name which is used for debugging/testing purposes */
     private static final String TAG = MainActivity.class.getSimpleName();
+    /** the region which covers beacons */
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
+    /** handler object responsible for displaying the message related to the network state */
     private Handler handleInternetStateMsg = new Handler();
+    /** handler object responsible to keep bluetooth enabled while the app is running */
     private Handler handleBleEnabled = new Handler();
+    /** bluetooth adapter */
     private BluetoothAdapter bleAdapter ;
+    /** hash map that contains the beacons' mac addresses and the distances from the device */
     private HashMap<String,ArrayList<Double>> beaconsDistancesList;
+    /** counter of measurements taken until averaging process  */
     private int measurementsCounter = 0;
+    /** a toast object to display info msgs to the user */
     private Toast m_currentToast;
+    /** activity object */
     private Activity activity;
+    /** the view related to the navigation drawer's header which displays user account's details */
     private View drawerHeaderView;
+    /** user account details */
     private TextView txtDrawerHeaderDetails;
+    /** user account profile picture */
     private CircleImageView drawerHeaderImage;
 
+    /**
+     * beacons list
+     */
     private ArrayList<Beacon> beaconsList = new ArrayList<Beacon>();
 
+    /**
+     * This method performs the UI initialisation for the MainActivity screen. This initialisation includes the navigation
+     * drawer's UI initialisation.
+     * @param savedInstanceState
+     */
     @Override
     public void init(Bundle savedInstanceState) {
         /*set header data*/
@@ -131,8 +158,13 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     }
 
+    /**
+     * This runnable is responsible to check if the bluetooth of the device is enabled
+     */
     Runnable ckeckBleOn = new Runnable(){
-
+        /**
+         * If the bluetooth is enabled do nothing, otherwise turn it on
+         */
         @Override
         public void run() {
             // If Bluetooth is not enabled, let user enable it.
@@ -143,7 +175,9 @@ public class MainActivity extends MaterialNavigationDrawer {
         }
     };
 
-    //display an alert when user is not connected to the internet
+    /**
+     * Display an alert when user is not connected to the internet
+     */
     Runnable checkInternetState = new Runnable() {
         @Override
         public void run() {
@@ -156,7 +190,16 @@ public class MainActivity extends MaterialNavigationDrawer {
         }
     };
 
+    /**
+     * Define the ranging listener for the beacon manager.
+     */
     BeaconManager.RangingListener rangingListener = new BeaconManager.RangingListener() {
+        /**
+         * When beacons are discovered store them do the averaging every a preset number of discoveries and then send the values
+         * to the server
+         * @param region
+         * @param beacons
+         */
         @Override
         public void onBeaconsDiscovered(Region region, final List<Beacon> beacons) {
             // Note that results are not delivered on UI thread.
@@ -265,8 +308,9 @@ public class MainActivity extends MaterialNavigationDrawer {
     };
 
 
-
-
+    /**
+     * This method triggers the communication between the device and the beacons using bluetooth low energy technology
+     */
     protected void startBeaconsComm() {
         // Check if device supports Bluetooth Low Energy.
         if (!beaconManager.hasBluetooth()) {
@@ -280,12 +324,18 @@ public class MainActivity extends MaterialNavigationDrawer {
         connectToService();
     }
 
+    /**
+     * This method defines the activity's behaviour when it enters the onStop state
+     */
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG,"Activity is onStop");
     }
 
+    /**
+     * When this activity is destroyed stop beacons' ranging process
+     */
     @Override
     protected void onDestroy() {
         try {
@@ -299,6 +349,9 @@ public class MainActivity extends MaterialNavigationDrawer {
     }
 
 
+    /**
+     * Connect to the beacons discovery service
+     */
     private void connectToService() {
         getSupportActionBar().setSubtitle("Scanning...");
         beaconsList.clear();
@@ -320,6 +373,9 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     }
 
+    /**
+     * This method defines the activity (screen) behaviour when it enters the onResume state
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -331,7 +387,10 @@ public class MainActivity extends MaterialNavigationDrawer {
         MyApplication.setCurrentActivity(this);
     }
 
-    //create an async task to execute the post request to the server to send beacons' measurements
+    /**
+     * Create an async task to execute the post request to the server to send beacons' measurements
+     * @param jsonArray JSON array containing the distances of the device from the beacons
+     */
     private void sendBeaconsToServer(JSONObject jsonArray) {
 
         class SendPostReqAsyncTask extends AsyncTask<JSONObject, Void, String> {
@@ -376,6 +435,9 @@ public class MainActivity extends MaterialNavigationDrawer {
         }
     }
 
+    /**
+     * Override back button action. Double back quickly to exit the app
+     */
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -393,7 +455,12 @@ public class MainActivity extends MaterialNavigationDrawer {
             }
         }, 2000);
     }
-    //show toasts
+
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     */
     void showToast(String text,int toast_length)
     {
         if(m_currentToast != null)
