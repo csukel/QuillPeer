@@ -68,7 +68,6 @@ public class MainActivity extends MaterialNavigationDrawer {
     private BeaconManager beaconManager;
     private boolean  doubleBackToExitPressedOnce;
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int REQUEST_ENABLE_BT = 1234;
     private static final Region ALL_ESTIMOTE_BEACONS = new Region("regionId", null, null, null);
     private Handler handleInternetStateMsg = new Handler();
     private Handler handleBleEnabled = new Handler();
@@ -85,15 +84,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle savedInstanceState) {
-
-        // set header data
-
-        //setDrawerBackgroundColor(R.color.actionBarColor);
-/*        Drawable userProfilePicture = new BitmapDrawable(this.getResources(),User.getInstance().getProfilePicture());
-        setFirstAccountPhoto(userProfilePicture);
-        setUsername(User.getInstance().getName() + " " + User.getInstance().getSurname());
-        setUserEmail(User.getInstance().getEmail());*/
-
+        /*set header data*/
         drawerHeaderView = LayoutInflater.from(this).inflate(R.layout.drawable_header_layout,null);
         txtDrawerHeaderDetails = (TextView)drawerHeaderView.findViewById(R.id.txtDrawerHeaderDetails);
         String profileDetails = "";
@@ -116,28 +107,11 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         this.addBottomSection(newSection("Settings",R.drawable.ic_action_settings,new SettingsFragment()));
         getSupportActionBar().setLogo(R.drawable.logo);
-/*        this.addSection(newSection("Section 1", new FragmentIndex()));
-        this.addSection(newSection("Section 2",new FragmentIndex()));
-        this.addSection(newSection("Section 3",R.drawable.ic_mic_white_24dp,new FragmentButton()).setSectionColor(Color.parseColor("#9c27b0")));
-        this.addSection(newSection("Section",R.drawable.ic_hotel_grey600_24dp,new FragmentButton()).setSectionColor(Color.parseColor("#03a9f4")));*/
-
-        // create bottom section
-/*
-        this.addBottomSection(newSection("Bottom Section",R.drawable.ic_settings_black_24dp,new Intent(this,Settings.class)));
-*/
-
         activity = this;
        /* setContentView(R.layout.activity_main);*/
         beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
-/*        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);*/
-        //mTitle = getTitle();
         //get bluetooth adapter
         bleAdapter = BluetoothAdapter.getDefaultAdapter();
-        // Set up the drawer.
-/*        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));*/
 
         // Configure BeaconManager.
         beaconManager = new BeaconManager(this);
@@ -156,40 +130,6 @@ public class MainActivity extends MaterialNavigationDrawer {
 
 
     }
-
-/*    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        activity = this;
-        setContentView(R.layout.activity_main);
-        beaconsDistancesList = new HashMap<String,ArrayList<Double>>();
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-        //get bluetooth adapter
-        bleAdapter = BluetoothAdapter.getDefaultAdapter();
-        // Set up the drawer.
-*//*        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));*//*
-
-        // Configure BeaconManager.
-        beaconManager = new BeaconManager(this);
-        beaconManager.setForegroundScanPeriod(200,0);
-
-        beaconManager.setRangingListener(rangingListener);
-        //run the checkBleOn thread which intents to enable bluetooth when the user disables it manually
-        handleBleEnabled.postDelayed(ckeckBleOn,2000);
-        //run a handler to check every 1 sec (with initial post delay of 2 secs) the internet state and
-        //display to the user the corresponding alert msg
-        handleInternetStateMsg.postDelayed(checkInternetState,2000);
-        //start the communication with beacons
-        startBeaconsComm();
-        MyApplication.setApplicationContext(getApplicationContext());
-
-
-    }*/
 
     Runnable ckeckBleOn = new Runnable(){
 
@@ -340,19 +280,6 @@ public class MainActivity extends MaterialNavigationDrawer {
         connectToService();
     }
 
-/*    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == Activity.RESULT_OK) {
-                connectToService();
-            } else {
-                Toast.makeText(this, "Bluetooth not enabled", Toast.LENGTH_LONG).show();
-                getActionBar().setSubtitle("Bluetooth not enabled");
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }*/
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -370,102 +297,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         beaconManager.disconnect();
         super.onDestroy();
     }
-    /*
-    * Loucas
-    * When on of the navigation drawer item is selected then show the corresponding fragment
-    * */
-/*    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        //declare and initialize each fragment object for the main menu screens(Profile, People, Timetable,Settings,About)
-        ProfileFragment fragmentProfile = new ProfileFragment();
-        PeopleFragment fragmentPeople = new PeopleFragment();
-        TimetableFragment fragmentTimetable = new TimetableFragment();
-        SettingsFragment fragmentSettings = new SettingsFragment();
-        AboutFragment fragmentAbout = new AboutFragment();
-
-        Bundle args = new Bundle();
-        args.putInt("Position", position);
-        Fragment gFragment = null;
-
-        switch (position) {
-            case 0:
-                gFragment = fragmentProfile;
-                break;
-            case 1:
-                gFragment = fragmentPeople;
-                break;
-*//*            case 2:
-                gFragment = fragmentTimetable;
-                break;*//*
-            case 2:
-                gFragment = fragmentSettings;
-                break;
-            case 3:
-                gFragment = fragmentAbout;
-                break;
-        }
-        //Store the position of the selected fragment into bundle
-        gFragment.setArguments(args);
-        //Show gFragment object on the screen
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, gFragment)
-                .commit();
-    }*/
-
-
-
-/*    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        try {
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setTitle(mTitle);
-        }catch  (Exception ex){
-            Log.e(TAG,"Main activity",ex);
-        }
-    }*/
-
-
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.search_menu, menu);
-
-            SearchManager searchManager = (SearchManager)
-                    getSystemService(Context.SEARCH_SERVICE);
-            MenuItem searchMenuItem = menu.findItem(R.id.search);
-            SearchView searchView = (SearchView) searchMenuItem.getActionView();
-
-            searchView.setSearchableInfo(searchManager.
-                    getSearchableInfo(getComponentName()));
-            searchView.setSubmitButtonEnabled(true);
-            //searchView.setOnQueryTextListener(this);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
-/*    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     private void connectToService() {
         getSupportActionBar().setSubtitle("Scanning...");
