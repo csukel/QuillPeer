@@ -29,17 +29,36 @@ import ui.quillpeer.com.quillpeer.R;
 import ui.quillpeer.com.quillpeer.ui.MapActivity;
 
 /**
- * Created by loucas on 18/11/2014.
+ * This class defines the behaviour of the small map screen
+ * Created on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class MapFragment extends Fragment implements FragmentLifecycle {
+    /** the tile view object which is used to show the map */
     private TileView tileView;
+    /** the map layout where the tile view is placed in */
     private LinearLayout mapLayout;
+    /** handler object for displaying info msg */
     private Handler handlerInfoMsg;
+    /** info message object */
     private AppMsg appMsg;
+    /** handler for updating the map */
     private Handler handlerUpdateMap;
+    /** the list of all markers shown on the map */
     private static List<MapMarker> markerList;
+    /** determines the visibility state of the screen */
     private boolean visible = false;
+    /** the class name which is used for debugging/testing purposes */
     private static final String TAG = MapFragment.class.getSimpleName();
+
+    /**
+     * This method defines the behaviour of the fragment when the view(UI) is created. It initialises the map view using
+     * the tile view object.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,6 +104,10 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
 
         return rootView;
     }
+
+    /**
+     * When this fragment is onResume prepare the process which will run in parallel with the main ui thread
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -94,6 +117,10 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         handlerUpdateMap = new Handler();
         handlerUpdateMap.postDelayed(runnableUpdateMap, 100);
     }
+
+    /**
+     * When the fragment is onStop state then stop any other thread than main ui thread
+     */
     @Override
     public void onStop(){
         super.onStop();
@@ -101,7 +128,14 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         handlerUpdateMap.removeCallbacks(runnableUpdateMap);
     }
 
+    /**
+     * This listener defines the behaviour of the full screen floating button
+     */
     View.OnClickListener fullScreenOnClickListener = new View.OnClickListener() {
+        /**
+         * When the full screen button is clicked launch the Map Activity which is a full screen map view
+         * @param v View
+         */
         @Override
         public void onClick(View v) {
             Log.i(TAG,"full screen is clicked");
@@ -111,8 +145,13 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
     };
 
 
-    //show msg if the fragment is visible
+    /**
+     * Show msg if the fragment is visible
+     */
     Runnable runnableMsgInfo = new Runnable() {
+        /**
+         * Display info message to the user
+         */
         @Override
         public void run() {
             if (visible) {
@@ -144,7 +183,10 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
 
     }
 
-    //check the fragment's visibility
+    /**
+     * Check the fragment's visibility and act accordingly
+     * @param visibleHint
+     */
     @Override
     public void setUserVisibleHint(final boolean visibleHint){
         super.setUserVisibleHint(visibleHint);
@@ -165,6 +207,10 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
             visible = false;
         }
     }
+
+    /**
+     * When the fragment is destroyed remove any running threads to avoid any abnormal app behaviour
+     */
     @Override
     public void onDestroy(){
         super.onDestroy();
@@ -174,13 +220,18 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         handlerUpdateMap.removeCallbacks(runnableUpdateMap);
     }
 
+    /**
+     * This runnable defines the actions that are taken to update the map
+     */
     Runnable runnableUpdateMap = new Runnable() {
+        /**
+         * Update map data
+         */
         @Override
         public void run() {
             if (MapData.haveMapSize){
                 tileView.defineRelativeBounds( 0, 0,MapData.getMaxX(), MapData.getMaxY());
                 if ( !MapData.isUpdating() && MapData.getMarkerList()!=null){
-                    //TODO get data from list and show the markers
                     updateMap();
                     MapData.getRecommendation();
                 }else if (!MapData.isUpdating()) {
@@ -194,7 +245,9 @@ public class MapFragment extends Fragment implements FragmentLifecycle {
         }
     };
 
-    /*update the map with adding removing markers*/
+    /**
+     * Update the map with adding removing markers
+     */
     private void updateMap() {
         /*is not null then remove every existing marker on the map*/
         if (markerList!=null){

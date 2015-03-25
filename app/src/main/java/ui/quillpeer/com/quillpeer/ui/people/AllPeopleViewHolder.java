@@ -24,22 +24,33 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
- * Created by loucas on 15/02/2015.
+ * This class defines the behaviour of the people view holder
+ * Created on 15/02/2015.
+ * @author Loucas Stylianou
  */
 public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
+    /** The profile picture view */
     protected ImageView imgPeopleProfilePic;
+    /** The text view that contains the person's details */
     protected TextView txtPeoplePersonalDetails;
     protected TextView txtPeopleUniversity;
     protected TextView txtPeopleDepartment;
     protected TextView txtPeopleQualification;
+    /** Image view which depicts if the person is in favourites or not */
     protected ImageView imgPeopleFavourite;
+    /** This object is used for displaying small info messages to the user */
     protected Toast m_currentToast;
+    /** This circular image view depicts any correlation between the user and the person */
     protected CircleImageView corrIndicator;
-    //private OtherParticipant op;
+    /** The list of people */
     private List<Person> personList;
+    /** the screen name that is used to determine which screen is using the corresponding instance of the people view holder */
     private String screenName;
 
-    //initialise views
+    /**
+     * Initialise the view for each card in the recycler view
+     * @param v View
+     */
     public AllPeopleViewHolder(View v){
         super(v);
         imgPeopleFavourite = (ImageView)v.findViewById(R.id.imgPeopleFavourite);
@@ -61,8 +72,15 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
 
     }
 
+    /**
+     * This listener captures the behaviour when the user taps on a profile picture of a person
+     */
     View.OnClickListener imgProfPicTapListener = new View.OnClickListener() {
 
+        /**
+         * When the user clicks on a profile picture of a person then the app opens the corresponding profile page
+         * @param v View
+         */
         @Override
         public void onClick(View v) {
             OtherParticipant op = (OtherParticipant)personList.get(getPosition());
@@ -79,7 +97,16 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
     };
 
     //on favourite image press do ...
+    /**
+     * This defines the behaviour of touch listener for the favourite star button
+     */
     View.OnTouchListener imgStarListener = new View.OnTouchListener() {
+        /**
+         * When this button is touched by the user the corresponding request is sent to the server
+         * @param v View
+         * @param event Event
+         * @return
+         */
         @Override
         public boolean onTouch(View v, MotionEvent event) {
 
@@ -100,6 +127,13 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
         }
     };
 
+    /**
+     * This method defines the network operation when the favourite button is touched by the user
+     * @param userId
+     * @param v
+     * @param favouriteAction
+     * @param positionIndex
+     */
     private void sendPostRequest(String userId, final View v,String favouriteAction, final int positionIndex) {
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
@@ -183,7 +217,12 @@ public class AllPeopleViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    //show toasts
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     * @param v View
+     */
     void showToast(String text,int toast_length,View v)
     {
         if(m_currentToast != null)
