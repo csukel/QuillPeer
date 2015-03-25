@@ -37,35 +37,63 @@ import core.Server.ServerComm;
 import ui.quillpeer.com.quillpeer.R;
 
 /**
+ * This class defines the behaviour of the Suggested screen.
  * Created by loucas on 18/11/2014.
+ * @author Loucas Stylianou
  */
 public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnMoreListener, FragmentLifecycle {
+    /** the people's list */
     private static List<Person> peopleList;
+    /** the adapter */
     private AllPeopleAdapter allPeopleAdapter = null;
-    //toast for displaying small messages to the user
+    /** toast for displaying small messages to the user */
     private Toast m_currentToast;
+    /** the root view for this screen */
     private View rootView;
+    /** linear layout which contains the recycler view */
     private LinearLayoutManager llm;
+    /** start index for the results expected from the server */
     private int startIndex = 0;
+    /** start index for the results expected from the server when search mode is on */
     private int indexSearch = 0;
+    /** number of expected results */
     private static final int numOfPeople = 5;
-    //when user has retrieved or people this should be turn to true
+    /** when user has retrieved or people this should be turn to true */
     private boolean noMoreData = false;
+    /** reset mode when the user refreshes the list */
     private boolean reset = false;
+    /** super recycler view object */
     private SuperRecyclerView recList;
+    /** determines the visibility state of this screen */
     private boolean isVisible = false;
+    /** determines the search mode state */
     private boolean searching = false;
+    /** screen name */
     private String screenName = "SuggestionsFragment";
+    /** query string given by the user */
     private String queryString;
+    /** search view */
     private SearchView searchView;
     private MenuItem searchItem;
+    /** the class name which is used for debugging/testing purposes */
     private static final String TAG = SuggestionsFragment.class.getSimpleName();
 
+    /**
+     * When the fragment is launched allow the use of the options menu
+     * @param savedInstanceState
+     */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /**
+     * Initialise UI when the framgent is onCreateView
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,24 +120,32 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         return rootView;
     }
 
+    /**
+     * This method is used for debugging purposes
+     * @param activity
+     */
     public void onPauseFragment(FragmentActivity activity) {
 
         Log.i(TAG, "onPauseFragment");
         //isVisible =false;
     }
 
+    /**
+     * When the fragment enters the onResume state then refresh the UI
+     */
     @Override
     public void onResume() {
         super.onResume();
-        //TODO refresh the list and the UI
         Log.i("AllFragment", "on resume");
-/*        allPeopleAdapter = new AllPeopleAdapter(peopleList,getActivity().getApplicationContext());
-        //set the adapter to the recycler view
-        recList.setAdapter(allPeopleAdapter);*/
+
         allPeopleAdapter.notifyDataSetChanged();
 
     }
 
+    /**
+     * This method is used for debugging purposes
+     * @param activity
+     */
     @Override
     public void onResumeFragment(FragmentActivity activity) {
         Log.i("AllFragment", "is visible");
@@ -117,6 +153,9 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
     }
 
 
+    /**
+     * Populate the people list by sending a request to the server and retrieving the results
+     */
     private void populateList() {
         //instantiate the list
         peopleList = new ArrayList<Person>();
@@ -124,6 +163,11 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         sendPostRequest(Integer.toString(startIndex), Integer.toString(numOfPeople), reset, "");
     }
 
+    /**
+     * This method defines the behaviour of the screen when the options menu is created
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -172,7 +216,10 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
 
     }
 
-    /* Called whenever we call invalidateOptionsMenu() */
+    /**
+     * Called whenever we call invalidateOptionsMenu()
+     * @param menu
+     */
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -184,12 +231,18 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         }
     }
 
+    /**
+     * This defines the behaviour of the screen when the user types a query string in the search view
+     */
     private SearchView.OnQueryTextListener onQueryTextChange = new SearchView.OnQueryTextListener() {
-        //when the user submits a query using the button
+        /**
+         * When the user submits a query string then the app sends a request to the server to retrieve results if there exist
+         * @param s
+         * @return
+         */
         @Override
         public boolean onQueryTextSubmit(String s) {
             Log.d("AllFragment", "query submitted");
-            //TODO send the query to the server
             if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(), getActivity())) {
                 searching = true;
                 indexSearch = 0;
@@ -208,6 +261,13 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
     };
 
 
+    /**
+     * Retrieve the people's data when is necessary by sending a post request to the server
+     * @param begin
+     * @param size
+     * @param reSet
+     * @param searchQuery
+     */
     private void sendPostRequest(String begin, String size, final boolean reSet, String searchQuery) {
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
             private List<Person> backupList;
@@ -323,7 +383,11 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
 
     }
 
-    //show toasts
+    /**
+     * Display info messages to the user
+     * @param text Message
+     * @param toast_length Duration
+     */
     void showToast(String text, int toast_length) {
         if (m_currentToast != null) {
             m_currentToast.cancel();
@@ -338,13 +402,10 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
 
     }
 
-    /*    @Override
-        public void setMenuVisibility(final boolean visible) {
-            super.setMenuVisibility(visible);
-            if (visible) {
-
-            }
-        }*/
+    /**
+     * This method determines the visibility of this screen and sets the behaviour accordingly
+     * @param visibleHint
+     */
     @Override
     public void setUserVisibleHint(final boolean visibleHint) {
         super.setUserVisibleHint(visibleHint);
@@ -373,12 +434,18 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         }
     }
 
+    /**
+     * When the user triggers the refresh function by using the corresponding gesture then the app resets the list
+     */
     @Override
     public void onRefresh() {
         resetList();
 
     }
 
+    /**
+     * Reset the list and refresh the UI
+     */
     private void resetList() {
         //check the network state and proceed if there is internet connection
         if (ServerComm.isNetworkConnected(getActivity().getApplicationContext(), getActivity())) {
@@ -391,6 +458,13 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         }
     }
 
+    /**
+     * When the user scrolls to the end of the list and if there exist more data to receive send the request to the server and update
+     * the UI accordingly
+     * @param i
+     * @param i2
+     * @param i3
+     */
     @Override
     public void onMoreAsked(int i, int i2, int i3) {
 
@@ -415,6 +489,11 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
 
     }
 
+    /**
+     * This method defines the screen's behaviour when the user selects one of the options menu items
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i("AllFragment", "menu item was pressed");
@@ -429,6 +508,10 @@ public class SuggestionsFragment extends Fragment implements SwipeRefreshLayout.
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Retrieve the people's list
+     * @return peopleList
+     */
     public static List<Person> getPeopleList() {
         return peopleList;
     }
